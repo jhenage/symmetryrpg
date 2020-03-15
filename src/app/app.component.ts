@@ -45,6 +45,12 @@ export class AppComponent  {
         this.chars.push(new Character(char.id,creaturetype,character));
       }
     }
+
+    if(this.chars.length) {
+      console.log('huh');
+      this.chars[0].tap.AddTap(1,1);
+      console.log(this.chars[0].tap,this.chars[0].tap.Penalty(2));
+    }
   }
 
   save() {
