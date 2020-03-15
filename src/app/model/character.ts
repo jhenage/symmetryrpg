@@ -67,7 +67,7 @@ export class Character {
       this.traits = new Traits(this._data.traits);
       this.wounds = new Wounds(this._data.wounds);
       this.equipment = new Equipment(this._data.equipment);
-      this.tap = new Tap(this._data.tap);
+      this.tap = new Tap(this,this._data.tap);
       this.fatigue = new Fatigue(this._data.fatigue);
     }
     else {
@@ -79,7 +79,7 @@ export class Character {
       this.traits = new Traits();
       this.wounds = new Wounds();
       this.equipment = new Equipment();
-      this.tap = new Tap();
+      this.tap = new Tap(this);
       this.fatigue = new Fatigue();
 
       this._data = {createdAt:0,location:[],qi:[],token:'',creatureType:0,
@@ -156,6 +156,12 @@ export class Character {
       }
       if ( this._data.qi[i-1].time < time ) {
         this._data.qi.splice(i,0,{time:time,amount:qi});
+
+        i++;
+        while(i < this._data.qi.length) {
+          this._data.qi[i].amount += amount;
+          i++;
+        }
         return;
       }
     }

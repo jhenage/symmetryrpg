@@ -46,4 +46,8 @@ export class CreatureType {
     return this._data.name;
   }
 
+  get limbs() {
+    return this._data.limbs;
+  }
+
 }
