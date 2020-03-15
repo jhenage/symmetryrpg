@@ -105,7 +105,7 @@ console.log('test')
             newamount = 0;
             amount = 0-oldtap;
           }
-          console.log(this._data,location)
+          console.log(this._data,location);
           this._data[location].splice(i,0,{time:time,amount:newamount});
           i++;
         }
