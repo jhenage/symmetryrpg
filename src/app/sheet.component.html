@@ -1,0 +1,52 @@
+<div (change)="save()">
+    Creature Type: {{character.creatureType.name}}
+    <div class="field name">
+      <label>Name</label>
+      <input [(ngModel)]="character.about.name" />
+    </div>
+    <div class="field height">
+      <label>Height</label>
+      <input [(ngModel)]="character.about.height" />
+    </div>
+    <div class="field name">
+      <label>Body Type</label>
+      <select [(ngModel)]="character.about.bodyType" >
+        <option *ngFor="let bt of character.creatureType.bodyTypes" [value]="bt.amount">{{bt.label}}</option>
+      </select>
+    </div>
+    <div class="field brawn">
+      <label>Brawn</label>
+      <input [(ngModel)]="character.aspects.brawn" />
+    </div>
+    <div class="field toughness">
+      <label>Toughness</label>
+      <input [(ngModel)]="character.aspects.toughness" />
+    </div>
+    <div class="field agility">
+      <label>Agility</label>
+      <input [(ngModel)]="character.aspects.agility" />
+    </div>
+    <div class="field reflex">
+      <label>Reflex</label>
+      <input [(ngModel)]="character.aspects.reflex" />
+    </div>
+    <div class="field cleverness">
+      <label>Cleverness</label>
+      <input [(ngModel)]="character.aspects.cleverness" />
+    </div>
+    <div class="field serenity">
+      <label>Serenity</label>
+      <input [(ngModel)]="character.aspects.serenity" />
+    </div>
+    <div class="field impression">
+      <label>Impression</label>
+      <input [(ngModel)]="character.aspects.impression" />
+    </div>
+    <div class="field awareness">
+      <label>Awareness</label>
+      <input [(ngModel)]="character.aspects.awareness" />
+    </div>
+     weight: {{character.weight | number:'1.0-0'}},
+      endurance: {{character.Endurance() | number:'1.0-1'}},
+ 
+</div>
