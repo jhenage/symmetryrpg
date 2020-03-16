@@ -1,9 +1,9 @@
-import { Character } from '../character'
+import { Character, ModifiableStat, ModifiedValue, ChangeModifiedValue } from '../character'
 export interface AboutData {
   name: string;
-  height: number; // in meters (100in/254cm)(100cm/1m)
+  height: ModifiableStat; // in meters (100in/254cm)(100cm/1m)
   age: number;
-  bodyType: number; // weight multiplier, usually 0.5 to 2
+  bodyType: ModifiableStat; // weight multiplier, usually 0.5 to 2
   description: string;
   notes: string;
 }
@@ -22,9 +22,9 @@ export class About {
   initialize(): AboutData {
     this._data = {
       name: "",
-      height: 1.7,
+      height: {amount:1.7},
       age: 18,
-      bodyType: 1,
+      bodyType: {amount:1},
       description: "",
       notes: ""
     };
@@ -49,16 +49,22 @@ export class About {
     let regex = /^(\d+)'(\d+)"/;
     let res = regex.exec(newHeight);
     if (res) {
-      this._data.height = (Number(res[1]) * 12 + Number(res[2])) * 2.54 / 100;
+      this._data.height.amount = (Number(res[1]) * 12 + Number(res[2])) * 2.54 / 100;
     }
   }
 
-  HeightMeter(): number {
-    return this._data.height;
+  HeightMeter(time?: number): number {
+    if ( typeof time === undefined ) {
+      return this._data.height.amount;
+    }
+    return ModifiedValue(time,this._data.height);
   }
 
-  HeightInch(): number {
-    return this._data.height * 100 / 2.54;
+  HeightInch(time?: number): number {
+    if ( typeof time === undefined ) {
+      return this._data.height.amount * 100 / 2.54;
+    }
+    return ModifiedValue(time,this._data.height) * 100 / 2.54;
   }
 
   get age(): number {
@@ -66,15 +72,23 @@ export class About {
   }
 
   set age(age) {
-    this._data.age = Number(age || 18);
+    this._data.age = Number(age) || 18;
   }
 
   get bodyType(): number {
-    return this._data.bodyType;
+    return this._data.bodyType.amount;
   }
 
   set bodyType(bt) {
-    this._data.bodyType = Number(bt || 1);
+    this._data.bodyType.amount = Number(bt) || 1;
+  }
+
+  CurrentBodyType(time:number): number {
+    return ModifiedValue(time,this._data.bodyType);
+  }
+
+  AlterBodyType(time:number,amount:number) {
+    ChangeModifiedValue(time,this._data.bodyType,amount);
   }
 
   get description(): string {

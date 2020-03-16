@@ -46,7 +46,7 @@
       <label>Awareness</label>
       <input [(ngModel)]="character.aspects.awareness" />
     </div>
-     weight: {{character.weight | number:'1.0-0'}},
-      endurance: {{character.Endurance() | number:'1.0-1'}},
+     weight: {{character.WeightLbs(0) | number:'1.0-0'}},
+      endurance: {{character.Endurance(0) | number:'1.0-1'}},
  
 </div>

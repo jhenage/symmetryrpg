@@ -10,6 +10,50 @@ import { Tap, TapData } from './character/tap';
 import { Fatigue, FatigueData } from './character/fatigue';
 import { CreatureType } from './creaturetype';
 
+export interface ModifiableStat {
+  amount: number;
+  modified?: {
+    time: number;
+    amount: number;
+  }[];
+}
+
+export function ModifiedValue(time:number,data:ModifiableStat): number {
+  if ( !data.modified ) {
+    data.modified = [];
+  }
+
+  for(let i = data.modified.length; i > 0; i--) {
+    if ( data.modified[i-1].time <= time ) {
+      return data.modified[i-1].amount;
+    }
+  }
+
+  return data.amount;
+
+}
+
+export function ChangeModifiedValue(time:number,data:ModifiableStat,amount:number): void {
+  
+  if ( amount == ModifiedValue(time,data) ) {
+    return;
+  }
+
+  let i = data.modified.length;
+  if ( i == 0 || data.modified[i-1].time < time ) {
+    data.modified.push({time:time,amount:amount});
+    return;
+  }
+
+  if ( data.modified[i-1].time == time ) {
+    data.modified[i-1].amount = amount;
+  }
+
+  if ( data.modified[i-1].time == time ) {
+    throw new Error('Invalid time '+time);
+  }
+  
+}
 
 export class Character {
 
@@ -33,10 +77,7 @@ export class Character {
       velx: number;
       vely: number;
     }[];
-    qi: {
-      time: number;
-      amount: number;
-    }[];
+    qi: ModifiableStat;
     token: string; // url to image
   }
   readonly id: number;
@@ -82,7 +123,8 @@ export class Character {
       this.tap = new Tap(this);
       this.fatigue = new Fatigue(this);
 
-      this._data = {createdAt:0,location:[],qi:[],token:'',creatureType:0,
+      this._data = {createdAt:0,location:[],token:'',creatureType:0,
+                    qi:{amount:0},
                     about:this.about.initialize(),
                     aspects: this.aspects.initialize(),
                     skills: this.skills.initialize(),
@@ -101,23 +143,23 @@ export class Character {
   serialize(): string { return JSON.stringify(this._data); }
   get createdAt(): number { return this._data.createdAt; }
 
-  get weight(): number {
-    return this.WeightKg() * 2.2;
+  WeightLbs(time:number): number {
+    return this.WeightKg(time) * 2.2;
   }
 
   // This is based off of BMI. Human BMI is 11 + 10*bodyType + bodyType*toughness
   // . This is set so that at the thinnest bodyType anything below toughness 5 is underweight
   // . At average bodyType and toughness, you are barely overweight
-  WeightKg(): number {
+  WeightKg(time:number): number {
     let bmi = this.creatureType.weight.bmiOffset;
-    bmi += this.creatureType.weight.btFactor * this.about.bodyType;
-    bmi += this.about.bodyType * this.aspects.toughness;
-    let height = this.about.HeightMeter();
+    bmi += this.creatureType.weight.btFactor * this.about.CurrentBodyType(time);
+    bmi += this.about.CurrentBodyType(time) * this.aspects.Current(time,'toughness');
+    let height = this.about.HeightMeter(time);
     return height * height * bmi * this.creatureType.weight.multiplier;
   }
 
-  Endurance(): number { 
-    let endurance = this.aspects.toughness / this.about.bodyType;
+  Endurance(time:number): number { 
+    let endurance = this.aspects.Current(time,'toughness') / this.about.CurrentBodyType(time);
     //if ( this.traits.endurance ) {
     //  if ( this.traits.greatEndurance ) {
     //    if ( this.traits.epicEndurance ) {
@@ -134,38 +176,13 @@ export class Character {
   }
 
   Qi(time: number): number {
-    if(this._data.qi.length == 0) {
-      this._data.qi.push({time:this._data.createdAt,amount:this.MaxQi()});
-    }
-    for(let i = this._data.qi.length; i > 0; i--) {
-      if ( this._data.qi[i-1].time <= time ) {
-        return this._data.qi[i-1].amount;
-      }
-    }
-    throw new Error("invalid time " + time);
+    return ModifiedValue(time,this._data.qi);
   }
 
   MaxQi(): number { return 10; }
 
   AddQi(time: number, amount: number): void {
-    let qi = this.Qi(time) + amount;
-    for(let i = this._data.qi.length; i > 0; i--) {
-      if ( this._data.qi[i-1].time == time ) {
-        this._data.qi[i-1].amount = qi;
-        return;
-      }
-      if ( this._data.qi[i-1].time < time ) {
-        this._data.qi.splice(i,0,{time:time,amount:qi});
-
-        i++;
-        while(i < this._data.qi.length) {
-          this._data.qi[i].amount += amount;
-          i++;
-        }
-        return;
-      }
-    }
-    throw new Error("invalid time " + time)
+    return ChangeModifiedValue(time,this._data.qi,ModifiedValue(time,this._data.qi)+amount);
   }
 
 }
