@@ -1,4 +1,5 @@
-interface FatigueData {
+import { Character } from '../character'
+export interface FatigueData {
   aerobic: {
     time: number;
     rate: number;
@@ -20,8 +21,10 @@ interface FatigueData {
 export class Fatigue {
 
   protected _data: FatigueData;
+  character: Character;
  
-  constructor(data?: FatigueData) {
+  constructor(character: Character,data?: FatigueData) {
+    this.character = character;
     if(data) {
       this._data = data;
     }
@@ -35,5 +38,7 @@ export class Fatigue {
   Penalty(location: string): number {
     return 0;
   }
+
+
 
 }

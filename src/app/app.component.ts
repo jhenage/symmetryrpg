@@ -45,7 +45,6 @@ export class AppComponent  {
         this.chars.push(new Character(char.id,creaturetype,character));
       }
     }
-
   }
 
   save() {

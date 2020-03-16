@@ -1,5 +1,5 @@
 import { Character } from '../character'
-interface TapData {
+export interface TapData {
   [propName: string]: { // Location (e.g. leftArm,mental,general)
     time: number;
     amount: number;

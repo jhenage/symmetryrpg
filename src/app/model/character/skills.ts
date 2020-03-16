@@ -1,4 +1,5 @@
-interface SkillsData {
+import { Character } from '../character'
+export interface SkillsData {
   actor: number;
   artist: number;
   athlete: number;
@@ -22,8 +23,10 @@ interface SkillsData {
 export class Skills {
 
   protected _data: SkillsData;
+  character: Character;
  
-  constructor(data?: SkillsData) {
+  constructor(character: Character,data?: SkillsData) {
+    this.character = character;
     if(data) {
       this._data = data;
     }

@@ -1,11 +1,14 @@
-interface SpellsData {
+import { Character } from '../character'
+export interface SpellsData {
 }
 
 export class Spells {
 
   protected _data: SpellsData;
+  character: Character;
  
-  constructor(data?: SpellsData) {
+  constructor(character: Character,data?: SpellsData) {
+    this.character = character;
     if(data) {
       this._data = data;
     }

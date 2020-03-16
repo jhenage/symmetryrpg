@@ -1,4 +1,5 @@
-interface EquipmentData {
+import { Character } from '../character'
+export interface EquipmentData {
   [propName: string]: {  // Location (e.g. leftArm,rightLeg,body)
     start: number; // when moved to this location
     end: number;   // when removed from this location. 0 or undefined means indefinitely
@@ -10,8 +11,10 @@ interface EquipmentData {
 export class Equipment {
 
   protected _data: EquipmentData;
+  character: Character;
  
-  constructor(data?: EquipmentData) {
+  constructor(character: Character,data?: EquipmentData) {
+    this.character = character;
     if(data) {
       this._data = data;
     }

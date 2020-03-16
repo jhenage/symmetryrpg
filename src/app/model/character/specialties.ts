@@ -1,12 +1,15 @@
-interface SpecialtiesData {
+import { Character } from '../character'
+export interface SpecialtiesData {
   [propName: string]: number;
 }
 
 export class Specialties {
 
   protected _data: SpecialtiesData;
+  character: Character;
  
-  constructor(data?: SpecialtiesData) {
+  constructor(character: Character,data?: SpecialtiesData) {
+    this.character = character;
     if(data) {
       this._data = data;
     }

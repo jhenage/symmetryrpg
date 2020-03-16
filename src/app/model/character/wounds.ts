@@ -1,4 +1,5 @@
-interface WoundData {
+import { Character } from '../character'
+export interface WoundData {
   [propName: string]: { // Location (e.g. leftArm,head,torso)
     initial: {}; // the initial wound object
     recovery: {}; // actions taken toward recover, and results
@@ -8,8 +9,10 @@ interface WoundData {
 export class Wounds {
 
   protected _data: FatigueData;
+  character: Character;
  
-  constructor(data?: WoundData) {
+  constructor(character: Character,data?: WoundData) {
+    this.character = character;
     if(data) {
       this._data = data;
     }

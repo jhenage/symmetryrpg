@@ -1,4 +1,5 @@
-interface AboutData {
+import { Character } from '../character'
+export interface AboutData {
   name: string;
   height: number; // in meters (100in/254cm)(100cm/1m)
   age: number;
@@ -9,8 +10,10 @@ interface AboutData {
 
 export class About {
   protected _data: AboutData;
+  character: Character;
 
-  constructor(data?: AboutData) {
+  constructor(character: Character,data?: AboutData) {
+    this.character = character;
     if (data) {
       this._data = data;
     }

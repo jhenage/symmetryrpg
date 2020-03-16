@@ -1,13 +1,13 @@
-import { About } from './character/about';
-import { Aspects } from './character/aspects';
-import { Skills } from './character/skills';
-import { Specialties } from './character/specialties';
-import { Spells } from './character/spells';
-import { Traits } from './character/traits';
-import { Wounds } from './character/wounds';
-import { Equipment } from './character/equipment';
-import { Tap } from './character/tap';
-import { Fatigue } from './character/fatigue';
+import { About, AboutData } from './character/about';
+import { Aspects, AspectsData } from './character/aspects';
+import { Skills, SkillsData } from './character/skills';
+import { Specialties, SpecialtiesData } from './character/specialties';
+import { Spells, SpellsData } from './character/spells';
+import { Traits, TraitsData } from './character/traits';
+import { Wounds, WoundsData } from './character/wounds';
+import { Equipment, EquipmentData } from './character/equipment';
+import { Tap, TapData } from './character/tap';
+import { Fatigue, FatigueData } from './character/fatigue';
 import { CreatureType } from './creaturetype';
 
 
@@ -16,16 +16,16 @@ export class Character {
   protected _data: {
     createdAt: number;  // tick count of creation
     creatureType: number;
-    about: { };
-    aspects: { };
-    skills: { };
-    specialties: { };
-    spells: { };
-    traits: { };
-    equipment: { };
-    wounds: { };
-    tap: { };
-    fatigue: {};
+    about: AboutData;
+    aspects: AspectsData;
+    skills: SkillsData;
+    specialties: SpecialtiesData;
+    spells: SpellsData;
+    traits: TraitsData;
+    equipment: EquipmentData;
+    wounds: WoundsData;
+    tap: TapData;
+    fatigue: FatigueData;
     location: {
       time: number;
       x: number;
@@ -59,28 +59,28 @@ export class Character {
     
     if(data) {
       this._data = data;
-      this.about = new About(this._data.about);
-      this.aspects = new Aspects(this._data.aspects);
-      this.skills = new Skills(this._data.skills);
-      this.specialties = new Specialties(this._data.specialties);
-      this.spells = new Spells(this._data.spells);
-      this.traits = new Traits(this._data.traits);
-      this.wounds = new Wounds(this._data.wounds);
-      this.equipment = new Equipment(this._data.equipment);
+      this.about = new About(this,this._data.about);
+      this.aspects = new Aspects(this,this._data.aspects);
+      this.skills = new Skills(this,this._data.skills);
+      this.specialties = new Specialties(this,this._data.specialties);
+      this.spells = new Spells(this,this._data.spells);
+      this.traits = new Traits(this,this._data.traits);
+      this.wounds = new Wounds(this,this._data.wounds);
+      this.equipment = new Equipment(this,this._data.equipment);
       this.tap = new Tap(this,this._data.tap);
-      this.fatigue = new Fatigue(this._data.fatigue);
+      this.fatigue = new Fatigue(this,this._data.fatigue);
     }
     else {
-      this.about = new About();
-      this.aspects = new Aspects();
-      this.skills = new Skills();
-      this.specialties = new Specialties();
-      this.spells = new Spells();
-      this.traits = new Traits();
-      this.wounds = new Wounds();
-      this.equipment = new Equipment();
+      this.about = new About(this);
+      this.aspects = new Aspects(this);
+      this.skills = new Skills(this);
+      this.specialties = new Specialties(this);
+      this.spells = new Spells(this);
+      this.traits = new Traits(this);
+      this.wounds = new Wounds(this);
+      this.equipment = new Equipment(this);
       this.tap = new Tap(this);
-      this.fatigue = new Fatigue();
+      this.fatigue = new Fatigue(this);
 
       this._data = {createdAt:0,location:[],qi:[],token:'',creatureType:0,
                     about:this.about.initialize(),

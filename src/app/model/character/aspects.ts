@@ -1,4 +1,5 @@
-interface AspectsData {
+import { Character } from '../character'
+export interface AspectsData {
   brawn: number;
   toughness: number;
   agility: number;
@@ -12,8 +13,10 @@ interface AspectsData {
 export class Aspects {
 
   protected _data: AspectsData;
+  character: Character;
  
-  constructor(data?: AspectsData) {
+  constructor(character: Character,data?: AspectsData) {
+    this.character = character;
     if(data) {
       this._data = data;
     }
