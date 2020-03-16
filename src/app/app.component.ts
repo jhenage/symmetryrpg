@@ -3,9 +3,9 @@ import { Character } from './model/character';
 import { CreatureType } from './model/creaturetype';
 
 @Component({
-  selector: 'my-app',
+  selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: [ './app.component.css' ]
+  styleUrls: [ './app.component.less' ]
 })
 export class AppComponent  {
   character: Character;

@@ -1,17 +1,17 @@
 import { Character } from '../character'
 export interface FatigueData {
-  aerobic: {
-    time: number;
-    rate: number;
-    current: {
-      regular: {
-
-      }
-      malfatigue: {
-
-      }
-    }
-  }[];
+  //aerobic: {
+  //  time: number;
+  //  rate: number;
+  //  current: {
+  //    regular: {
+//
+  //    }
+  //    malfatigue: {
+//
+  //    }
+  //  }
+  //}[];
   [propName: string]: { // Location (e.g. leftArm, mental)
     time: number;
     amount: number;

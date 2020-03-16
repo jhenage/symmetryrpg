@@ -5,10 +5,10 @@ import { Character } from './model/character';
 @Component({
   selector: 'app-sheet',
   templateUrl: 'sheet.component.html',
-  styleUrls: ['sheet.component.css']
+  styleUrls: ['sheet.component.less']
 })
 
-export class SheetComponent implements OnInit, OnDestroy {
+export class SheetComponent {//implements OnInit, OnDestroy {
 
   @Input() character: Character;
   @Output() saved = new EventEmitter();

@@ -8,7 +8,7 @@ export interface WoundData {
 
 export class Wounds {
 
-  protected _data: FatigueData;
+  protected _data: WoundData;
   character: Character;
  
   constructor(character: Character,data?: WoundData) {

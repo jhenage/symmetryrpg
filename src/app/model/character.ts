@@ -4,7 +4,7 @@ import { Skills, SkillsData } from './character/skills';
 import { Specialties, SpecialtiesData } from './character/specialties';
 import { Spells, SpellsData } from './character/spells';
 import { Traits, TraitsData } from './character/traits';
-import { Wounds, WoundsData } from './character/wounds';
+import { Wounds, WoundData } from './character/wounds';
 import { Equipment, EquipmentData } from './character/equipment';
 import { Tap, TapData } from './character/tap';
 import { Fatigue, FatigueData } from './character/fatigue';
@@ -23,7 +23,7 @@ export class Character {
     spells: SpellsData;
     traits: TraitsData;
     equipment: EquipmentData;
-    wounds: WoundsData;
+    wounds: WoundData;
     tap: TapData;
     fatigue: FatigueData;
     location: {
@@ -53,7 +53,7 @@ export class Character {
   fatigue: Fatigue;
   creatureType: CreatureType;
 
-  constructor(id: number,creatureType: CreatureType,data) {
+  constructor(id: number,creatureType: CreatureType,data?) {
     this.id = id;
     this.creatureType = creatureType;
     
@@ -118,18 +118,18 @@ export class Character {
 
   Endurance(): number { 
     let endurance = this.aspects.toughness / this.about.bodyType;
-    if ( this.traits.endurance ) {
-      if ( this.traits.greatEndurance ) {
-        if ( this.traits.epicEndurance ) {
-          if ( this.traits.ultEndurance ) {
-            return endurance + 15;
-          }
-          return endurance + 9;
-        }
-        return endurance + 5;
-      }
-      return endurance + 2;
-    }
+    //if ( this.traits.endurance ) {
+    //  if ( this.traits.greatEndurance ) {
+    //    if ( this.traits.epicEndurance ) {
+    //      if ( this.traits.ultEndurance ) {
+    //        return endurance + 15;
+    //      }
+    //      return endurance + 9;
+    //    }
+    //    return endurance + 5;
+    //  }
+    //  return endurance + 2;
+    //}
     return endurance;
   }
 

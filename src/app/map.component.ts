@@ -5,18 +5,18 @@ import { Character } from './model/character';
 @Component({
   selector: 'app-map',
   templateUrl: 'map.component.html',
-  styleUrls: ['map.component.css']
+  styleUrls: ['map.component.less']
 })
 
-export class MapComponent implements OnInit, OnDestroy {
+export class MapComponent { //implements OnInit, OnDestroy {
 
  
   save() {
-    this.saved.emit();
+    //this.saved.emit();
   }
 
   delete() {
-    this.deleted.emit(this.character);
+    //this.deleted.emit(this.character);
   }
 
 }
