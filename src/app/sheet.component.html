@@ -46,6 +46,15 @@
       <label>Awareness</label>
       <input [(ngModel)]="character.aspects.awareness" />
     </div>
+    <div class="skills container">
+      <h4>Skills</h4>
+      <div *ngFor="let skill of character.skills.skillsList">
+        <label>{{skill|titlecase}}</label>
+        <input
+          [value]="character.skills.getSkillRank(skill)"
+          (input)="character.skills.setSkillRank(skill,$event.target.value)" />
+      </div>
+    </div>
      weight: {{character.WeightLbs(0) | number:'1.0-0'}},
       endurance: {{character.Endurance(0) | number:'1.0-1'}},
  

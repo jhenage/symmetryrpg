@@ -56,4 +56,18 @@ export class Skills {
     return this._data;
   }
 
+  get skillsList(): string[] {
+    return Object.keys(this._data);
+  }
+
+  getSkillRank(skillName: string): number {
+    return this._data[skillName];
+  }
+
+  setSkillRank(skillName: string, rank: number) {
+    if(this._data.hasOwnProperty(skillName)) {
+      this._data[skillName] = Math.max(0,Math.min(25,rank));
+    }
+  }
+
 }
