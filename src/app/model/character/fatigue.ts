@@ -1,5 +1,4 @@
 import { Character } from '../character'
-import { MaxLengthValidator } from '@angular/forms';
 export interface FatigueData {
   aerobic: {
     time: number;
@@ -7,11 +6,22 @@ export interface FatigueData {
     amount: number;  // size of regular fatigue
     malfatigue: number;  // increases penalty but not HR
   }[];
-  [propName: string]: { // Location (e.g. leftArm, mental)
-    time: number;
-    amount: number;
-  }[];
+  muscles: {
+    [propName: string]: { // Location (e.g. leftArm, mental)
+      time: number;
+      rate: number;
+      amount: number[];
+    }[];
+  }
 }
+
+// As of 3/17, these functions are not quite ready for consumption
+//  Aerobic fatigue uses Endurance, and currently only needs adjustment per muscle group size
+//  Muscle fatigue needs the values entered to be divided by Endurance still
+//  Both need a scale to convert actions into fatigue values.
+//   Note that Aerobic buckets are 30*End, Muscle Buckets are 60,000
+
+const muscleCarryover = 0.3; // Percent that gets added to subsequent bucket
 
 export class Fatigue {
 
@@ -26,7 +36,7 @@ export class Fatigue {
   }
 
   initialize(): FatigueData {
-    this._data = {aerobic: []};
+    this._data = {aerobic: [],muscles: {}};
     return this._data;
   }
 
@@ -38,39 +48,82 @@ export class Fatigue {
           let result = this.AerobicOverTime(this._data.aerobic[i-1].amount,this._data.aerobic[i-1].malfatigue,this._data.aerobic[i-1].rate,this._data.aerobic[i-1].time,time);
           let buckets = this.AerobicBuckets(time,result.amount+result.malfatigue);
 
-          if ( buckets > 4 ) {
-            return buckets - 4;
+          if ( buckets > 7 ) {
+            return 2 * (buckets - 7) + 3;
           }
 
-          let penalty = [0,-0.5,-1,-0.5,0];
+          let penalty = [0,-0.5,-1,-0.5,0,1,2,3];
           return penalty[buckets];          
         }
       }
       return 0;
     }
-    if ( !this._data.hasOwnProperty(location) ) {
+    if ( !this._data.muscles.hasOwnProperty(location) ) {
       return 0;
     }
-    return 0;
+
+    for(let i = this._data.muscles[location].length; i > 0; i--) {
+      if ( this._data.muscles[location][i-1].time <= time ) {
+        let result = this.MuscleOverTime(this._data.muscles[location][i-1].rate,this._data.muscles[location][i-1].amount,time-this._data.muscles[location][i-1].time);
+        let total = result.reduce((a,b) => a+b);
+        return total / 60000;
+      }
+    }
   }
 
-  AerobicBucketSize(time:number): number {
+  AddAerobicRate(time:number,rate:number): void {
+    let i = this._data.aerobic.length;
+    if ( i == 0 ) {
+      this._data.aerobic.push({time:time,rate:rate,amount:0,malfatigue:0});
+      return;
+    }
+
+    if ( this._data.aerobic[i-1].time > time ) {
+      throw new Error('Invalid time '+time);
+    }
+    if ( this._data.aerobic[i-1].time == time ) {
+      this._data.aerobic[i-1].rate += rate;
+      return;
+    }
+    let result = this.AerobicOverTime(this._data.aerobic[i-1].amount,this._data.aerobic[i-1].malfatigue,this._data.aerobic[i-1].rate,this._data.aerobic[i-1].time,time);
+    this._data.aerobic.push({time:time,rate:this._data.aerobic[i-1].rate+rate,amount:result.amount,malfatigue:result.malfatigue});
+  }
+
+  AddAerobicMalfatigue(time:number,malfatigue:number): void {
+    let i = this._data.aerobic.length;
+    if ( i == 0 ) {
+      this._data.aerobic.push({time:time,rate:0,amount:0,malfatigue:malfatigue});
+      return;
+    }
+
+    if ( this._data.aerobic[i-1].time > time ) {
+      throw new Error('Invalid time '+time);
+    }
+    if ( this._data.aerobic[i-1].time == time ) {
+      this._data.aerobic[i-1].malfatigue += malfatigue;
+      return;
+    }
+    let result = this.AerobicOverTime(this._data.aerobic[i-1].amount,this._data.aerobic[i-1].malfatigue,this._data.aerobic[i-1].rate,this._data.aerobic[i-1].time,time);
+    this._data.aerobic.push({time:time,rate:this._data.aerobic[i-1].rate,amount:result.amount,malfatigue:result.malfatigue+malfatigue});
+  }
+
+  protected AerobicBucketSize(time:number): number {
     return this.character.Endurance(time) * 30;
   }
 
-  AerobicBuckets(time:number,fatigue: number): number {
+  protected AerobicBuckets(time:number,fatigue: number): number {
     return Math.floor(fatigue / this.AerobicBucketSize(time));
   }
 
   // return fatigue per milisecond
-  AerobicRecoverySpeed(time:number,buckets: number): number {
+  protected AerobicRecoverySpeed(time:number,buckets: number): number {
     if ( buckets > 6 ) {
       return this.character.Endurance(time) * .0016;
     }
     return this.character.Endurance(time) * 0.0002 * (buckets+1);
   }
 
-  AerobicOverTime(amount:number,malfatigue:number,rate:number,start:number,end:number): {amount:number,malfatigue:number} {
+  protected AerobicOverTime(amount:number,malfatigue:number,rate:number,start:number,end:number): {amount:number,malfatigue:number} {
     let recovery = this.AerobicRecoverySpeed(start,this.AerobicBuckets(start,amount));
     let bucketsize = this.AerobicBucketSize(start);
     let bucketremaining = bucketsize - amount % bucketsize;
@@ -120,6 +173,85 @@ export class Fatigue {
     }
     return {amount:amount - duration * (recovery - rate),malfatigue:0};
 
+  }
+
+  ValidateMuscleLocation(time:number,location: string) {
+    if ( !this._data.muscles.hasOwnProperty(location) ) {
+      if ( location != 'mental' && !this.character.creatureType.limbs.hasOwnProperty(location) ) {
+        throw new Error('Invalid location '+location);
+      }
+      this._data.muscles[location] = [{ time: time, rate: 0, amount: Array(5).fill(0) }];
+    }
+  }
+  
+  AddMuscleRate(time:number,rate:number,location:string): void {
+    
+    this.ValidateMuscleLocation(time,location);
+    let i = this._data.muscles[location].length;
+
+    if ( this._data.muscles[location][i-1].time > time ) {
+      throw new Error('Invalid time '+time);
+    }
+    if ( this._data.muscles[location][i-1].time == time ) {
+      this._data.muscles[location][i-1].rate += rate;
+      return;
+    }
+    let result = this.MuscleOverTime(this._data.muscles[location][i-1].rate,this._data.muscles[location][i-1].amount,time-this._data.muscles[location][i-1].time);
+    this._data.muscles[location].push({time:time,rate:rate+this._data.muscles[location][i-1].rate,amount:result});
+  }
+
+  // Adding Instant Fatigue
+  AddMuscleAmount(time:number,amount:number,location:string): void {
+    
+    this.ValidateMuscleLocation(time,location);
+    let i = this._data.muscles[location].length;
+    
+    if ( this._data.muscles[location][i-1].time > time ) {
+      throw new Error('Invalid time '+time);
+    }
+
+    let result = this.MuscleOverTime(this._data.muscles[location][i-1].rate,this._data.muscles[location][i-1].amount,time-this._data.muscles[location][i-1].time);
+    for ( let i = 0; i < 5; i++ ) {
+      result[i] += amount;
+      if ( result[i] < 0 ) {
+        result[i] = 0;
+      }
+
+      if ( i < 4 ) {
+        amount *= muscleCarryover;
+        if ( amount < result[i] - 60000 - result[i+1] ) { // this bucket is more than one penalty larger than the next
+          amount = result[i] - 60000 - result[i+1];
+        }
+      }
+    }
+
+    if ( this._data.muscles[location][i-1].time == time ) {
+      this._data.muscles[location][i-1].amount = result;
+      return;
+    }
+    this._data.muscles[location].push({time:time,rate:this._data.muscles[location][i-1].rate,amount:result});
+  }
+
+
+  protected MuscleOverTime(rate:number,amount:number[],duration:number): number[] {
+    let result = Array(5).fill(0);
+    let toadd = duration * rate;
+
+    for ( let i = 0; i < 5; i++ ) {
+      result[i] = amount[i] + toadd - duration * Math.pow(0.1,i);
+      if ( result[i] < 0 ) {
+        result[i] = 0;
+      }
+
+      if ( i < 4 ) {
+        toadd *= muscleCarryover;
+        if ( toadd < result[i] - 60000 - amount[i+1] ) { // this bucket is more than one penalty larger than the next
+          toadd = result[i] - 60000 - amount[i+1];
+        }
+      }
+    }
+
+    return result;
   }
 
 }
