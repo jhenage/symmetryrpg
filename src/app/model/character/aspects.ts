@@ -44,69 +44,18 @@ export class Aspects {
     ChangeModifiedValue(time,this._data[aspect],amount);
   }
 
-  get brawn(): number {
-    return this._data.brawn.amount;
+  get aspectsList(): string[] {
+    return Object.keys(this._data);
   }
 
-  set brawn(newValue) {
-     this._data.brawn.amount = Number(newValue) || 5;
+  getAspectRank(aspectName: string): number {
+    return this._data[aspectName].amount;
   }
 
-  get toughness(): number {
-    return this._data.toughness.amount;
+  setAspectRank(aspectName: string, rank: number) {
+    if(this._data.hasOwnProperty(aspectName)) {
+      this._data[aspectName].amount = Math.max(0,Math.min(25,rank));
+    }
   }
-
-  set toughness(newValue) {
-     this._data.toughness.amount = Number(newValue) || 5;
-  }
-
-  get agility(): number {
-    return this._data.agility.amount;
-  }
-
-  set agility(newValue) {
-     this._data.agility.amount = Number(newValue) || 5;
-  }
-
-  get reflex(): number {
-    return this._data.reflex.amount;
-  }
-
-  set reflex(newValue) {
-     this._data.reflex.amount = Number(newValue) || 5;
-  }
-
-  get cleverness(): number {
-    return this._data.cleverness.amount;
-  }
-
-  set cleverness(newValue) {
-     this._data.cleverness.amount = Number(newValue) || 5;
-  }
-
-  get serenity(): number {
-    return this._data.serenity.amount;
-  }
-
-  set serenity(newValue) {
-     this._data.serenity.amount = Number(newValue) || 5;
-  }
-
-  get impression(): number {
-    return this._data.impression.amount;
-  }
-
-  set impression(newValue) {
-     this._data.impression.amount = Number(newValue) || 5;
-  }
-
-  get awareness(): number {
-    return this._data.awareness.amount;
-  }
-
-  set awareness(newValue) {
-     this._data.awareness.amount = Number(newValue) || 5;
-  }
-
 
 }
