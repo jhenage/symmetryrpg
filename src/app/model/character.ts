@@ -11,6 +11,11 @@ import { Traits, TraitsData } from './character/traits';
 import { Wounds, WoundData } from './character/wounds';
 import { CreatureType } from './creaturetype';
 
+export interface BasicTestResult {
+  standardResult: number;
+  lowluckResult: number;
+}
+
 export interface ModifiableStat {
   amount: number;
   modified?: {
@@ -191,6 +196,39 @@ export class Character {
 
   AddQi(time: number, amount: number): void {
     return ChangeModifiedValue(time,this._data.qi,ModifiedValue(time,this._data.qi)+amount);
+  }
+
+  getDieRoll(sides: number): number {
+    return 1 + Math.floor(Math.random()*sides);
+  }
+
+  getTestResults(): BasicTestResult {
+    var standardResult = 0;
+    var lowluckResult = 0;
+    for(var i=0; i<2; i++) {
+      var die = this.getDieRoll(8);
+      if(die==1) die = 5;
+      standardResult += die;
+      if(die < 4) {
+        lowluckResult += 4;
+      } else if(die >6) {
+        lowluckResult += 6;
+      } else {
+        lowluckResult += 5;
+      }
+    }
+    return {
+      standardResult: standardResult,
+      lowluckResult: lowluckResult
+    }
+  }
+
+  makeAspectTest(time:number, aspectName:string) {
+    console.log(this.aspects.getTestResult(time,aspectName));
+  }
+
+  makeSkillTest(time:number, aspectName:string, skillName:string) {
+    console.log(this.skills.getTestResult(this.aspects.Current(time,aspectName),skillName));
   }
 
 }

@@ -1,4 +1,4 @@
-import { Character, ModifiableStat, ModifiedValue, ChangeModifiedValue } from '../character'
+import { Character, BasicTestResult, ModifiableStat, ModifiedValue, ChangeModifiedValue } from '../character'
 export interface AspectsData {
   brawn: ModifiableStat;
   toughness: ModifiableStat;
@@ -28,9 +28,9 @@ export class Aspects {
       toughness: {amount:5},
       agility: {amount:5},
       reflex: {amount:5},
-      cleverness: {amount:5},
-      serenity: {amount:5},
       impression: {amount:5},
+      serenity: {amount:5},
+      cleverness: {amount:5},
       awareness: {amount:5}
     };
     return this._data;
@@ -56,6 +56,18 @@ export class Aspects {
     if(this._data.hasOwnProperty(aspectName)) {
       this._data[aspectName].amount = Math.max(0,Math.min(25,rank));
     }
+  }
+
+  getBaseResult(time:number, aspectName:string): number {
+    return 2*this.Current(time,aspectName);
+  }
+
+  getTestResult(time:number, aspectName:string): BasicTestResult {
+    var result = this.character.getTestResults();
+    var baseResult = this.getBaseResult(time,aspectName);
+    result.standardResult += baseResult;
+    result.lowluckResult += baseResult;
+    return result;
   }
 
 }

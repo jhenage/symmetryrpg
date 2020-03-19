@@ -21,6 +21,7 @@
         <input
           [value]="character.aspects.getAspectRank(aspect)"
           (input)="character.aspects.setAspectRank(aspect,$event.target.value)" />
+        <button [class]="aspect" (click)="character.makeAspectTest(0,aspect)"></button>
       </div>
     </div>
     <div class="skills container">
@@ -30,6 +31,8 @@
         <input
           [value]="character.skills.getSkillRank(skill)"
           (input)="character.skills.setSkillRank(skill,$event.target.value)" />
+        <button *ngFor="let aspect of character.aspects.aspectsList"
+          [class]="aspect" (click)="character.makeSkillTest(0,aspect,skill)"></button>
       </div>
     </div>
      weight: {{character.WeightLbs(0) | number:'1.0-0'}},
