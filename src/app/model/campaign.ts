@@ -1,9 +1,10 @@
 import { Character } from './character'
 import { CreatureType, CreatureTypeData } from './creaturetype';
+import { DataService } from '../data.service';
 
 export interface CampaignData {
     characters: {id:number,version:number}[];
-    archivedCharacters: {id:number,name:string}[];
+    allCharacters: {name:string,versions:number[]}[];
     now: number; // The current time
     creatureTypes: CreatureTypeData[];
 }
@@ -11,13 +12,15 @@ export interface CampaignData {
 export class Campaign {
 
     protected _data: CampaignData;
+    private dataService: DataService;
 
     characters: Character[];
     creatureTypes: CreatureType[];
 
-    constructor(data: CampaignData,getCharacter: CallableFunction) {
+    constructor(data: CampaignData,dataService: DataService) {
         
         this._data = data;
+        this.dataService = dataService;
  
         this.creatureTypes = [];
         for ( let creaturetype of this._data.creatureTypes ) {
@@ -26,7 +29,7 @@ export class Campaign {
 
         this.characters = [];
         for ( let char of this._data.characters ) {
-            let character = getCharacter(char.id,char.version);
+            let character = dataService.getCharacter(char.id,char.version);
             let creaturetype = this.creatureTypes[character.creatureType];
             this.characters.push(new Character(char.id,creaturetype,character));
         }
@@ -36,18 +39,38 @@ export class Campaign {
         return JSON.stringify(this._data);
     }
 
-    deleteCharacter(character: Character): void {
+    archiveCharacter(character: Character): void {
         let index = this.characters.indexOf(character);
         this.characters.splice(index,1);
         this._data.characters.splice(index,1);
-    
+        this._data.allCharacters[character.id].name = character.about.name;
+    }
+    deleteCharacter(character: Character): void {
+        this.archiveCharacter(character);
+
     }
 
     newCharacter(): Character {
-        let character = new Character(this.characters.length,this.creatureTypes[0],this._data.now);
+        let character = new Character(this._data.allCharacters.length,this.creatureTypes[0],this._data.now);
         this.characters.push(character);
         this._data.characters.push({id:character.id,version:character.createdAt});
+        this._data.allCharacters.push({name:'',versions:[character.createdAt]});
         return character;
+    }
+
+    nextActions(): any[] {
+        let actions = [];
+        let current = 0;
+        this.characters.forEach((char) => {
+            char.actions.nextActions(this._data.now).forEach((action) => {
+                if ( current == 0 || current > action.time ) {
+                    current = action.time;
+                }
+                actions.push(action);
+            });
+        });
+        
+        return actions.filter((action) => { return action.time == current; });
     }
 
 }

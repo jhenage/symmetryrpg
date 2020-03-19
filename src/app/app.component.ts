@@ -21,12 +21,12 @@ export class AppComponent  {
   ngOnInit() {
     let campaigndata = this.dataService.getCampaign();
     if ( campaigndata ) {
-      this.campaign = new Campaign(campaigndata,this.dataService.getCharacter);
+      this.campaign = new Campaign(campaigndata,this.dataService);
     }
     else {
       this.campaign = new Campaign({
         characters: [],
-        archivedCharacters: [],
+        allCharacters: [],
         now: 0,
         creatureTypes: [{
           name: 'Human',
@@ -47,7 +47,7 @@ export class AppComponent  {
           ],
           weight: { bmiOffset: 11, btFactor: 10, multiplier: 1 },
         }]
-      }, this.dataService.getCharacter);
+      }, this.dataService);
 
     }
   }
