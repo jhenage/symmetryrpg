@@ -1,26 +1,35 @@
 import { Character } from '../character'
-export interface ActionsData {
+export interface ActionData {
+  time: number;
+  character: number;
  }
 
 export class Actions {
-  protected _data: ActionsData;
+  protected _data: ActionData[];
   character: Character;
 
-  constructor(character: Character,data?: ActionsData) {
+  constructor(character: Character,data?: ActionData[]) {
     this.character = character;
     if (data) {
       this._data = data;
     }
   }
 
-  initialize(): ActionsData {
-    this._data = {
-     };
+  initialize(): ActionData[] {
+    this._data = [];
     return this._data;
   }
 
-  nextActions(time:number): [] {
-    return [];
+  nextActions(time:number): ActionData[] {
+    let actions = this.allNextActions(time);
+    if ( actions.length == 0 ) return actions;
+
+    let current = actions[0].time;
+    return actions.filter((action)=>{ return action.time == current; });
+  }
+
+  allNextActions(time:number): ActionData[] {
+    return this._data.filter((action)=>{ return action.time >= time; });
   }
 
  }

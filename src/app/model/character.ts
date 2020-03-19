@@ -1,5 +1,5 @@
 import { About, AboutData } from './character/about';
-import { Actions, ActionsData } from './character/actions'
+import { Actions, ActionData } from './character/actions'
 import { Aspects, AspectsData } from './character/aspects';
 import { Equipment, EquipmentData } from './character/equipment';
 import { Fatigue, FatigueData } from './character/fatigue';
@@ -10,7 +10,6 @@ import { Tap, TapData } from './character/tap';
 import { Traits, TraitsData } from './character/traits';
 import { Wounds, WoundData } from './character/wounds';
 import { CreatureType } from './creaturetype';
-import { Action } from 'rxjs/internal/scheduler/Action';
 
 export interface ModifiableStat {
   amount: number;
@@ -63,7 +62,7 @@ export class Character {
     createdAt: number;  // tick count of creation
     creatureType: number;
     about: AboutData;
-    actions: ActionsData;
+    actions: ActionData[];
     aspects: AspectsData;
     equipment: EquipmentData;
     fatigue: FatigueData;
