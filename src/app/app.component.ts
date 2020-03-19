@@ -12,7 +12,6 @@ import { DataService } from './data.service';
 export class AppComponent  {
   character: Character; // the selected character
   campaign: Campaign;
-  chars: Character[];
   creaturetypes: CreatureType[];
 
   constructor(private dataService: DataService) {

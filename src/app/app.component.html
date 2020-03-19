@@ -1,5 +1,5 @@
 Sheets: <a (click)="newChar()">New</a> 
-<a *ngFor="let character of chars" (click)="select(character)">{{character.about.name}}</a>
+<a *ngFor="let character of campaign.characters" (click)="select(character)">{{character.about.name}}</a>
 <div *ngIf="character"><app-sheet [character]="character" (saved)="save()" (deleted)="delete($event)"></app-sheet></div>
 <app-map></app-map>
 <h2>
