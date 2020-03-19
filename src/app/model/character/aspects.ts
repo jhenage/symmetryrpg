@@ -1,4 +1,5 @@
-import { Character, BasicTestResult, ModifiableStat, ModifiedValue, ChangeModifiedValue } from '../character'
+import { Character, ModifiableStat, ModifiedValue, ChangeModifiedValue } from '../character'
+import { DiceRoll } from '../diceroll'
 export interface AspectsData {
   brawn: ModifiableStat;
   toughness: ModifiableStat;
@@ -62,12 +63,10 @@ export class Aspects {
     return 2*this.Current(time,aspectName);
   }
 
-  getTestResult(time:number, aspectName:string): BasicTestResult {
-    var result = this.character.getTestResults();
-    var baseResult = this.getBaseResult(time,aspectName);
-    result.standardResult += baseResult;
-    result.lowluckResult += baseResult;
-    return result;
+  getTestResult(time:number, aspectName:string): DiceRoll {
+    let roll = new DiceRoll();
+    roll.modifier = this.getBaseResult(time,aspectName);
+    return roll;
   }
 
 }
