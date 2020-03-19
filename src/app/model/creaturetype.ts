@@ -1,4 +1,4 @@
-interface CreatureTypeData {
+export interface CreatureTypeData {
   name: string;
   limbs: {
     [propName: string]: {

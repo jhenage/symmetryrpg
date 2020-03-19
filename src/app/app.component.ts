@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Character } from './model/character';
 import { CreatureType } from './model/creaturetype';
+import { Campaign } from './model/campaign';
+import { DataService } from './data.service';
 
 @Component({
   selector: 'app-root',
@@ -8,64 +10,63 @@ import { CreatureType } from './model/creaturetype';
   styleUrls: [ './app.component.less' ]
 })
 export class AppComponent  {
-  character: Character;
+  character: Character; // the selected character
+  campaign: Campaign;
   chars: Character[];
   creaturetypes: CreatureType[];
 
-  constructor() {
-    this.creaturetypes = [];
-    this.creaturetypes.push(new CreatureType({
-      name: 'Human',
-      limbs: {
-        leftArm:  { dexterity: 5, locomotion: 1, muscleSize: 2, reach: 0.374 },
-        rightArm: { dexterity: 5, locomotion: 1, muscleSize: 2, reach: 0.374 },
-        leftLeg:  { dexterity: 1, locomotion: 5, muscleSize: 3, reach: 0.48 },
-        rightLeg: { dexterity: 1, locomotion: 5, muscleSize: 3, reach: 0.48 },
-      },
-      height: { average: 1.7, stddev: 0.1 },
-      bodyTypes: [
-        {label: 'Extremely Thin', amount: 0.5},
-        {label: 'Thin', amount: 0.75},
-        {label: 'Average', amount: 1},
-        {label: 'Stout', amount: 1.5},
-        {label: 'Very Large', amount: 2},
-        {label: 'Extremely Large', amount: 3}
-      ],
-      weight: { bmiOffset: 11, btFactor: 10, multiplier: 1 },
-    }));
+  constructor(private dataService: DataService) {
   }
 
   ngOnInit() {
-    this.chars = [];
-    if(localStorage.getItem('chars')) {
-      let chars = JSON.parse(localStorage.getItem('chars'));
-      for ( let char of chars ) {
-        let character = JSON.parse(localStorage.getItem('character_'+char.id+'_'+char.version));
-        let creaturetype = this.creaturetypes[character.creatureType];
-        this.chars.push(new Character(char.id,creaturetype,character));
-      }
+    let campaigndata = this.dataService.getCampaign();
+    if ( campaigndata ) {
+      this.campaign = new Campaign(campaigndata,this.dataService);
+    }
+    else {
+      this.campaign = new Campaign({
+        characters: [],
+        allCharacters: [],
+        now: 0,
+        creatureTypes: [{
+          name: 'Human',
+          limbs: {
+            leftArm:  { dexterity: 5, locomotion: 1, muscleSize: 2, reach: 0.374 },
+            rightArm: { dexterity: 5, locomotion: 1, muscleSize: 2, reach: 0.374 },
+            leftLeg:  { dexterity: 1, locomotion: 5, muscleSize: 3, reach: 0.48 },
+            rightLeg: { dexterity: 1, locomotion: 5, muscleSize: 3, reach: 0.48 },
+          },
+          height: { average: 1.7, stddev: 0.1 },
+          bodyTypes: [
+            {label: 'Extremely Thin', amount: 0.5},
+            {label: 'Thin', amount: 0.75},
+            {label: 'Average', amount: 1},
+            {label: 'Stout', amount: 1.5},
+            {label: 'Very Large', amount: 2},
+            {label: 'Extremely Large', amount: 3}
+          ],
+          weight: { bmiOffset: 11, btFactor: 10, multiplier: 1 },
+        }]
+      }, this.dataService);
+
     }
   }
 
-  save() {
-    let chars = [];
-    for ( let char of this.chars ) {
-      chars.push({id:char.id,version:char.createdAt});
-      localStorage.setItem('character_'+char.id+'_'+char.createdAt,char.serialize());
+  save():void {
+    for ( let char of this.campaign.characters ) {
+      this.dataService.saveCharacter(char);
     }
-    localStorage.setItem('chars',JSON.stringify(chars));
+    this.dataService.saveCampaign(this.campaign);
   }
 
-  delete(character) {
-    let index = this.chars.indexOf(character);
-    localStorage.removeItem('character_'+character.id+'_'+character.createdAt);
-    this.chars.splice(index,1);
-    this.save();
+  delete(character: Character): void {
+    this.campaign.deleteCharacter(character);
+    this.dataService.deleteCharacter(character);
+    this.dataService.saveCampaign(this.campaign);
   }
 
-  newChar() {
-    this.character = new Character(this.chars.length,this.creaturetypes[0]);
-    this.chars.push(this.character);
+  newChar():void {
+    this.character = this.campaign.newCharacter();
   }
 
   select(character: Character) {
