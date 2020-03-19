@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Character } from './model/character';
 import { CreatureType } from './model/creaturetype';
 import { Campaign } from './model/campaign';
+import { DataService } from './data.service';
 
 @Component({
   selector: 'app-root',
@@ -14,12 +15,13 @@ export class AppComponent  {
   chars: Character[];
   creaturetypes: CreatureType[];
 
-  constructor() {
+  constructor(private dataService: DataService) {
   }
 
   ngOnInit() {
-    if(localStorage.getItem('campaign')) {
-      this.campaign = new Campaign(JSON.parse(localStorage.getItem('campaign')));
+    let campaigndata = this.dataService.getCampaign();
+    if ( campaigndata ) {
+      this.campaign = new Campaign(campaigndata,this.dataService.getCharacter);
     }
     else {
       this.campaign = new Campaign({
@@ -45,21 +47,22 @@ export class AppComponent  {
           ],
           weight: { bmiOffset: 11, btFactor: 10, multiplier: 1 },
         }]
-      });
+      }, this.dataService.getCharacter);
 
     }
   }
 
   save():void {
     for ( let char of this.campaign.characters ) {
-      localStorage.setItem('character_'+char.id+'_'+char.createdAt,char.serialize());
+      this.dataService.saveCharacter(char);
     }
-    localStorage.setItem('campaign',this.campaign.serialize());
+    this.dataService.saveCampaign(this.campaign);
   }
 
   delete(character: Character): void {
     this.campaign.deleteCharacter(character);
-    this.save();
+    this.dataService.deleteCharacter(character);
+    this.dataService.saveCampaign(this.campaign);
   }
 
   newChar():void {

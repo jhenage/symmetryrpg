@@ -1,7 +1,7 @@
 import { Character } from './character'
 import { CreatureType, CreatureTypeData } from './creaturetype';
 
-interface CampaignData {
+export interface CampaignData {
     characters: {id:number,version:number}[];
     archivedCharacters: {id:number,name:string}[];
     now: number; // The current time
@@ -15,7 +15,8 @@ export class Campaign {
     characters: Character[];
     creatureTypes: CreatureType[];
 
-    constructor(data: CampaignData) {
+    constructor(data: CampaignData,getCharacter: CallableFunction) {
+        
         this._data = data;
  
         this.creatureTypes = [];
@@ -25,7 +26,7 @@ export class Campaign {
 
         this.characters = [];
         for ( let char of this._data.characters ) {
-            let character = JSON.parse(localStorage.getItem('character_'+char.id+'_'+char.version));
+            let character = getCharacter(char.id,char.version);
             let creaturetype = this.creatureTypes[character.creatureType];
             this.characters.push(new Character(char.id,creaturetype,character));
         }
@@ -37,7 +38,6 @@ export class Campaign {
 
     deleteCharacter(character: Character): void {
         let index = this.characters.indexOf(character);
-        localStorage.removeItem('character_'+character.id+'_'+character.createdAt);
         this.characters.splice(index,1);
         this._data.characters.splice(index,1);
     
