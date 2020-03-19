@@ -1,4 +1,10 @@
 import { Character } from '../character'
+
+export interface SkillTestResult {
+  standardResult: number[];
+  lowluckResult: number[];
+}
+
 export interface SkillsData {
   actor: number;
   artist: number;
@@ -68,6 +74,27 @@ export class Skills {
     if(this._data.hasOwnProperty(skillName)) {
       this._data[skillName] = Math.max(0,Math.min(25,rank));
     }
+  }
+
+  getBaseResult(aspectRank: number, skillName: string, missingSpecializationRanks?: number): number {
+    missingSpecializationRanks = missingSpecializationRanks || 0;
+    var skillRank = this.getSkillRank(skillName) - 4*missingSpecializationRanks;
+    var high = Math.max(aspectRank, skillRank);
+    var low = Math.min(aspectRank, skillRank);
+    high = Math.max(0,Math.min(high,low*2,low+5));
+    return (high + low + aspectRank + skillRank)/2;
+  }
+
+  getTestResult(aspectRank: number, skillName: string): SkillTestResult {
+    var baseResults = [];
+    for(var i=0; i<4; i++) {
+      baseResults.push(this.getBaseResult(aspectRank, skillName,i));
+    }
+    var diceResult = this.character.getTestResults();
+    return {
+      standardResult: baseResults.map((e)=>{return e+diceResult.standardResult}),
+      lowluckResult: baseResults.map((e)=>{return e+diceResult.lowluckResult})
+    };
   }
 
 }
