@@ -1,14 +1,16 @@
 import { About, AboutData } from './character/about';
+import { Actions, ActionsData } from './character/actions'
 import { Aspects, AspectsData } from './character/aspects';
+import { Equipment, EquipmentData } from './character/equipment';
+import { Fatigue, FatigueData } from './character/fatigue';
 import { Skills, SkillsData } from './character/skills';
 import { Specialties, SpecialtiesData } from './character/specialties';
 import { Spells, SpellsData } from './character/spells';
+import { Tap, TapData } from './character/tap';
 import { Traits, TraitsData } from './character/traits';
 import { Wounds, WoundData } from './character/wounds';
-import { Equipment, EquipmentData } from './character/equipment';
-import { Tap, TapData } from './character/tap';
-import { Fatigue, FatigueData } from './character/fatigue';
 import { CreatureType } from './creaturetype';
+import { Action } from 'rxjs/internal/scheduler/Action';
 
 export interface ModifiableStat {
   amount: number;
@@ -61,15 +63,16 @@ export class Character {
     createdAt: number;  // tick count of creation
     creatureType: number;
     about: AboutData;
+    actions: ActionsData;
     aspects: AspectsData;
+    equipment: EquipmentData;
+    fatigue: FatigueData;
     skills: SkillsData;
     specialties: SpecialtiesData;
     spells: SpellsData;
-    traits: TraitsData;
-    equipment: EquipmentData;
-    wounds: WoundData;
     tap: TapData;
-    fatigue: FatigueData;
+    traits: TraitsData;
+    wounds: WoundData;
     location: {
       time: number;
       x: number;
@@ -83,36 +86,25 @@ export class Character {
   readonly id: number;
 
   about: About;
+  actions: Actions;
   aspects: Aspects;
+  equipment: Equipment;
+  fatigue: Fatigue;
   skills: Skills;
   specialties: Specialties;
   spells: Spells;
+  tap: Tap;
   traits: Traits;
   wounds: Wounds;
-  equipment: Equipment;
-  tap: Tap;
-  fatigue: Fatigue;
   creatureType: CreatureType;
 
-  constructor(id: number,creatureType: CreatureType,data?) {
+  constructor(id: number,creatureType: CreatureType,data: any) {
     this.id = id;
     this.creatureType = creatureType;
-    
-    if(data) {
-      this._data = data;
-      this.about = new About(this,this._data.about);
-      this.aspects = new Aspects(this,this._data.aspects);
-      this.skills = new Skills(this,this._data.skills);
-      this.specialties = new Specialties(this,this._data.specialties);
-      this.spells = new Spells(this,this._data.spells);
-      this.traits = new Traits(this,this._data.traits);
-      this.wounds = new Wounds(this,this._data.wounds);
-      this.equipment = new Equipment(this,this._data.equipment);
-      this.tap = new Tap(this,this._data.tap);
-      this.fatigue = new Fatigue(this,this._data.fatigue);
-    }
-    else {
+
+    if ( typeof data === "number" ) {
       this.about = new About(this);
+      this.actions = new Actions(this);
       this.aspects = new Aspects(this);
       this.skills = new Skills(this);
       this.specialties = new Specialties(this);
@@ -123,9 +115,10 @@ export class Character {
       this.tap = new Tap(this);
       this.fatigue = new Fatigue(this);
 
-      this._data = {createdAt:0,location:[],token:'',creatureType:0,
+      this._data = {createdAt:data,location:[],token:'',creatureType:0,
                     qi:{amount:0},
                     about:this.about.initialize(),
+                    actions: this.actions.initialize(),
                     aspects: this.aspects.initialize(),
                     skills: this.skills.initialize(),
                     specialties: this.specialties.initialize(),
@@ -138,6 +131,22 @@ export class Character {
       };
 
     }
+    
+    else {
+      this._data = data;
+      this.about = new About(this,this._data.about);
+      this.actions = new Actions(this,this._data.actions);
+      this.aspects = new Aspects(this,this._data.aspects);
+      this.skills = new Skills(this,this._data.skills);
+      this.specialties = new Specialties(this,this._data.specialties);
+      this.spells = new Spells(this,this._data.spells);
+      this.traits = new Traits(this,this._data.traits);
+      this.wounds = new Wounds(this,this._data.wounds);
+      this.equipment = new Equipment(this,this._data.equipment);
+      this.tap = new Tap(this,this._data.tap);
+      this.fatigue = new Fatigue(this,this._data.fatigue);
+    }
+
   }
 
   serialize(): string { return JSON.stringify(this._data); }
