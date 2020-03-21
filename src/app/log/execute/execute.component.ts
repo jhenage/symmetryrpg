@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Campaign } from '../model/campaign';
+import { Campaign } from '../../model/campaign';
 
 @Component({
   selector: 'app-execute',
