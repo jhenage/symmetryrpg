@@ -14,7 +14,7 @@
         <option *ngFor="let bt of character.creatureType.bodyTypes" [value]="bt.amount">{{bt.label}}</option>
       </select>
     </div>
-    <app-aspects [character]="character"></app-aspects>
+    <app-aspects [aspects]="character.aspects"></app-aspects>
     <div class="skills container">
       <h4>Skills</h4>
       <div *ngFor="let skill of character.skills.skillsList" class="field skill">

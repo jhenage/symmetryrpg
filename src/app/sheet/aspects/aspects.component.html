@@ -1,10 +1,10 @@
 <div class="aspects container">
     <h4>Aspects</h4>
-    <div *ngFor="let aspect of character.aspects.aspectsList" class="field aspect">
+    <div *ngFor="let aspect of aspects.aspectsList" class="field aspect">
       <label>{{aspect|titlecase}}</label>
-      <input type="number" class="two-digit" [ngClass]="character.aspects.getRangeClass(aspect)"
-        [value]="character.aspects.getAspectRank(aspect)"
-        (input)="character.aspects.setAspectRank(aspect,$event.target.value)" />
-      <button [class]="aspect" (click)="character.makeAspectTest(0,aspect)"></button>
+      <input type="number" class="two-digit" [ngClass]="getRangeClass(aspect)"
+        [value]="aspects.getAspectRank(aspect)"
+        (input)="setAspectRank(aspect,$event.target.value)" />
+      <button [class]="aspect" (click)="aspects.character.makeAspectTest(0,aspect)"></button>
     </div>
 </div>
