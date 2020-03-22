@@ -1,6 +1,6 @@
 import { About, AboutData } from './character/about';
 import { Actions, ActionData } from './character/actions'
-import { Aspects, AspectsData } from './character/aspects';
+import { AspectsComponent, AspectsData } from '../sheet/aspects/aspects.component';
 import { Equipment, EquipmentData } from './character/equipment';
 import { Fatigue, FatigueData } from './character/fatigue';
 import { Skills, SkillsData } from './character/skills';
@@ -87,7 +87,7 @@ export class Character {
 
   about: About;
   actions: Actions;
-  aspects: Aspects;
+  aspects: AspectsComponent;
   equipment: Equipment;
   fatigue: Fatigue;
   skills: Skills;
@@ -101,11 +101,11 @@ export class Character {
   constructor(id: number,creatureType: CreatureType,data: any) {
     this.id = id;
     this.creatureType = creatureType;
+    this.aspects = new AspectsComponent();
 
     if ( typeof data === "number" ) {
       this.about = new About(this);
       this.actions = new Actions(this);
-      this.aspects = new Aspects(this);
       this.skills = new Skills(this);
       this.specialties = new Specialties(this);
       this.spells = new Spells(this);
@@ -136,7 +136,7 @@ export class Character {
       this._data = data;
       this.about = new About(this,this._data.about);
       this.actions = new Actions(this,this._data.actions);
-      this.aspects = new Aspects(this,this._data.aspects);
+      this.aspects.initialize(this._data.aspects);
       this.skills = new Skills(this,this._data.skills);
       this.specialties = new Specialties(this,this._data.specialties);
       this.spells = new Spells(this,this._data.spells);
