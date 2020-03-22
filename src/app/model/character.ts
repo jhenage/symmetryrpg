@@ -10,7 +10,6 @@ import { Tap, TapData } from './character/tap';
 import { Traits, TraitsData } from './character/traits';
 import { Wounds, WoundData } from './character/wounds';
 import { CreatureType } from './creaturetype';
-import { DiceRoll } from './diceroll';
 
 export interface ModifiableStat {
   amount: number;
@@ -192,15 +191,6 @@ export class Character {
 
   AddQi(time: number, amount: number): void {
     return ChangeModifiedValue(time,this._data.qi,ModifiedValue(time,this._data.qi)+amount);
-  }
-
-  makeAspectTest(time:number, aspectName:string) {
-    console.log(this.aspects.getTestResult(time,aspectName));
-  }
-
-  makeSkillTest(time:number, aspectName:string, skillName:string) {
-    let die = new DiceRoll();
-    console.log(this.skills.getTestModifiers(this.aspects.Current(time,aspectName),skillName),die);
   }
 
 }

@@ -1,0 +1,30 @@
+<p>history works!</p>
+<div *ngFor="let action of actions">
+    <div *ngIf="action.data.type=='test' && action.data.skill==undefined">
+        {{action.character.about.name}} rolled a Pure {{action.data.aspect|titlecase}} test.
+        <div class="result">
+            <select [(ngModel)]="action.data.luck">
+                <option value="low">Low Luck</option>
+                <option value="high">High Luck</option>
+            </select>
+            {{action.data.luck=="low" ? action.roll.lowluckResult : action.roll.standardResult}}
+        </div>
+    </div>
+    <div *ngIf="action.data.type=='test' && action.data.skill">
+        {{action.character.about.name}} rolled a {{action.data.aspect|titlecase}} {{action.data.skill|titlecase}} test.
+        <div class="result">
+            <select [(ngModel)]="action.data.luck">
+                <option value="low">Low Luck</option>
+                <option value="high">High Luck</option>
+            </select>
+            <select [(ngModel)]="action.data.missingSpecialty">
+                <option value="0">0 Missing Specialties</option>
+                <option value="1">1 Missing Specialties</option>
+                <option value="2">2 Missing Specialties</option>
+                <option value="3">3 Missing Specialties</option>
+            </select>
+            {{action.data.luck=="low" ? action.roll.lowluckResult + action.data.modifierBySpecialty[action.data.missingSpecialty] 
+                                      : action.roll.standardResult + action.data.modifierBySpecialty[action.data.missingSpecialty]}}
+        </div>
+    </div>
+</div>

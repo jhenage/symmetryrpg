@@ -1,8 +1,8 @@
 import { Character } from '../character'
 export interface ActionData {
   time: number;
-  character: number;
- }
+  character?: number;
+}
 
 export class Actions {
   protected _data: ActionData[];
@@ -18,6 +18,11 @@ export class Actions {
   initialize(): ActionData[] {
     this._data = [];
     return this._data;
+  }
+
+  add(data: ActionData): void {
+    data.character = this.character.id;
+    this._data.push(data);
   }
 
   nextActions(time:number): ActionData[] {

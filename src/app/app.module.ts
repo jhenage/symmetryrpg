@@ -7,10 +7,12 @@ import { SheetComponent } from './sheet.component';
 import { MapComponent } from './map.component';
 import { ExecuteComponent } from './log/execute/execute.component';
 import { LogComponent } from './log/log.component';
+import { QueueComponent } from './log/queue/queue.component';
+import { HistoryComponent } from './log/history/history.component';
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule ],
-  declarations: [ AppComponent, SheetComponent, MapComponent, ExecuteComponent, LogComponent ],
+  declarations: [ AppComponent, SheetComponent, MapComponent, ExecuteComponent, LogComponent, QueueComponent, HistoryComponent ],
   bootstrap:    [ AppComponent ]
 })
 export class AppModule { }

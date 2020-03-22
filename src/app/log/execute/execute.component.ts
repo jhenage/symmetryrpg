@@ -8,13 +8,13 @@ import { Campaign } from '../../model/campaign';
 })
 export class ExecuteComponent implements OnInit {
 
-  @Input() campaign: Campaign;
+  //@Input() campaign: Campaign;
   actions: {}[];
 
   constructor() { }
 
   ngOnInit(): void {
-    this.actions = this.campaign.nextActions();
+    //this.actions = this.campaign.nextActions();
   }
 
 }

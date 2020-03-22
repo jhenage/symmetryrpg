@@ -63,10 +63,5 @@ export class Aspects {
     return 2*this.Current(time,aspectName);
   }
 
-  getTestResult(time:number, aspectName:string): DiceRoll {
-    let roll = new DiceRoll();
-    roll.modifier = this.getBaseResult(time,aspectName);
-    return roll;
-  }
-
+ 
 }
