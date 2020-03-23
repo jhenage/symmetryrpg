@@ -10,6 +10,7 @@ import { LogComponent } from './log/log.component';
 import { QueueComponent } from './log/queue/queue.component';
 import { HistoryComponent } from './log/history/history.component';
 import { ActionDirective } from './log/action/action.directive';
+import { AspectsComponent } from './sheet/aspects/aspects.component';
 import { HistoryActionwrapComponent } from './log/history/actionwrap.component';
 
 import { AspecttestHistoryComponent } from './log/action/aspecttest/history.component';
@@ -18,7 +19,7 @@ import { SkilltestHistoryComponent } from './log/action/skilltest/history.compon
 @NgModule({
   imports:      [ BrowserModule, FormsModule ],
   declarations: [ AppComponent, SheetComponent, MapComponent, ExecuteComponent, LogComponent, QueueComponent, HistoryComponent, ActionDirective, 
-    HistoryActionwrapComponent,
+    HistoryActionwrapComponent, AspectsComponent,
     AspecttestHistoryComponent, SkilltestHistoryComponent
    ],
   entryComponents: [ AspecttestHistoryComponent, SkilltestHistoryComponent ],
