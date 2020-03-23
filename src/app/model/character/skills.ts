@@ -67,7 +67,7 @@ export class Skills {
 
   setSkillRank(skillName: string, rank: number) {
     if(this._data.hasOwnProperty(skillName)) {
-      this._data[skillName] = Math.max(0,Math.min(25,rank));
+      this._data[skillName] = rank;
     }
   }
 
