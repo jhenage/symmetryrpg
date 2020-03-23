@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { LogService } from '../log.service';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-history',
@@ -7,16 +6,16 @@ import { LogService } from '../log.service';
   styleUrls: ['./history.component.less']
 })
 export class HistoryComponent implements OnInit {
-  actions:{}[];
+  @Input() actions:{}[];
 
-  constructor(private logService: LogService) { }
+  constructor() { }
 
   ngOnInit(): void {
-    this.actions = [];
-    this.logService.registerAddToHistory((action) => {
-      this.actions.push(action);
-      console.log('added',this.actions);
-    });
+//   this.actions = [];
+//   this.logService.registerAddToHistory((action) => {
+//     this.actions.push(action);
+//     console.log('added',this.actions);
+//   });
   }
 
 }

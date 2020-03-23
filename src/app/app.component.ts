@@ -3,6 +3,7 @@ import { Character } from './model/character';
 import { CreatureType } from './model/creaturetype';
 import { Campaign } from './model/campaign';
 import { DataService } from './data.service';
+import { LogService } from './log/log.service';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +15,7 @@ export class AppComponent  {
   campaign: Campaign;
   creaturetypes: CreatureType[];
 
-  constructor(private dataService: DataService) {
+  constructor(private dataService: DataService, private logService: LogService) {
   }
 
   ngOnInit() {
@@ -49,6 +50,10 @@ export class AppComponent  {
       }, this.dataService);
 
     }
+
+    this.campaign.characters.forEach((character) => {
+      this.logService.import(character);
+    });
   }
 
   save():void {

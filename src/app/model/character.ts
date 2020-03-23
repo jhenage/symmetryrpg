@@ -151,6 +151,10 @@ export class Character {
   serialize(): string { return JSON.stringify(this._data); }
   get createdAt(): number { return this._data.createdAt; }
 
+  generalPenalty(time:number): number {
+    return 0;
+  }
+
   WeightLbs(time:number): number {
     return this.WeightKg(time) * 2.2;
   }

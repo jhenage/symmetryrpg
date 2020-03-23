@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, Input, EventEmitter, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Character } from './model/character';
-import { DiceRoll } from './model/diceroll';
-import { LogService } from './log/log.service';
+import { Character } from '../model/character';
+import { DiceRoll } from '../model/diceroll';
+import { LogService } from '../log/log.service';
+import { AspectTestActionFactory } from '../log/action/aspecttest/action';
 
 @Component({
   selector: 'app-sheet',
@@ -27,17 +27,15 @@ export class SheetComponent {//implements OnInit, OnDestroy {
   }
 
   makeAspectTest(time:number, aspectName:string) {
-    let roll = new DiceRoll();
-    roll.modifier = this.character.aspects.getBaseResult(time,aspectName);
-    this.logService.buildAction(this.character,time,'test',{aspect:aspectName},{roll:roll});
-    //this.character.actions.add({time:time});
-    console.log(roll);
+    let factory = new AspectTestActionFactory();
+    let action = factory.build(this.character,{time:time,aspect:aspectName});
+    this.logService.newAction(action);
   }
 
   makeSkillTest(time:number, aspectName:string, skillName:string) {
     let die = new DiceRoll();
     let modifiers = this.character.skills.getTestModifiers(this.character.aspects.Current(time,aspectName),skillName);
-    this.logService.buildAction(this.character,time,'test',{aspect:aspectName,skill:skillName,modifierBySpecialty:modifiers},{roll:die});
+    //this.logService.buildAction(this.character,time,'skilltest',{aspect:aspectName,skill:skillName,modifierBySpecialty:modifiers},{roll:die});
     console.log(modifiers,die);
   }
 

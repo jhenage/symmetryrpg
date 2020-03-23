@@ -1,7 +1,9 @@
 import { Character } from '../character'
 export interface ActionData {
+  type: string;
   time: number;
-  character?: number;
+  executed?: boolean;
+  order?: number; // order of execution
 }
 
 export class Actions {
@@ -21,9 +23,10 @@ export class Actions {
   }
 
   add(data: ActionData): void {
-    data.character = this.character.id;
     this._data.push(data);
   }
+
+  getAll() { return this._data; }
 
   nextActions(time:number): ActionData[] {
     let actions = this.allNextActions(time);

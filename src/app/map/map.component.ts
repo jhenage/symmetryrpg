@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy, Input, EventEmitter, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Character } from './model/character';
+import { Character } from '../model/character';
 
 @Component({
   selector: 'app-map',
