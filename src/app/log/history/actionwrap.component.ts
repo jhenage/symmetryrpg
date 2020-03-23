@@ -3,9 +3,11 @@ import { ActionDirective } from '../action/action.directive';
 import { ActionHistoryComponent } from '../action/history.component';
 
 import { AspecttestHistoryComponent } from '../action/aspecttest/history.component'
+import { SkilltestHistoryComponent } from '../action/skilltest/history.component'
 
 const historyActionComponents = {
-  aspecttest: AspecttestHistoryComponent
+  aspecttest: AspecttestHistoryComponent,
+  skilltest: SkilltestHistoryComponent
 };
 
 @Component({

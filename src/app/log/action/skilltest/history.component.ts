@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { SkillTestActionObject } from './action';
 import { ActionHistoryComponent } from '../history.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   template: `{{action.character.about.name}} rolled a {{action.data.aspect|titlecase}} {{action.data.skill|titlecase}} test.

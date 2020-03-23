@@ -1,48 +1,10 @@
-<app-log></app-log>
-Sheets: <a (click)="newChar()">New</a> 
-<a *ngFor="let character of campaign.characters" (click)="select(character)">{{character.about.name}}</a>
-<div *ngIf="character"><app-sheet [character]="character" (saved)="save()" (deleted)="delete($event)"></app-sheet></div>
-<app-map></app-map>
-<h2>
-  Action History
-</h2>
-<ul>
-  <li>View everyone's actions and their results
-    <ul>
-      <li></li>
-    </ul>
-  </li>
+<div class="logPane">
+  <app-log></app-log>
+</div>
+<div class="mainPane">
+  Sheets: <a (click)="newChar()">New</a> 
+  <a *ngFor="let character of campaign.characters" (click)="select(character)">{{character.about.name}}</a>
+  <div *ngIf="character"><app-sheet [character]="character" (saved)="save()" (deleted)="delete($event)"></app-sheet></div>
+  <app-map></app-map>
+</div>
 
-</ul>
-<h2>
-  Map
-</h2>
-<ul>
-  <li>Background / Scale</li>
-  <li>Terrain Editor (add basic shapes/colors)</li>
-  <li>Show Character Tokens at their location
-    <ul>
-      <li>Button to add action</li>
-      <li>Move Character</li>
-      <li>Open Status Sheet</li>
-      <li>Open Character Sheet</li>
-    </ul>
-
-  </li>
-
-</ul>
-<h2>
-  Character Sheet
-</h2>
-<ul>
-  <li></li>
-</ul>
-<h2>
-  New Action
-</h2>
-<ul>
-  <li></li>
-</ul>
-<p>
-  
-</p>

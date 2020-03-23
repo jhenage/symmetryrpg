@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { Character } from '../model/character';
 
 import { AspectTestActionFactory } from './action/aspecttest/action';
+import { SkillTestActionFactory } from './action/skilltest/action';
 
 const factories = {
-  aspecttest: AspectTestActionFactory
+  aspecttest: AspectTestActionFactory,
+  skilltest: SkillTestActionFactory
 }
 
 // Manages the generated log from campaign
