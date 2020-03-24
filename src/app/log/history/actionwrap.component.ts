@@ -12,7 +12,7 @@ const historyActionComponents = {
 
 @Component({
   selector: 'historyactionwrap',
-  template: `<ng-template appAction></ng-template>`
+  template: `<a (click)="log(action)">(_)</a><ng-template appAction></ng-template>`
 })
 export class HistoryActionwrapComponent implements OnInit {
   @Input() action: any;
@@ -33,4 +33,6 @@ export class HistoryActionwrapComponent implements OnInit {
     (<ActionHistoryComponent>componentRef.instance).action = this.action;
 
   }
+
+  log(action) { console.log(action); }
 }
