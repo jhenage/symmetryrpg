@@ -1,0 +1,20 @@
+<div class="about container">
+  Creature Type: {{about.character.creatureType.name}}
+  <div class="field name">
+    <label>Name</label>
+    <input [(ngModel)]="about.name" />
+  </div>
+  <div class="field height">
+    <label>Height</label>
+    <input [(ngModel)]="about.height" />
+  </div>
+  <div class="field name">
+    <label>Body Type</label>
+    <select [(ngModel)]="about.bodyType" >
+      <option *ngFor="let bt of about.character.creatureType.bodyTypes" [value]="bt.amount">{{bt.label}}</option>
+    </select>
+  </div>
+  Weight: {{about.character.WeightLbs(0) | number:'1.0-0'}}<br/>
+  endurance: {{about.character.Endurance(0) | number:'1.0-1'}}
+
+</div>
