@@ -9,10 +9,14 @@ import { About } from 'src/app/model/character/about';
 export class AboutComponent implements OnInit {
 
   @Input() about: About;
-  
+
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  log(evt: any) {
+    console.log(evt);
   }
 
 }
