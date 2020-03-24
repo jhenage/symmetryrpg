@@ -1,0 +1,11 @@
+<div class="skills container">
+    <h4>Skills</h4>
+    <div *ngFor="let skill of skills.skillsList" class="field skill two-digit">
+      <label>{{skill|titlecase}}</label>
+      <input type="number" [class.out-of-range]="inputsOutOfRange[skill]"
+        [value]="skills.getSkillRank(skill)"
+        (input)="setSkillRank(skill,$event.target.value)" />
+      <button *ngFor="let aspect of skills.character.aspects.aspectsList"
+        [class]="aspect" (click)="makeSkillTest(0,aspect,skill)"></button>
+    </div>
+</div>

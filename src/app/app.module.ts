@@ -15,12 +15,14 @@ import { HistoryActionwrapComponent } from './log/history/actionwrap.component';
 
 import { AspecttestHistoryComponent } from './log/action/aspecttest/history.component';
 import { SkilltestHistoryComponent } from './log/action/skilltest/history.component';
+import { SkillsComponent } from './sheet/skills/skills.component';
+import { AboutComponent } from './sheet/about/about.component';
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule ],
   declarations: [ AppComponent, SheetComponent, MapComponent, ExecuteComponent, LogComponent, QueueComponent, HistoryComponent, ActionDirective, 
     HistoryActionwrapComponent, AspectsComponent,
-    AspecttestHistoryComponent, SkilltestHistoryComponent
+    AspecttestHistoryComponent, SkilltestHistoryComponent, SkillsComponent, AboutComponent
    ],
   entryComponents: [ AspecttestHistoryComponent, SkilltestHistoryComponent ],
   bootstrap:    [ AppComponent ]

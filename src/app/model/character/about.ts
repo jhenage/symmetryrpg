@@ -4,7 +4,23 @@ export interface AboutData {
   height: ModifiableStat; // in meters (100in/254cm)(100cm/1m)
   age: number;
   bodyType: ModifiableStat; // weight multiplier, usually 0.5 to 2
-  description: string;
+  descriptions: DescriptionData;
+}
+export interface DescriptionData {
+  origin: string;
+  achievements: string;
+  failures: string;
+  relationships: string;
+  goals: string;
+  ethics: string;
+  occupation: string;
+  obligations: string;
+  strengths: string;
+  weaknesses: string;
+  blessings: string;
+  trials: string;
+  fears: string;
+  appearance: string;
   notes: string;
 }
 
@@ -25,8 +41,23 @@ export class About {
       height: {amount:1.7},
       age: 18,
       bodyType: {amount:1},
-      description: "",
-      notes: ""
+      descriptions: { 
+        origin: "",
+        achievements: "",
+        failures: "",
+        relationships: "",
+        goals: "",
+        ethics: "",
+        occupation: "",
+        obligations: "",
+        strengths: "",
+        weaknesses: "",
+        blessings: "",
+        trials: "",
+        fears: "",
+        appearance: "",
+        notes: ""
+      } 
     };
     return this._data;
   }
@@ -91,19 +122,15 @@ export class About {
     ChangeModifiedValue(time,this._data.bodyType,amount);
   }
 
-  get description(): string {
-    return this._data.description;
+  get descriptionsList(): string[] {
+    return Object.keys(this._data.descriptions);
   }
 
-  set description(description: string) {
-    this._data.description = description;
+  getDescriptionText(descriptionName: string): string {
+    return this._data.descriptions[descriptionName];
   }
 
-  get notes(): string {
-    return this._data.notes;
-  }
-
-  set notes(notes: string) {
-    this._data.name = notes;
+  setDescriptionText(descriptionName: string, newText: string) {
+    this._data.descriptions[descriptionName] = newText;
   }
 }

@@ -67,13 +67,14 @@ export class Skills {
 
   setSkillRank(skillName: string, rank: number) {
     if(this._data.hasOwnProperty(skillName)) {
-      this._data[skillName] = Math.max(0,Math.min(25,rank));
+      this._data[skillName] = rank;
     }
   }
 
   getBaseResult(aspectRank: number, skillName: string, missingSpecializationRanks?: number): number {
     missingSpecializationRanks = missingSpecializationRanks || 0;
     var skillRank = this.getSkillRank(skillName) - 4*missingSpecializationRanks;
+    if(missingSpecializationRanks > 3) skillRank -= 2*(missingSpecializationRanks-3);
     var high = Math.max(aspectRank, skillRank);
     var low = Math.min(aspectRank, skillRank);
     high = Math.max(0,Math.min(high,low*2,low+5));
@@ -82,7 +83,7 @@ export class Skills {
 
   getTestModifiers(aspectRank: number, skillName: string): number[] {
     var baseResults = [];
-    for(var i=0; i<4; i++) {
+    for(var i=0; i<7; i++) {
       baseResults.push(this.getBaseResult(aspectRank, skillName,i));
     }
     return baseResults;

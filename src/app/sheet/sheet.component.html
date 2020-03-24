@@ -1,32 +1,5 @@
 <div (change)="save()">
-    Creature Type: {{character.creatureType.name}}
-    <div class="field name">
-      <label>Name</label>
-      <input [(ngModel)]="character.about.name" />
-    </div>
-    <div class="field height">
-      <label>Height</label>
-      <input [(ngModel)]="character.about.height" />
-    </div>
-    <div class="field name">
-      <label>Body Type</label>
-      <select [(ngModel)]="character.about.bodyType" >
-        <option *ngFor="let bt of character.creatureType.bodyTypes" [value]="bt.amount">{{bt.label}}</option>
-      </select>
-    </div>
+    <app-about [about]="character.about"></app-about>
     <app-aspects [aspects]="character.aspects"></app-aspects>
-    <div class="skills container">
-      <h4>Skills</h4>
-      <div *ngFor="let skill of character.skills.skillsList" class="field skill">
-        <label>{{skill|titlecase}}</label>
-        <input type="number" class="two-digit"
-          [value]="character.skills.getSkillRank(skill)"
-          (input)="character.skills.setSkillRank(skill,$event.target.value)" />
-        <button *ngFor="let aspect of character.aspects.aspectsList"
-          [class]="aspect" (click)="makeSkillTest(0,aspect,skill)"></button>
-      </div>
-    </div>
-     weight: {{character.WeightLbs(0) | number:'1.0-0'}},
-      endurance: {{character.Endurance(0) | number:'1.0-1'}},
- 
+    <app-skills [skills]="character.skills"></app-skills> 
 </div>

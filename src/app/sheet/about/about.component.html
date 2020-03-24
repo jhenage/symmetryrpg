@@ -1,0 +1,29 @@
+<div class="about container">
+  <div class="field name">
+    <label>Name</label>
+    <input [(ngModel)]="about.name" />
+  </div>
+  Creature Type: {{about.character.creatureType.name}}
+  <div class="field height">
+    <label>Height</label>
+    <input [(ngModel)]="about.height" />
+  </div>
+  <div class="field name">
+    <label>Body Type</label>
+    <select [(ngModel)]="about.bodyType" >
+      <option *ngFor="let bt of about.character.creatureType.bodyTypes" [value]="bt.amount">{{bt.label}}</option>
+    </select>
+  </div>
+  Weight: {{about.character.WeightLbs(0) | number:'1.0-0'}}<br/>
+  Endurance: {{about.character.Endurance(0) | number:'1.0-1'}}
+  <div class="descriptions container">
+    <input type="checkbox" class="display" /><label>Show Descriptions</label>
+    <div *ngFor="let description of about.descriptionsList" class="description">
+        <label>{{description|titlecase}}:</label>
+        <textarea 
+        [value]="about.getDescriptionText(description)"
+        (input)="about.setDescriptionText(description,$event.target.value)">
+        </textarea>
+    </div>
+  </div>
+</div>
