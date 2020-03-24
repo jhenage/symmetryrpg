@@ -4,24 +4,23 @@ export interface AboutData {
   height: ModifiableStat; // in meters (100in/254cm)(100cm/1m)
   age: number;
   bodyType: ModifiableStat; // weight multiplier, usually 0.5 to 2
-  descriptions: DescriptionData;
-}
-export interface DescriptionData {
-  origin: string;
-  achievements: string;
-  failures: string;
-  relationships: string;
-  goals: string;
-  ethics: string;
-  occupation: string;
-  obligations: string;
-  strengths: string;
-  weaknesses: string;
-  blessings: string;
-  trials: string;
-  fears: string;
-  appearance: string;
-  notes: string;
+  descriptions: {
+    origin: string;
+    achievements: string;
+    failures: string;
+    relationships: string;
+    goals: string;
+    ethics: string;
+    occupation: string;
+    obligations: string;
+    strengths: string;
+    weaknesses: string;
+    blessings: string;
+    trials: string;
+    fears: string;
+    appearance: string;
+    notes: string;
+  }
 }
 
 export class About {
