@@ -167,7 +167,7 @@ export class Character {
   WeightKg(time:number): number {
     let bmi = this.creatureType.weight.bmiOffset;
     bmi += this.creatureType.weight.btFactor * this.about.CurrentBodyType(time);
-    bmi += this.about.CurrentBodyType(time) * this.aspects.Current(time,'toughness');
+    bmi += (1 + this.about.CurrentBodyType(time)) * (0.35*this.aspects.Current(time,'brawn')+0.15*this.aspects.Current(time,'toughness'));
     let height = this.about.HeightMeter(time);
     return height * height * bmi * this.creatureType.weight.multiplier;
   }
@@ -233,6 +233,34 @@ export class Character {
       }
       this._data.location.push(data);
     }
+  }
+
+  protected LimbsMovementFactor(time: number, limbList: string[]): number { // weighted avg of all participating limbs and penalties
+    if(!limbList || limbList.length == 0) return 0;
+    var result = 1;
+    limbList.forEach((limb) => { // build up product for geometric mean
+      result *= this.creatureType.limbs[limb].locomotion;
+      result *= this.creatureType.limbs[limb].reach;
+      result *= 0.7 ** this.fatigue.Penalty(limb,time);
+      result *= 0.5 ** this.wounds.Penalty(limb,time);
+    });
+    result **= 1 / limbList.length; // finish taking geometric mean
+    result *= 0.7 ** this.fatigue.Penalty('aerobic',time);
+    return result;
+  }
+
+  MaxSpeed(time: number, limbList: string[], carriedWeight: number): number { // spd in m/s
+    var result = this.skills.getBaseResult(this.aspects.Current(time,'brawn'),'athlete',0) - 1;
+    if(result <=0) return 0;
+    result *= 0.5 * this.LimbsMovementFactor(time,limbList) * this.about.HeightMeter(time);
+    result *= (100/(this.WeightKg(time)+carriedWeight))**0.25;
+    return result;
+  }
+
+  MaxAcceleration(time: number, limbList: string[], carriedWeight: number): number { // accel in m/s/s
+    var result = (this.aspects.Current(time,'brawn') / 5) ** 1.5;
+    result *= 100 * this.LimbsMovementFactor(time,limbList) / (this.WeightKg(time)+carriedWeight);
+    return result;
   }
 
 }

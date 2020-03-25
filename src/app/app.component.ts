@@ -33,10 +33,10 @@ export class AppComponent  {
         creatureTypes: [{
           name: 'Human',
           limbs: {
-            leftArm:  { dexterity: 5, locomotion: 1, muscleSize: 2, reach: 0.374 },
-            rightArm: { dexterity: 5, locomotion: 1, muscleSize: 2, reach: 0.374 },
-            leftLeg:  { dexterity: 1, locomotion: 5, muscleSize: 3, reach: 0.48 },
-            rightLeg: { dexterity: 1, locomotion: 5, muscleSize: 3, reach: 0.48 },
+            leftArm:  { dexterity: 5, locomotion: 0.05, muscleSize: 2, reach: 0.375 },
+            rightArm: { dexterity: 5, locomotion: 0.05, muscleSize: 2, reach: 0.375 },
+            leftLeg:  { dexterity: 1, locomotion: 0.85, muscleSize: 3, reach: 0.5 },
+            rightLeg: { dexterity: 1, locomotion: 0.85, muscleSize: 3, reach: 0.5 },
           },
           height: { average: 1.7, stddev: 0.1 },
           bodyTypes: [
