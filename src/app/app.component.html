@@ -2,9 +2,19 @@
   <app-log></app-log>
 </div>
 <div class="mainPane">
-  Sheets: <a (click)="newChar()">New</a> 
-  <a *ngFor="let character of campaign.characters" (click)="select(character)">{{character.about.name}}</a>
-  <div *ngIf="character"><app-sheet [character]="character" (saved)="save()" (deleted)="delete($event)"></app-sheet></div>
-  <app-map></app-map>
+  <div class="menu">
+    <div class="mode">
+      <a (click)="mode='sheet'" [class.selected]="mode=='sheet'">Sheets</a>
+      <a (click)="mode='map'" [class.selected]="mode=='map'">Map</a>
+    </div>
+    <div class="character">
+      <a *ngFor="let char of campaign.characters" (click)="select(char)" [class.selected]="char==character">{{char.about.name}}</a>
+      <a (click)="newChar()">New Character</a>
+    </div>
+  </div>
+  <div class="view">
+    <div *ngIf="character && mode=='sheet'"><app-sheet [character]="character" (saved)="save()" (deleted)="delete($event)"></app-sheet></div>
+    <div *ngIf="mode=='map'"><app-map [character]="character" [campaign]="campaign" (saved)="save()" (selected)="select($event)"></app-map></div>
+  </div>
 </div>
 

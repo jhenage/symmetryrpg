@@ -14,11 +14,13 @@ export class AppComponent  {
   character: Character; // the selected character
   campaign: Campaign;
   creaturetypes: CreatureType[];
+  mode: string; // sheet | status | map
 
   constructor(private dataService: DataService, private logService: LogService) {
   }
 
   ngOnInit() {
+    this.mode = 'sheet';
     let campaigndata = this.dataService.getCampaign();
     if ( campaigndata ) {
       this.campaign = new Campaign(campaigndata,this.dataService);
@@ -71,6 +73,7 @@ export class AppComponent  {
 
   newChar():void {
     this.character = this.campaign.newCharacter();
+    this.mode = 'sheet';
   }
 
   select(character: Character) {

@@ -4,6 +4,9 @@ export interface AboutData {
   height: ModifiableStat; // in meters (100in/254cm)(100cm/1m)
   age: number;
   bodyType: ModifiableStat; // weight multiplier, usually 0.5 to 2
+  token: {
+    url: string;
+  }
   descriptions: {
     origin: string;
     achievements: string;
@@ -40,6 +43,7 @@ export class About {
       height: {amount:1.7},
       age: 18,
       bodyType: {amount:1},
+      token: {url:""},
       descriptions: { 
         origin: "",
         achievements: "",
@@ -132,4 +136,14 @@ export class About {
   setDescriptionText(descriptionName: string, newText: string) {
     this._data.descriptions[descriptionName] = newText;
   }
+
+  get url(): string {
+    return this._data.token.url;
+  }
+
+  set url(val: string) {
+    this._data.token.url = val;
+  }
+
+
 }
