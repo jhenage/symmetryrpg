@@ -2,6 +2,12 @@ import { Character } from 'src/app/model/character';
 import { DiceRoll } from 'src/app/model/diceroll';
 import { ActionData } from 'src/app/model/character/actions';
 
+export interface ActionPenalty {
+    targetedPenalty: number;
+    genericPenalty: number;
+    incidentalPenalty: number;
+}
+
 interface AspectTestActionData extends ActionData {
     aspect: string;
     luck: string; // 'low' or 'high'

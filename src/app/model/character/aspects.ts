@@ -1,5 +1,6 @@
 import { Character, ModifiableStat, ModifiedValue, ChangeModifiedValue } from '../character'
 import { DiceRoll } from '../diceroll'
+import { ActionPenalty } from 'src/app/log/action/aspecttest/action';
 export interface AspectsData {
   brawn: ModifiableStat;
   toughness: ModifiableStat;
@@ -15,7 +16,11 @@ export class Aspects {
 
   protected _data: AspectsData;
   character: Character;
- 
+  readonly BASE_REACTION_TIMES = [160,100,65,45,36,34,32,30,28,26,24,22,20,18,16,14,12,10,8,6,4,3,2,1,0];
+  readonly REACTION_FLUX_TIMES = [100,60,40,30,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5];
+  readonly SURPRISE_MULTIPLIERS = [15,13,12,11,10,9.75,9.5,9.25,9,8.75,8.5,8.25,8,7.75,7.5,7.25,7,6.75,6.5,6.25,6,5.75,5.5,5.25,5];
+  readonly BASE_ACTION_DURATIONS = [5000,2750,1750,1250,1000,900,810,729,656,591,531,478,431,387,349,307,270,238,209,184,162,143,125,110,97];
+
   constructor(character: Character,data?: AspectsData) {
     this.character = character;
     if(data) {
@@ -41,6 +46,10 @@ export class Aspects {
     return ModifiedValue(time,this._data[aspect]);
   }
 
+  CurrentRank(time:number,aspect:string): number { // when you need an integer between 1 and 25
+    return Math.max(1,Math.min(25,Math.round(this.Current(time,aspect))));
+  }
+
   TempChange(time:number,aspect:string,amount:number): void {
     ChangeModifiedValue(time,this._data[aspect],amount);
   }
@@ -63,5 +72,42 @@ export class Aspects {
     return 2*this.Current(time,aspectName);
   }
 
- 
+  protected getBaseReactionTime(rank: number, penalty: number, isSurprised: boolean): number {
+    var result = this.BASE_REACTION_TIMES[rank-1];
+    var roller = new DiceRoll([]);
+    for(var i=0; i<2; i++) result += roller.getDieRoll(this.REACTION_FLUX_TIMES[rank-1]);
+    if(penalty) result *= 1.1 ** penalty;
+    if(isSurprised) result *= this.SURPRISE_MULTIPLIERS[rank-1];
+    return Math.round(result);
+  }
+
+  getMentalReactionTime(time:number, penalty: number, isSurprised: boolean): number { //time is in milliseconds
+    var awareRank = this.CurrentRank(time,'awareness');
+    return this.getBaseReactionTime(awareRank,penalty,isSurprised) +
+           this.getBaseReactionTime(awareRank,penalty,isSurprised);
+  }
+
+  getPhysicalReactionTime(time:number, penalty: number, isSurprised: boolean): number { //time is in milliseconds
+    var awareRank = this.CurrentRank(time,'awareness');
+    var reflexRank = this.CurrentRank(time,'reflex');
+    return this.getBaseReactionTime(awareRank,penalty,isSurprised) +
+           this.getBaseReactionTime(reflexRank,penalty,false);
+  }
+
+  protected getActionTime(actionTime: number, rank: number, actionPenalty: ActionPenalty): number {
+    var result = actionTime * this.BASE_ACTION_DURATIONS[rank-1];
+    result *= 2 ** actionPenalty.targetedPenalty;
+    result *= 1.2 ** actionPenalty.genericPenalty;
+    result *= 1.05 ** actionPenalty.incidentalPenalty;
+    return Math.max(1,Math.round(result));
+  }
+
+  getMentalActionTime(time:number, actionTime: number, actionPenalty: ActionPenalty) {
+    return this.getActionTime(actionTime,this.CurrentRank(time,'cleverness'),actionPenalty);
+  }
+
+  getPhysicalActionTime(time:number, actionTime: number, actionPenalty: ActionPenalty) {
+    return this.getActionTime(actionTime,this.CurrentRank(time,'agility'),actionPenalty);
+  }
+
 }
