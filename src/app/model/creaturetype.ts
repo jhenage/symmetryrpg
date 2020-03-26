@@ -14,12 +14,14 @@ export interface CreatureTypeData {
   };
   bodyTypes: {
     label: string;
-    amount: number; // human average = 1
+    amount: number; // between 0 and 10, human average = 1, reflecting more variation on heavier side (1-10) than on thin side (0-1)
   }[];
-  weight: { // = multiplier * height^2 * (bmiOffset + btFactor * bodyType + (1+bodyType)*(0.35*brawn+0.15*toughness) )
-    bmiOffset: number; // humans = 11
-    btFactor: number; // humans = 10
-    multiplier: number; // humans = 1
+  weight: { // = bmi * height^2 (using SI units); bmi calculated from the factors in this object
+    bmiOffset: number; // min 0, increases minimum bmi (humans = 6)
+    bodyTypeFactor: number; // min 0, increases base effect of body type (humans = 12)
+    aspectFactor: number; // min 0, increases base effect of aspect scores (humans = 0.4)
+    combinedFactor: number; // min 0, increases effect of body type and aspect scores on each other (humans = 0.4)
+    brawnFactor: number; // between 0 and 1, fraction of brawn vs toughness (humans = 0.7)
   };
 }
 

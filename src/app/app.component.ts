@@ -38,14 +38,18 @@ export class AppComponent  {
           },
           height: { average: 1.7, stddev: 0.1 },
           bodyTypes: [
-            {label: 'Extremely Thin', amount: 0.5},
-            {label: 'Thin', amount: 0.75},
+            {label: 'Skeletal', amount: 0.5},
+            {label: 'Severely Thin', amount: 0.6},
+            {label: 'Very Thin', amount: 0.7},
+            {label: 'Thin', amount: 0.8},
             {label: 'Average', amount: 1},
-            {label: 'Stout', amount: 1.5},
-            {label: 'Very Large', amount: 2},
-            {label: 'Extremely Large', amount: 3}
+            {label: 'Stout', amount: 1.2},
+            {label: 'Large', amount: 1.6},
+            {label: 'Very Large', amount: 2.2},
+            {label: 'Exceptionally Large', amount: 3},
+            {label: 'Incredibly Large', amount: 4}
           ],
-          weight: { bmiOffset: 11, btFactor: 10, multiplier: 1 },
+          weight: { bmiOffset: 6, bodyTypeFactor: 12, aspectFactor: 0.4, combinedFactor: 0.4, brawnFactor: 0.7 },
         }]
       }, this.dataService);
 

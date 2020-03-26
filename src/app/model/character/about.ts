@@ -3,7 +3,7 @@ export interface AboutData {
   name: string;
   height: ModifiableStat; // in meters (100in/254cm)(100cm/1m)
   age: number;
-  bodyType: ModifiableStat; // weight multiplier, usually 0.5 to 2
+  bodyType: ModifiableStat; // between 0 and 10, descriptive label from creatureType
   descriptions: {
     origin: string;
     achievements: string;
