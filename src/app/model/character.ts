@@ -10,7 +10,6 @@ import { Tap, TapData } from './character/tap';
 import { Traits, TraitsData } from './character/traits';
 import { Wounds, WoundData } from './character/wounds';
 import { CreatureType } from './creaturetype';
-import { ActionPenalty } from '../log/action/aspecttest/action';
 
 export interface ModifiableStat {
   amount: number;
@@ -57,6 +56,14 @@ export function ChangeModifiedValue(time:number,data:ModifiableStat,amount:numbe
   
 }
 
+interface LocationData {
+  time: number;
+  x: number;
+  y: number;
+  velx?: number;
+  vely?: number;
+}
+
 export class Character {
 
   protected _data: {
@@ -73,13 +80,7 @@ export class Character {
     tap: TapData;
     traits: TraitsData;
     wounds: WoundData;
-    location: {
-      time: number;
-      x: number;
-      y: number;
-      velx: number;
-      vely: number;
-    }[];
+    location: LocationData[];
     qi: ModifiableStat;
     token: string; // url to image
   }
@@ -199,6 +200,42 @@ export class Character {
 
   AddQi(time: number, amount: number): void {
     return ChangeModifiedValue(time,this._data.qi,ModifiedValue(time,this._data.qi)+amount);
+  }
+
+  location(time:number): LocationData {
+    let result = {time:time,x:0,y:0,velx:0,vely:0};
+    if(this._data.location.length==0) {
+      return result;
+    }
+    for(let i = this._data.location.length; i > 0; i--) {
+      if ( this._data.location[i-1].time <= time ) {
+        let duration = time - this._data.location[i-1].time;
+
+        result.velx = this._data.location[i-1].velx;
+        result.vely = this._data.location[i-1].vely;
+        result.x = this._data.location[i-1].x + duration * this._data.location[i-1].velx;
+        result.y = this._data.location[i-1].y + duration * this._data.location[i-1].vely;
+
+        return result;
+      }
+    }
+ 
+  }
+
+  setLocation(data: LocationData) {
+    let i = this._data.location.length;
+    if(i && this._data.location[i-1].time == data.time) {
+      for ( let name in data ) {
+        this._data.location[i-1][name] = data[name];
+      }
+    } else {
+      if ( typeof data.velx == 'undefined' ) {
+        let location = this.location(data.time);
+        data.velx = location.velx;
+        data.vely = location.vely;
+      }
+      this._data.location.push(data);
+    }
   }
 
   protected LimbsMovementFactor(time: number, limbList: string[]): number { // weighted avg of all participating limbs and penalties

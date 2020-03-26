@@ -2,12 +2,6 @@ p {
   font-family: Lato;
 }
 
-a {
-  text-decoration: underline;
-  color: blue;
-  padding: 3px;
-}
-
 .logPane {
   position: fixed;
   width: 25%;
@@ -19,4 +13,42 @@ a {
   margin-left: 30%;
   width: 65%;
   height: 100%;
+
+  > .menu {
+    clear: both;
+    width: 100%;
+  
+    .mode {
+      height: 26px;
+  
+      a {
+        border-color: forestgreen;
+      }
+  
+      a.selected {
+        background-color: greenyellow;
+      }
+    }
+    
+    .character {
+      height: 26px;
+  
+      a {
+        border-color: rebeccapurple;
+      }
+  
+      a.selected {
+        background-color: rebeccapurple;
+        color: white;
+      }
+    }
+  
+    a {
+      display: block;
+      float: left;
+      padding: 3px;
+      border: 1px solid;
+      font-weight: bold;
+    }
+  }
 }

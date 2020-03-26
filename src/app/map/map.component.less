@@ -1,0 +1,76 @@
+#tokens {
+    position: relative;
+
+    .container {
+        position: absolute;
+
+        .token.selected {
+            border: 3px solid green;
+            margin: -3px 0 0 -3px;
+        }
+
+        .token {
+            
+            img {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        .menu.visible {
+            display: block;
+        }
+        .menu {
+            display: none;
+            border: 1px solid black;
+            border-radius: 3px;
+            padding: 3px;
+            background-color: beige;
+
+            a {
+                display: block;
+                cursor: pointer;
+            }
+            a:hover {
+                background-color: lavender;
+            }
+            a.selected {
+                background-color: greenyellow;
+            }
+
+            .editMenu.visible {
+                display: block;
+            }
+            .editMenu {
+                display: none;
+                position: relative;
+
+                .editMenuBox {
+                    position: absolute;
+                    top: -21px;
+                    left: 75px;
+                    width: 190px;
+                    background-color: beige;
+                    border: 1px solid saddlebrown;
+                    padding: 3px;
+                    border-radius: 2px;
+                }
+            }
+
+        }
+
+    }
+    #reposition {
+        display: none;
+        opacity: .5;
+    }
+    #reposition.visible {
+        display: block;
+    }
+}
+
+.viewer {
+    overflow-x: scroll;
+    overflow-y: scroll;
+    width: 100%;
+}
