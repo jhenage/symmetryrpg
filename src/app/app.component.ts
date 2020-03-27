@@ -45,8 +45,9 @@ export class AppComponent  {
             {label: 'Very Thin', amount: 0.7},
             {label: 'Thin', amount: 0.8},
             {label: 'Average', amount: 1},
-            {label: 'Stout', amount: 1.2},
-            {label: 'Large', amount: 1.6},
+            {label: 'Solid', amount: 1.2},
+            {label: 'Bulky', amount: 1.4},
+            {label: 'Hefty', amount: 1.6},
             {label: 'Very Large', amount: 2.2},
             {label: 'Exceptionally Large', amount: 3},
             {label: 'Incredibly Large', amount: 4}
