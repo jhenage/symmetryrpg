@@ -2,10 +2,26 @@
     display: block;
 }
 
-.descriptions input[type=checkbox].display~.description {
+.description textarea {
+    width: -webkit-fill-available;
+    resize: vertical;
+}
+
+input[type=checkbox].display.descriptions~.descriptions.container,
+input[type=checkbox].display.descriptions~.blank-descriptions,
+input[type=checkbox].hide.blank-descriptions:checked~.descriptions.container .description.blank {
     display: none;
 }
 
-.descriptions input[type=checkbox].display:checked~.description {
+input[type=checkbox].display.descriptions:checked~.descriptions.container,
+input[type=checkbox].hide.blank-descriptions~.descriptions.container .description {
     display: block;
+}
+
+input[type=checkbox].display.descriptions:checked~.blank-descriptions {
+    display: inline-block;
+}
+
+label {
+    margin-right: 5px;
 }

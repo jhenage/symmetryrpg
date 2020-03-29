@@ -266,4 +266,12 @@ export class Character {
     return result;
   }
 
+  getSpentIPTotal(): number {
+    return this.aspects.getSpentIPTotal() + this.skills.getSpentIPTotal();
+  }
+
+  get isOverBudget(): boolean {
+    return this.about.improvementPoints < 0;
+  }
+
 }

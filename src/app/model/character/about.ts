@@ -7,6 +7,7 @@ export interface AboutData {
   token: {
     url: string;
   }
+  potentialRating: number;
   descriptions: {
     origin: string;
     achievements: string;
@@ -44,6 +45,7 @@ export class About {
       age: 18,
       bodyType: {amount:1},
       token: {url:""},
+      potentialRating: 0,
       descriptions: { 
         origin: "",
         achievements: "",
@@ -87,6 +89,14 @@ export class About {
     }
   }
 
+  get potentialRating(): number {
+    return this._data.potentialRating;
+  }
+
+  set potentialRating(pr: number) {
+    this._data.potentialRating = pr;
+  }
+
   HeightMeter(time?: number): number {
     if ( typeof time === undefined ) {
       return this._data.height.amount;
@@ -99,6 +109,10 @@ export class About {
       return this._data.height.amount * 100 / 2.54;
     }
     return ModifiedValue(time,this._data.height) * 100 / 2.54;
+  }
+
+  get improvementPoints(): number {
+    return this._data.potentialRating - this.character.getSpentIPTotal();
   }
 
   get age(): number {
