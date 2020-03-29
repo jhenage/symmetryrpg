@@ -245,7 +245,7 @@ export class Character {
       result *= this.creatureType.limbs[limb].locomotion;
       result *= this.creatureType.limbs[limb].reach;
       result *= 0.7 ** this.fatigue.Penalty(limb,time);
-      result *= 0.5 ** this.wounds.Penalty(limb,time);
+      result *= 0.7 ** this.wounds.Penalty(limb,time);
     });
     result **= 1 / limbList.length; // finish taking geometric mean
     result *= 0.7 ** this.fatigue.Penalty('aerobic',time);
