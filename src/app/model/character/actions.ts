@@ -3,6 +3,7 @@ export interface ActionData {
   type: string;
   time: number;
   executed?: boolean;
+  nextExecution?: number;
   order?: number; // order of execution
 }
 
@@ -24,6 +25,13 @@ export class Actions {
 
   add(data: ActionData): void {
     this._data.push(data);
+  }
+
+  remove(data: ActionData): void {
+    let i = this._data.indexOf(data);
+    if ( i > -1 ) {
+      this._data.splice(i,1);
+    }
   }
 
   getAll() { return this._data; }

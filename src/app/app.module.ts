@@ -10,21 +10,27 @@ import { LogComponent } from './log/log.component';
 import { QueueComponent } from './log/queue/queue.component';
 import { HistoryComponent } from './log/history/history.component';
 import { ActionDirective } from './log/action/action.directive';
-import { AspectsComponent } from './sheet/aspects/aspects.component';
-import { HistoryActionwrapComponent } from './log/history/actionwrap.component';
 
 import { AspecttestHistoryComponent } from './log/action/aspecttest/history.component';
 import { SkilltestHistoryComponent } from './log/action/skilltest/history.component';
+import { MoveHistoryComponent } from './log/action/move/history.component';
+import { MoveExecuteComponent } from './log/action/move/execute.component';
+import { MoveQueueComponent } from './log/action/move/queue.component';
+
+import { AspectsComponent } from './sheet/aspects/aspects.component';
+import { HistoryActionwrapComponent } from './log/history/actionwrap.component';
+import { QueueActionwrapComponent } from './log/queue/actionwrap.component';
+import { ExecuteActionwrapComponent } from './log/execute/actionwrap.component';
 import { SkillsComponent } from './sheet/skills/skills.component';
 import { AboutComponent } from './sheet/about/about.component';
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule ],
   declarations: [ AppComponent, SheetComponent, MapComponent, ExecuteComponent, LogComponent, QueueComponent, HistoryComponent, ActionDirective, 
-    HistoryActionwrapComponent, AspectsComponent,
-    AspecttestHistoryComponent, SkilltestHistoryComponent, SkillsComponent, AboutComponent
+    AspecttestHistoryComponent, SkilltestHistoryComponent, MoveHistoryComponent, MoveExecuteComponent, MoveQueueComponent,
+    HistoryActionwrapComponent, AspectsComponent, SkillsComponent, AboutComponent, QueueActionwrapComponent, ExecuteActionwrapComponent
    ],
-  entryComponents: [ AspecttestHistoryComponent, SkilltestHistoryComponent ],
+  entryComponents: [ AspecttestHistoryComponent, SkilltestHistoryComponent, MoveHistoryComponent, MoveExecuteComponent, MoveQueueComponent ],
   bootstrap:    [ AppComponent ]
 })
 export class AppModule { }

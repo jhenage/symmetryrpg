@@ -4,9 +4,13 @@
     .container {
         position: absolute;
 
-        .token.selected {
-            border: 3px solid green;
-            margin: -3px 0 0 -3px;
+        &.selected {
+            .token {
+                border: 3px solid green;
+                margin: -3px 0 0 -3px;
+            }
+            
+            z-index: 99;
         }
 
         .token {
@@ -26,6 +30,7 @@
             border-radius: 3px;
             padding: 3px;
             background-color: beige;
+            z-index: 100;
 
             a {
                 display: block;
@@ -63,9 +68,14 @@
     #reposition {
         display: none;
         opacity: .5;
+        z-index: 1000;
     }
     #reposition.visible {
         display: block;
+    }
+    
+    .movement .token {
+        opacity: .75;
     }
 }
 

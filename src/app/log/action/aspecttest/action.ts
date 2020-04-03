@@ -1,6 +1,7 @@
 import { Character } from 'src/app/model/character';
 import { DiceRoll } from 'src/app/model/diceroll';
 import { ActionData } from 'src/app/model/character/actions';
+import { ActionFactory, ActionObject } from '../factory';
 
 export interface ActionPenalty {
     targetedPenalty: number;
@@ -15,13 +16,12 @@ interface AspectTestActionData extends ActionData {
     modifier: number;
 }
 
-export interface AspectTestActionObject {
-    character: Character;
+export interface AspectTestActionObject extends ActionObject {
     roll: DiceRoll;
     data: AspectTestActionData;
 }
 
-export class AspectTestActionFactory {
+export class AspectTestActionFactory implements ActionFactory {
 
     build(character: Character,datainit: {time: number;aspect: string;luck?}): AspectTestActionObject {
         let data = datainit as AspectTestActionData;
@@ -43,4 +43,6 @@ export class AspectTestActionFactory {
         roll.modifier = data.modifier;
         return {character:character,roll:roll,data:data};
     }
+
+    execute() { }
 }

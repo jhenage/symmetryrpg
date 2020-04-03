@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Campaign } from '../../model/campaign';
 
 @Component({
   selector: 'app-execute',
@@ -8,8 +7,7 @@ import { Campaign } from '../../model/campaign';
 })
 export class ExecuteComponent implements OnInit {
 
-  //@Input() campaign: Campaign;
-  actions: {}[];
+ @Input() actions: {}[];
 
   constructor() { }
 

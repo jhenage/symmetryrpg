@@ -1,7 +1,13 @@
 <div class="logContainer">
+    <div class="timer" [class.past]="timer.time<campaign.now" [class.present]="timer.time==campaign.now" [class.future]="timer.time>campaign.now">
+        <input [(ngModel)]="timer.time" />
+        <a (click)="play()">></a>
+        <a (click)="toNow()" class="tonow">To Now</a>
+        <a (click)="setNow()" class="set">Set Now</a>
+    </div>
     <div class="logScrollable">
         <app-history [actions]="history"></app-history>
-        <app-execute></app-execute>
-        <app-queue></app-queue>
+        <div class="execute"><app-execute [actions]="execute"></app-execute></div>
+        <app-queue [actions]="queue"></app-queue>
     </div>
 </div>
