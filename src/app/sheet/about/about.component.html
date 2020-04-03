@@ -1,3 +1,4 @@
+<div [class.over-budget]="about.character.isOverBudget"></div>
 <div class="about container">
   <div class="field name">
     <label>Name</label>
@@ -15,12 +16,21 @@
     </select>
   </div>
   Weight: {{about.character.WeightLbs(0) | number:'1.0-0'}}<br/>
-  Endurance: {{about.character.Endurance(0) | number:'1.0-1'}}
+  Endurance: {{about.character.Endurance(0) | number:'1.0-1'}}<br/>
+  <div class="field potential-rating six-digit">
+    <label>Potential Rating</label>
+    <input [(ngModel)]="about.potentialRating" type="number" />
+  </div>
+  Improvement Points: {{about.improvementPoints}} <br/>
+  IP Spent on Aspects: {{about.character.aspects.getSpentIPTotal()}} <br/>
+  IP Spent on Skills: {{about.character.skills.getSpentIPTotal()}} <br/>
+  <input type="checkbox" class="display descriptions" /><label>Show Descriptions</label>
+  <input type="checkbox" class="hide blank-descriptions" /><label class="blank-descriptions">Hide Blank</label>
   <div class="descriptions container">
-    <input type="checkbox" class="display" /><label>Show Descriptions</label>
-    <div *ngFor="let description of about.descriptionsList" class="description">
+    <div *ngFor="let description of about.descriptionsList" class="description"
+    [class.blank]="about.getDescriptionText(description)==''">
         <label>{{description|titlecase}}:</label>
-        <textarea 
+        <textarea
         [value]="about.getDescriptionText(description)"
         (input)="about.setDescriptionText(description,$event.target.value)">
         </textarea>

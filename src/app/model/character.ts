@@ -161,15 +161,18 @@ export class Character {
     return this.WeightKg(time) * 2.2;
   }
 
-  // This is based off of BMI. Human BMI is 11 + 10*bodyType + bodyType*toughness
-  // . This is set so that at the thinnest bodyType anything below toughness 5 is underweight
-  // . At average bodyType and toughness, you are barely overweight
+  // This is based off of BMI. Human BMI is 6 + 12*bodyType + (0.4+0.4*bodyType)*(0.7*brawn+0.3*toughness)
+  // extreme body Types require minimum aspect scores for normal functioning and can even be lethal
   WeightKg(time:number): number {
     let bmi = this.creatureType.weight.bmiOffset;
-    bmi += this.creatureType.weight.btFactor * this.about.CurrentBodyType(time);
-    bmi += (1 + this.about.CurrentBodyType(time)) * (0.35*this.aspects.Current(time,'brawn')+0.15*this.aspects.Current(time,'toughness'));
+    bmi += this.creatureType.weight.bodyTypeFactor * this.about.CurrentBodyType(time);
+    let aspectValue = this.creatureType.weight.brawnFactor*this.aspects.Current(time,'brawn') + 
+                      (1 - this.creatureType.weight.brawnFactor)*this.aspects.Current(time,'toughness');
+    let aspectMultiplier = this.creatureType.weight.aspectFactor + 
+                           this.about.CurrentBodyType(time)*this.creatureType.weight.combinedFactor;
+    bmi += aspectValue*aspectMultiplier;
     let height = this.about.HeightMeter(time);
-    return height * height * bmi * this.creatureType.weight.multiplier;
+    return height * height * bmi;
   }
 
   Endurance(time:number): number { 
@@ -242,7 +245,7 @@ export class Character {
       result *= this.creatureType.limbs[limb].locomotion;
       result *= this.creatureType.limbs[limb].reach;
       result *= 0.7 ** this.fatigue.Penalty(limb,time);
-      result *= 0.5 ** this.wounds.Penalty(limb,time);
+      result *= 0.7 ** this.wounds.Penalty(limb,time);
     });
     result **= 1 / limbList.length; // finish taking geometric mean
     result *= 0.7 ** this.fatigue.Penalty('aerobic',time);
@@ -261,6 +264,14 @@ export class Character {
     var result = (this.aspects.Current(time,'brawn') / 5) ** 1.5;
     result *= 100 * this.LimbsMovementFactor(time,limbList) / (this.WeightKg(time)+carriedWeight);
     return result;
+  }
+
+  getSpentIPTotal(): number {
+    return this.aspects.getSpentIPTotal() + this.skills.getSpentIPTotal();
+  }
+
+  get isOverBudget(): boolean {
+    return this.about.improvementPoints < 0;
   }
 
 }

@@ -20,6 +20,7 @@ export class Aspects {
   readonly REACTION_FLUX_TIMES = [100,60,40,30,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5];
   readonly SURPRISE_MULTIPLIERS = [15,13,12,11,10,9.75,9.5,9.25,9,8.75,8.5,8.25,8,7.75,7.5,7.25,7,6.75,6.5,6.25,6,5.75,5.5,5.25,5];
   readonly BASE_ACTION_DURATIONS = [5000,2750,1750,1250,1000,900,810,729,656,591,531,478,431,387,349,307,270,238,209,184,162,143,125,110,97];
+  readonly ASPECT_IP_COSTS = [0,4,10,18,28,40,54,70,88,108,130,154,180,208,238,270,304,340,378,418,460,504,550,598,648];
 
   constructor(character: Character,data?: AspectsData) {
     this.character = character;
@@ -73,29 +74,29 @@ export class Aspects {
   }
 
   protected getBaseReactionTime(rank: number, penalty: number, isSurprised: boolean): number {
-    var result = this.BASE_REACTION_TIMES[rank-1];
-    var roller = new DiceRoll([]);
-    for(var i=0; i<2; i++) result += roller.getDieRoll(this.REACTION_FLUX_TIMES[rank-1]);
+    let result = this.BASE_REACTION_TIMES[rank-1];
+    let roller = new DiceRoll([]);
+    for(let i=0; i<2; i++) result += roller.getDieRoll(this.REACTION_FLUX_TIMES[rank-1]);
     if(penalty) result *= 1.1 ** penalty;
     if(isSurprised) result *= this.SURPRISE_MULTIPLIERS[rank-1];
     return Math.round(result);
   }
 
   getMentalReactionTime(time:number, penalty: number, isSurprised: boolean): number { //time is in milliseconds
-    var awareRank = this.CurrentRank(time,'awareness');
+    let awareRank = this.CurrentRank(time,'awareness');
     return this.getBaseReactionTime(awareRank,penalty,isSurprised) +
            this.getBaseReactionTime(awareRank,penalty,isSurprised);
   }
 
   getPhysicalReactionTime(time:number, penalty: number, isSurprised: boolean): number { //time is in milliseconds
-    var awareRank = this.CurrentRank(time,'awareness');
-    var reflexRank = this.CurrentRank(time,'reflex');
+    let awareRank = this.CurrentRank(time,'awareness');
+    let reflexRank = this.CurrentRank(time,'reflex');
     return this.getBaseReactionTime(awareRank,penalty,isSurprised) +
            this.getBaseReactionTime(reflexRank,penalty,false);
   }
 
   protected getActionTime(actionTime: number, rank: number, actionPenalty: ActionPenalty): number {
-    var result = actionTime * this.BASE_ACTION_DURATIONS[rank-1];
+    let result = actionTime * this.BASE_ACTION_DURATIONS[rank-1];
     result *= 2 ** actionPenalty.targetedPenalty;
     result *= 1.2 ** actionPenalty.genericPenalty;
     result *= 1.05 ** actionPenalty.incidentalPenalty;
@@ -108,6 +109,14 @@ export class Aspects {
 
   getPhysicalActionTime(time:number, actionTime: number, actionPenalty: ActionPenalty) {
     return this.getActionTime(actionTime,this.CurrentRank(time,'agility'),actionPenalty);
+  }
+
+  getSpentIPTotal(): number {
+    let result = 0;
+    this.aspectsList.forEach( (aspectName) => {
+      result += this.ASPECT_IP_COSTS[Math.max(0,this._data[aspectName].amount - 1)];
+    });
+    return result;
   }
 
 }

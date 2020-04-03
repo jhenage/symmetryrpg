@@ -4,7 +4,7 @@ import { About } from 'src/app/model/character/about';
 @Component({
   selector: 'app-about',
   templateUrl: './about.component.html',
-  styleUrls: ['./about.component.less']
+  styleUrls: ['./about.component.less', '../sheet.component.less']
 })
 export class AboutComponent implements OnInit {
 
