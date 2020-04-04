@@ -37,9 +37,9 @@ export class AspectsComponent implements OnInit {
   }
 
 
-  makeAspectTest(time:number, aspectName:string) {
+  makeAspectTest(aspectName:string) {
     let factory = new AspectTestActionFactory();
-    let action = factory.build(this.aspects.character,{time:time,aspect:aspectName});
+    let action = factory.build(this.aspects.character,{time:this.logService.now,aspect:aspectName});
     this.logService.newAction(action);
   }
 }

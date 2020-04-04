@@ -6,6 +6,6 @@
       <input type="number" [class.out-of-range]="inputsOutOfRange[aspect]"
         [value]="aspects.getAspectRank(aspect)"
         (input)="setAspectRank(aspect,$event.target.value)" />
-      <button [class]="aspect" (click)="makeAspectTest(0,aspect)"></button>
+      <button [class]="aspect" (click)="makeAspectTest(aspect)"></button>
     </div>
 </div>

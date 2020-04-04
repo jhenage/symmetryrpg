@@ -35,7 +35,7 @@ export class LogComponent implements OnInit, OnDestroy {
     
     if(typeof this.interval == 'undefined') {
       this.interval = window.setInterval(()=>{
-        this.timer.time = Number(this.timer.time) + 1;
+        this.timer.time += 1;
       },10);
     }
     else {
@@ -56,6 +56,10 @@ export class LogComponent implements OnInit, OnDestroy {
     this.timer.time = this.campaign.now;
     window.clearInterval(this.interval);
     this.interval = undefined;
+  }
+
+  setTime(time:number) {
+    this.timer.time = Number(time);
   }
 
 }

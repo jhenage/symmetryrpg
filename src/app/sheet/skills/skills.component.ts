@@ -37,9 +37,9 @@ export class SkillsComponent implements OnInit {
   }
 
 
-  makeSkillTest(time:number, aspectName:string, skillName:string) {
+  makeSkillTest(aspectName:string, skillName:string) {
     let factory = new SkillTestActionFactory();
-    let action = factory.build(this.skills.character,{time:time,aspect:aspectName,skill:skillName});
+    let action = factory.build(this.skills.character,{time:this.logService.now,aspect:aspectName,skill:skillName});
     this.logService.newAction(action);
   }
 

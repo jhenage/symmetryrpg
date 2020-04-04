@@ -1,6 +1,6 @@
 <div class="logContainer">
     <div class="timer" [class.past]="timer.time<campaign.now" [class.present]="timer.time==campaign.now" [class.future]="timer.time>campaign.now">
-        <input [(ngModel)]="timer.time" />
+        <input [value]="timer.time" (input)="setTime($event.target.value)" />
         <a (click)="play()">></a>
         <a (click)="toNow()" class="tonow">To Now</a>
         <a (click)="setNow()" class="set">Set Now</a>

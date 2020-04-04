@@ -167,6 +167,7 @@ export class LogService {
       this.removeAction(action);
       this.factories[action.data.type].execute(action);
       this.newAction(action);
+      this.sortAll();
     }
     this.dataService.saveCharacter(action.character);
     this.dataService.saveCampaign();

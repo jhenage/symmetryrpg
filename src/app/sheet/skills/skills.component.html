@@ -7,6 +7,6 @@
         [value]="skills.getSkillRank(skill)"
         (input)="setSkillRank(skill,$event.target.value)" />
       <button *ngFor="let aspect of skills.character.aspects.aspectsList"
-        [class]="aspect" (click)="makeSkillTest(0,aspect,skill)"></button>
+        [class]="aspect" (click)="makeSkillTest(aspect,skill)"></button>
     </div>
 </div>
