@@ -12,15 +12,13 @@ export interface CampaignData {
 export class Campaign {
 
     protected _data: CampaignData;
-    private dataService: DataService;
 
     characters: Character[];
     creatureTypes: CreatureType[];
 
-    constructor(data: CampaignData,dataService: DataService) {
+    constructor(data: CampaignData,getcharacters: (id,version)=>any) {
         
         this._data = data;
-        this.dataService = dataService;
  
         this.creatureTypes = [];
         for ( let creaturetype of this._data.creatureTypes ) {
@@ -28,11 +26,19 @@ export class Campaign {
         }
 
         this.characters = [];
-        for ( let char of this._data.characters ) {
-            let character = dataService.getCharacter(char.id,char.version);
+        for ( let char of data.characters ) {
+            let character = getcharacters(char.id,char.version);
             let creaturetype = this.creatureTypes[character.creatureType];
             this.characters.push(new Character(char.id,creaturetype,character));
         }
+    }
+
+    get now(): number {
+        return this._data.now;
+    }
+
+    set now(time:number) {
+        this._data.now = time;
     }
 
     serialize(): string {
@@ -72,5 +78,6 @@ export class Campaign {
         
         return actions.filter((action) => { return action.time == current; });
     }
+
 
 }

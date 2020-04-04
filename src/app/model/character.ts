@@ -213,8 +213,8 @@ export class Character {
 
         result.velx = this._data.location[i-1].velx;
         result.vely = this._data.location[i-1].vely;
-        result.x = this._data.location[i-1].x + duration * this._data.location[i-1].velx;
-        result.y = this._data.location[i-1].y + duration * this._data.location[i-1].vely;
+        result.x = this._data.location[i-1].x + duration * this._data.location[i-1].velx / 1000;
+        result.y = this._data.location[i-1].y + duration * this._data.location[i-1].vely / 1000;
 
         return result;
       }

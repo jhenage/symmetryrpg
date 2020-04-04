@@ -1,6 +1,7 @@
 import { Character } from 'src/app/model/character';
 import { DiceRoll } from 'src/app/model/diceroll';
 import { ActionData } from 'src/app/model/character/actions';
+import { ActionFactory, ActionObject } from '../factory';
 
 interface SkillTestActionData extends ActionData {
     aspect: string;
@@ -11,13 +12,12 @@ interface SkillTestActionData extends ActionData {
     missingSpecialty: number;
 }
 
-export interface SkillTestActionObject {
-    character: Character;
+export interface SkillTestActionObject extends ActionObject {
     roll: DiceRoll;
     data: SkillTestActionData;
 }
 
-export class SkillTestActionFactory {
+export class SkillTestActionFactory implements ActionFactory {
 
     build(character: Character,datainit: {time: number;aspect: string;skill: string;luck?}): SkillTestActionObject {
         let data = datainit as SkillTestActionData;
@@ -42,4 +42,6 @@ export class SkillTestActionFactory {
         let roll = new DiceRoll(data.dice);
         return {character:character,roll:roll,data:data};
     }
+
+    execute() {}
 }

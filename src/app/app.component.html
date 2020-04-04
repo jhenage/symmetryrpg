@@ -14,7 +14,7 @@
   </div>
   <div class="view">
     <div *ngIf="character && mode=='sheet'"><app-sheet [character]="character" (saved)="save()" (deleted)="delete($event)"></app-sheet></div>
-    <div *ngIf="mode=='map'"><app-map [character]="character" [campaign]="campaign" (saved)="save()" (selected)="select($event)"></app-map></div>
+    <div *ngIf="mode=='map'"><app-map [character]="character" (saved)="save()" (selected)="select($event)"></app-map></div>
   </div>
 </div>
 

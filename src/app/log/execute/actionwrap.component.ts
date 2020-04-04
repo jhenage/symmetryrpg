@@ -1,29 +1,25 @@
 import { Component, ViewChild, ComponentFactoryResolver, Input, OnInit } from '@angular/core';
 import { ActionDirective } from '../action/action.directive';
-import { ActionHistoryComponent } from '../action/history.component';
+import { ActionExecuteComponent } from '../action/execute.component';
 
-import { AspecttestHistoryComponent } from '../action/aspecttest/history.component'
-import { SkilltestHistoryComponent } from '../action/skilltest/history.component'
-import { MoveHistoryComponent } from '../action/move/history.component';
+import { MoveExecuteComponent } from '../action/move/execute.component'
 
-const historyActionComponents = {
-  aspecttest: AspecttestHistoryComponent,
-  skilltest: SkilltestHistoryComponent,
-  move: MoveHistoryComponent
+const executeActionComponents = {
+  move: MoveExecuteComponent
 };
 
 @Component({
-  selector: 'historyactionwrap',
+  selector: 'executeactionwrap',
   template: `<a (click)="log(action)">(_)</a><ng-template appAction></ng-template>`
 })
-export class HistoryActionwrapComponent implements OnInit {
+export class ExecuteActionwrapComponent implements OnInit {
   @Input() action: any;
   @ViewChild(ActionDirective, {static: true}) actionHost: ActionDirective;
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
 
   ngOnInit() {
-    const componentClass = historyActionComponents[this.action.data.type];
+    const componentClass = executeActionComponents[this.action.data.type];
     if ( ! componentClass ) { throw new Error('Bad action type '+this.action.data.type); }
 
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(componentClass);
@@ -32,7 +28,7 @@ export class HistoryActionwrapComponent implements OnInit {
     viewContainerRef.clear();
 
     const componentRef = viewContainerRef.createComponent(componentFactory);
-    (<ActionHistoryComponent>componentRef.instance).action = this.action;
+    (<ActionExecuteComponent>componentRef.instance).action = this.action;
 
   }
 
