@@ -36,6 +36,7 @@ export function ModifiedValue(time:number,data:ModifiableStat): number {
 
 export function ChangeModifiedValue(time:number,data:ModifiableStat,amount:number): void {
   
+  amount = Number(amount);
   if ( amount == ModifiedValue(time,data) ) {
     return;
   }
@@ -50,7 +51,7 @@ export function ChangeModifiedValue(time:number,data:ModifiableStat,amount:numbe
     data.modified[i-1].amount = amount;
   }
 
-  if ( data.modified[i-1].time == time ) {
+  if ( data.modified[i-1].time > time ) {
     throw new Error('Invalid time '+time);
   }
   
@@ -153,6 +154,39 @@ export class Character {
   serialize(): string { return JSON.stringify(this._data); }
   get createdAt(): number { return this._data.createdAt; }
 
+  // clear all temporary data. For after cloning character
+  resetAll() {
+    this._data.fatigue.aerobic = [];
+    this._data.fatigue.muscles = {};
+    this._data.location = [];
+    this._data.qi.modified = [];
+    this._data.about.bodyType.modified = [];
+    this._data.about.height.modified = [];
+    this.aspects.aspectsList.forEach((aspect) => {
+      this._data.aspects[aspect].modified = [];
+    });
+    this._data.actions.splice(0,this._data.actions.length);
+  }
+
+  // truncate all logs to one entry. For after archiving character
+  resetHistory(time: number) {
+    this._data.createdAt = time;
+    this.fatigue.AddAerobicRate(time,0);
+    this._data.fatigue.aerobic.splice(0,this._data.fatigue.aerobic.length-1);
+    for( let muscle in this._data.fatigue.muscles ) {
+      this.fatigue.AddMuscleRate(time,0,muscle);
+      this._data.fatigue.muscles[muscle].splice(0,this._data.fatigue.muscles[muscle].length-1);
+    }
+    this._data.location = [this.location(time)];
+    this._data.qi = {amount:this.MaxQi(),modified:[{time:time,amount:this.Qi(time)}]};
+    this._data.about.bodyType.modified = [{time:time,amount:this.about.CurrentBodyType(time)}];
+    this._data.about.height.modified = [{time:time,amount:this.about.HeightMeter(time)}];
+    this.aspects.aspectsList.forEach((aspect) => {
+      this._data.aspects[aspect].modified = [{time:time,amount:this.aspects.Current(time,aspect)}];
+    });
+    this._data.actions.splice(0,this._data.actions.findIndex((value)=> value.time > time));
+  }
+
   generalPenalty(time:number): number {
     return 0;
   }
@@ -196,10 +230,14 @@ export class Character {
     return ModifiedValue(time,this._data.qi);
   }
 
-  MaxQi(): number { return 10; }
+  MaxQi(time?: number): number { return 10; }
 
   AddQi(time: number, amount: number): void {
     return ChangeModifiedValue(time,this._data.qi,ModifiedValue(time,this._data.qi)+amount);
+  }
+
+  SetQi(time: number, amount: number): void {
+    return ChangeModifiedValue(time,this._data.qi,amount);
   }
 
   location(time:number): LocationData {
@@ -219,6 +257,7 @@ export class Character {
         return result;
       }
     }
+    return result;
  
   }
 

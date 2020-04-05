@@ -16,6 +16,7 @@ export class LogComponent implements OnInit, OnDestroy {
   timer: TimerObject;
   campaign: Campaign;
   private interval: number; // setIntervalID
+  speed: number; // speed of timer
   constructor(private logService: LogService, private dataService: DataService ) { }
 
   ngOnInit(): void {
@@ -34,32 +35,29 @@ export class LogComponent implements OnInit, OnDestroy {
   play() {
     
     if(typeof this.interval == 'undefined') {
+      this.speed = 1;
       this.interval = window.setInterval(()=>{
-        this.timer.time += 1;
+        this.timer.time += this.speed;
       },10);
     }
-    else {
+    else if(this.speed == 1) {
+      this.speed = 10;
+    } else {
       window.clearInterval(this.interval);
       this.interval = undefined;
+      this.speed = 0;
     }
     
-  }
-  setNow() {
-    if(this.timer.time > this.campaign.now) {
-      this.logService.progressClock(this.timer.time);
-    }
-    else {
-      this.toNow();
-    }
   }
   toNow() {
     this.timer.time = this.campaign.now;
     window.clearInterval(this.interval);
     this.interval = undefined;
+    this.speed = 0;
   }
 
   setTime(time:number) {
-    this.timer.time = Number(time);
+    this.timer.time = Number(time) || 0;
   }
 
 }

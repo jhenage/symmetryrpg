@@ -19,7 +19,7 @@ export interface FatigueData {
 //  Aerobic fatigue uses Endurance, and currently only needs adjustment per muscle group size
 //  Muscle fatigue needs the values entered to be divided by Endurance still
 //  Both need a scale to convert actions into fatigue values.
-//   Note that Aerobic buckets are 30*End, Muscle Buckets are 60,000
+//   Note that Aerobic buckets are 30*Endurance, Muscle Buckets are 60,000
 
 const muscleCarryover = 0.3; // Percent that gets added to subsequent bucket
 
@@ -42,21 +42,17 @@ export class Fatigue {
 
   Penalty(location: string, time: number): number {
     if ( location == 'aerobic' || location == 'general' ) {
-      // find the correct entry:
-      for(let i = this._data.aerobic.length; i > 0; i--) {
-        if ( this._data.aerobic[i-1].time <= time ) {
-          let result = this.AerobicOverTime(this._data.aerobic[i-1].amount,this._data.aerobic[i-1].malfatigue,this._data.aerobic[i-1].rate,this._data.aerobic[i-1].time,time);
-          let buckets = this.AerobicBuckets(time,result.amount+result.malfatigue);
-
-          if ( buckets > 7 ) {
-            return 2 * (buckets - 7) + 3;
-          }
-
-          let penalty = [0,-0.5,-1,-0.5,0,1,2,3];
-          return penalty[buckets];          
-        }
+      let buckets = this.AerobicTotal(time);
+      if ( buckets > 7 ) {
+        return 2 * (buckets - 7) + 3;
       }
-      return 0;
+      if ( buckets > 4 ) {
+        return buckets - 4;
+      }
+      if ( buckets > 2 ) {
+        return buckets/2 - 2;
+      }
+      return -buckets / 2;
     }
     if ( !this._data.muscles.hasOwnProperty(location) ) {
       return 0;
@@ -69,6 +65,31 @@ export class Fatigue {
         return total / 60000;
       }
     }
+  }
+
+  AerobicTotal(time:number): number {
+      // find the correct entry:
+      for(let i = this._data.aerobic.length; i > 0; i--) {
+        if ( this._data.aerobic[i-1].time <= time ) {
+          let result = this.AerobicOverTime(this._data.aerobic[i-1].amount,this._data.aerobic[i-1].malfatigue,this._data.aerobic[i-1].rate,this._data.aerobic[i-1].time,time);
+          let buckets2 = this.AerobicBuckets(time,result.amount+result.malfatigue);
+          if(buckets2>=4) {
+            return buckets2;
+          }
+          let buckets1 = this.AerobicBuckets(time,result.amount);
+          if(buckets1>=2) {
+            return buckets2;
+          }
+          if(buckets2<=2) {
+            return buckets1;
+          }
+          return -buckets1/2 <= buckets2/2-2 ? buckets2 : buckets1;
+
+       
+        }
+      }
+      return 0;
+
   }
 
   AddAerobicRate(time:number,rate:number): void {
@@ -112,7 +133,7 @@ export class Fatigue {
   }
 
   protected AerobicBuckets(time:number,fatigue: number): number {
-    return Math.floor(fatigue / this.AerobicBucketSize(time));
+    return fatigue / this.AerobicBucketSize(time);
   }
 
   // return fatigue per milisecond
@@ -192,6 +213,9 @@ export class Fatigue {
     if ( this._data.muscles[location][i-1].time > time ) {
       throw new Error('Invalid time '+time);
     }
+
+    rate = 3000 * rate / this.character.Endurance(time);
+
     if ( this._data.muscles[location][i-1].time == time ) {
       this._data.muscles[location][i-1].rate += rate;
       return;
@@ -238,7 +262,7 @@ export class Fatigue {
     let toadd = duration * rate;
 
     for ( let i = 0; i < 5; i++ ) {
-      result[i] = amount[i] + toadd - duration * Math.pow(0.1,i);
+      result[i] = amount[i] + toadd - duration * 0.1**i;
       if ( result[i] < 0 ) {
         result[i] = 0;
       }
@@ -252,6 +276,26 @@ export class Fatigue {
     }
 
     return result;
+  }
+
+  MuscleHalflife(time:number,location:string):number {
+    if ( !this._data.muscles.hasOwnProperty(location) ) {
+      return 0;
+    }
+    for(let i = this._data.muscles[location].length; i > 0; i--) {
+      if ( this._data.muscles[location][i-1].time <= time ) {
+        let result = this.MuscleOverTime(this._data.muscles[location][i-1].rate,this._data.muscles[location][i-1].amount,time-this._data.muscles[location][i-1].time);
+        let goal = result.reduce((a,b) => a+b) / 2;
+
+        for(let i = 0; i<5; i++) {
+          if(result[i] *1.1 >= goal) {
+            return Math.round(goal/1.1 / .1**i);
+          }
+          goal -= result[i];
+        }
+      }
+    }
+
   }
 
 }

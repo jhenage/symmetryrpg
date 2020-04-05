@@ -1,0 +1,35 @@
+<div class="modifiable container">
+    <table>
+        <thead><th>Stat</th><th>Current</th><th>Normal</th></thead>
+        <tr>
+            <td>Height</td>
+            <td><input [value]="character.about.getHeight(timer.time)" (input)="character.about.setHeight(timer.time,$event.target.value)" [disabled]="timer.time!=now"/></td>
+            <td>{{character.about.height}}</td>
+        </tr>
+        <tr>
+            <td>Qi</td>
+            <td><input type="number" [value]="character.Qi(timer.time)" (input)="character.SetQi(timer.time,$event.target.value)" [disabled]="timer.time!=now"/></td>
+            <td>{{character.MaxQi(timer.time)}}</td>
+        </tr>
+        <tr *ngFor="let aspect of character.aspects.aspectsList">
+            <td>{{aspect|titlecase}}</td>
+            <td><input type="number" [value]="character.aspects.Current(timer.time,aspect)" (input)="character.aspects.TempChange(timer.time,aspect,$event.target.value)" [disabled]="timer.time!=now"/></td>
+            <td>{{character.aspects.getAspectRank(aspect)}}</td>
+        </tr>
+    </table>
+  
+</div>
+<div class="fatigue container">
+    <div>
+        Top Speed: {{character.MaxSpeed(timer.time,['leftLeg','rightLeg'],0)}}
+    </div>
+    <div>
+        Aerobic Penalty {{character.fatigue.Penalty('aerobic',timer.time)}}, Total {{character.fatigue.AerobicTotal(timer.time)}}
+    </div>
+    <div>
+        Mental Penalty {{character.fatigue.Penalty('mental',timer.time)}}, Halflife {{character.fatigue.MuscleHalflife(timer.time,'mental')}}
+    </div>
+    <div *ngFor="let muscle of character.creatureType.limbList">
+        {{muscle|titlecase}} Penalty {{character.fatigue.Penalty(muscle,timer.time)}}, Halflife {{character.fatigue.MuscleHalflife(timer.time,muscle)}}
+    </div>
+</div>

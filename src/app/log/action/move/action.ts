@@ -42,7 +42,7 @@ export class MoveActionFactory implements ActionFactory {
 
     execute(action: MoveProcessActionObject) {
         if(!action.data.executed) {
-            action.data.fatigue = action.data.path[0].speed;
+            action.data.fatigue = 0;
             action.data.executed = true;
             action.data.nextExecution = action.data.time;
             action.data.limbs = ["leftLeg","rightLeg"];
@@ -61,6 +61,11 @@ export class MoveActionFactory implements ActionFactory {
                 location.velx = (action.data.path[i].x - location.x) / duration;
                 location.vely = (action.data.path[i].y - location.y) / duration;
                 action.character.setLocation(location);
+                action.data.fatigue = .08 * action.data.path[i].speed ** 2;
+                action.character.fatigue.AddMuscleRate(action.data.nextExecution,action.data.fatigue/6,"leftLeg");
+                action.character.fatigue.AddMuscleRate(action.data.nextExecution,action.data.fatigue/6,"rightLeg");
+                action.character.fatigue.AddAerobicRate(action.data.nextExecution,action.data.fatigue);
+                
             
                 action.data.nextExecution += Math.round(1000*duration);
                 action.data.path[i].state = "max";
@@ -69,7 +74,11 @@ export class MoveActionFactory implements ActionFactory {
             }
             if (action.data.path[i].state=="max") {
                 action.data.path[i].state = "done";
-                if(i == action.data.path.length-1) {
+                action.character.fatigue.AddMuscleRate(action.data.nextExecution,-action.data.fatigue/6,"leftLeg");
+                action.character.fatigue.AddMuscleRate(action.data.nextExecution,-action.data.fatigue/6,"rightLeg");
+                action.character.fatigue.AddAerobicRate(action.data.nextExecution,-action.data.fatigue);
+
+               if(i == action.data.path.length-1) {
                     let location = {time:action.data.nextExecution,x:action.data.path[i].x,y:action.data.path[i].y,velx:0,vely:0};
                     action.character.setLocation(location);
                     action.data.nextExecution = undefined;

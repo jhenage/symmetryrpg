@@ -24,7 +24,7 @@ export class LogService {
   history: ActionObject[] = [];
   queue: ActionObject[] = [];
   execute: ActionObject[] = [];
-  movements: MoveActionObject[] = [];
+  movements: ActionObject[] = [];
   timer: TimerObject = {time:0};
 
   readonly factories: {[propName:string]:ActionFactory} = {
@@ -54,7 +54,7 @@ export class LogService {
       this.queue.push(action);
       this.sortAll();
       if(action.data.type=="move") {
-        this.movements.push(action as MoveActionObject);
+        this.movements.push(action);
       }
     }
   }
@@ -79,7 +79,7 @@ export class LogService {
       if ( i > -1 ) {
         this.execute.splice(i,1);
       }
-      i = this.movements.indexOf(action as MoveActionObject);
+      i = this.movements.indexOf(action);
       if ( i > -1 ) {
         this.movements.splice(i,1);
       }

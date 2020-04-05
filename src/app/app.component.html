@@ -6,6 +6,7 @@
     <div class="mode">
       <a (click)="mode='sheet'" [class.selected]="mode=='sheet'">Sheets</a>
       <a (click)="mode='map'" [class.selected]="mode=='map'">Map</a>
+      <a (click)="mode='status'" [class.selected]="mode=='status'">Status</a>
     </div>
     <div class="character">
       <a *ngFor="let char of campaign.characters" (click)="select(char)" [class.selected]="char==character">{{char.about.name}}</a>
@@ -15,6 +16,7 @@
   <div class="view">
     <div *ngIf="character && mode=='sheet'"><app-sheet [character]="character" (saved)="save()" (deleted)="delete($event)"></app-sheet></div>
     <div *ngIf="mode=='map'"><app-map [character]="character" (saved)="save()" (selected)="select($event)"></app-map></div>
+    <div *ngIf="character && mode=='status'"><app-status [character]="character" [now]="campaign.now" (saved)="save()"></app-status></div>
   </div>
 </div>
 

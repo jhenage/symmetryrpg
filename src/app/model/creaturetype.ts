@@ -52,4 +52,8 @@ export class CreatureType {
     return this._data.limbs;
   }
 
+  get limbList() {
+    return Object.keys(this._data.limbs);
+  }
+
 }

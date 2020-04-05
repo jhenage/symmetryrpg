@@ -1,9 +1,8 @@
 <div class="logContainer">
     <div class="timer" [class.past]="timer.time<campaign.now" [class.present]="timer.time==campaign.now" [class.future]="timer.time>campaign.now">
-        <input [value]="timer.time" (input)="setTime($event.target.value)" />
-        <a (click)="play()">></a>
+        <input [value]="timer.time" (input)="setTime($event.target.value)" type="number" />
+        <a (click)="play()">{{ speed==10 ? '>>' : '>' }}</a>
         <a (click)="toNow()" class="tonow">To Now</a>
-        <a (click)="setNow()" class="set">Set Now</a>
     </div>
     <div class="logScrollable">
         <app-history [actions]="history"></app-history>

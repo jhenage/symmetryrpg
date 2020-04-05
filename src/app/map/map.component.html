@@ -1,3 +1,4 @@
+<div class="scale">scale<input [(ngModel)]="scale" type="number"/></div>
 <div (mousemove)="onMouseMove($event)" class="viewer">
     <div id="tokens">
         <div class="container character" *ngFor="let char of campaign.characters" 
@@ -38,7 +39,6 @@
             </div>
         </div>
     </div>
-
     <canvas id="canvas">
     </canvas>
 </div>
