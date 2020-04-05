@@ -4,8 +4,15 @@ export class DiceRoll {
   result: number[];
   modifier: number;
 
-    constructor(dice?: number[]) {
-        this.result = dice ? dice : this.standardDice();
+    constructor(); // new standard roll
+    constructor(dice: number[]); // use previous roll result
+    constructor(dice: number, sides: number); // roll 
+    constructor(dice?: any, sides?: number) {
+        if(Array.isArray(dice)) this.result = dice;
+        else if(dice && dice > 0 && sides > 0) {
+            this.result = [];
+            for(let i=0; i<dice; i++) this.result.push(this.getDieRoll(sides));
+        } else this.result = this.standardDice();
         this.modifier = 0;
     }
 
@@ -15,28 +22,34 @@ export class DiceRoll {
 
     get lowluckResult(): number {
         let lowluckResult = this.modifier;
-        this.result.forEach((die) => {
-            if(die < 4) {
-                lowluckResult += 4;
-            } else if(die >6) {
-                lowluckResult += 6;
-            } else {
-                lowluckResult += 5;
+        for(let i=0; i<2; i++) {
+            if(this.result[i] < -1) {
+                lowluckResult--;
+            } else if(this.result[i] >1) {
+                lowluckResult++;
             }
-        });
+        }
         return lowluckResult;
+    }
+
+    get genericResult(): number {
+        let result = this.modifier;
+        this.result.forEach((die) => {
+            result += die;
+        });
+        return result;
     }
 
     getDieRoll(sides: number): number {
         return 1 + Math.floor(Math.random()*sides);
     }
 
-    standardDice(): number[] {
+    standardDice(): number[] { // returns array of two numbers between -3 and 3, with 0 twice as likely
         let result = [];
-        let die = this.getDieRoll(8);
-        result.push(die==1?5:die);
-        die = this.getDieRoll(8);
-        result.push(die==1?5:die);
+        for(let i=0; i<2; i++) {
+            result[i] = this.getDieRoll(8);
+            result[i] = result[i] == 1 ? 0 : result[i] - 5;
+        }
         return result;
     }
 }
