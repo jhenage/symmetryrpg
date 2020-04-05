@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, EventEmitter, Output, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, EventEmitter, Output, ElementRef, AfterViewInit, OnChanges } from '@angular/core';
 import { Character } from '../model/character';
 import { Campaign } from '../model/campaign';
 import { LogService } from '../log/log.service';
@@ -11,7 +11,7 @@ import { DataService } from '../data.service';
   styleUrls: ['map.component.less']
 })
 
-export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
+export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
 
   @Input() character: Character;
   @Output() saved = new EventEmitter();
@@ -41,7 +41,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.character = this.campaign.characters[0];
     }
 
-    this.movements = this.logService.movements;
+    this.movements = <MoveActionObject[]>this.logService.movements;
   }
 
   ngOnDestroy() {
@@ -63,6 +63,24 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     let scrollX = this.offsetX - this.canvas.parentElement.clientWidth / 2;
     let scrollY = this.offsetY - this.canvas.parentElement.clientHeight / 2;
     this.canvas.parentElement.scrollTo(scrollX,scrollY);
+  }
+
+  ngOnChanges() {
+    let speed = 50;
+    let interval = setInterval(() => {
+      let token = <HTMLDivElement>document.querySelector('#tokens .character.selected');
+      //console.log(token)
+      if(token) {
+        let scrollX = Math.round(token.offsetLeft - this.canvas.parentElement.clientWidth / 2 + this.scale / 2);
+        let scrollY = Math.round(token.offsetTop - this.canvas.parentElement.clientHeight / 2 + this.scale / 2);
+        let diffX = this.canvas.parentElement.scrollLeft - scrollX;
+        let diffY = this.canvas.parentElement.scrollTop - scrollY;
+        if(diffX**2 <= 1 && diffY**2 <= 1) clearInterval(interval);
+        diffX = diffX>0 ? (diffX<speed ? 1 : Math.round(diffX/speed)) : (diffX>-speed ? -1 : Math.round(diffX/speed));
+        diffY = diffY>0 ? (diffY<speed ? 1 : Math.round(diffY/speed)) : (diffY>-speed ? -1 : Math.round(diffY/speed));
+        this.canvas.parentElement.scrollTo(this.canvas.parentElement.scrollLeft - diffX,this.canvas.parentElement.scrollTop - diffY);
+      }
+    },1);
   }
 
   save() {
@@ -109,7 +127,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         let factory = new MoveActionFactory();
         let action = factory.build(this.character,{time:time,path:[{x:x,y:y,speed:0.5}]});
         this.logService.newAction(action);
-        this.movements.push(action);
       }
       
     }
@@ -122,7 +139,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     if ( ! this.mouseMode ) { return; }
 
     if ( this.mouseMode == 'reposition' || this.mouseMode == 'move' ) {
-      if(event.offsetX == 0 || event.offsetY == 0) console.log(event);
       let repo = this.elementRef.nativeElement.querySelector('#reposition');
       let viewer = this.canvas.parentElement;
       repo.style.left = event.clientX + viewer.scrollLeft - viewer.offsetLeft - this.scale/2 + 'px';

@@ -22,8 +22,10 @@ export class AppComponent  {
   ngOnInit() {
     this.mode = 'sheet';
     this.campaign = this.dataService.campaign;
+    this.campaign.now = 0; // For Debugging
 
     this.campaign.characters.forEach((character) => {
+      character.resetAll(); // For Debugging
       this.logService.import(character);
     });
   }
@@ -48,30 +50,6 @@ export class AppComponent  {
 
   select(character: Character) {
     this.character = character;
-
-    //character.fatigue.AddAerobicRate(0,.1);
-    //character.fatigue.AddAerobicRate(5000,-.1);
-    //character.fatigue.AddAerobicRate(60000,.01);
-    //character.fatigue.AddAerobicRate(120000,.01);
-    //character.fatigue.AddAerobicRate(180000,.01);
-    //character.fatigue.AddAerobicRate(240000,-.03);
-    //character.fatigue.AddAerobicRate(60000*60,.01);
-    //character.fatigue.AddAerobicRate(60000*61,-.01);
-    //character.fatigue.AddAerobicRate(60000*60*3,.01);
-    //character.fatigue.AddAerobicRate(60000*61*3,-.01);
-    //character.fatigue.AddAerobicRate(60000*60*10,.01);
-    //character.fatigue.AddMuscleRate(5000,-5,'mental');
-    //character.fatigue.AddMuscleRate(60000,1,'mental');
-    //character.fatigue.AddMuscleRate(120000,1,'mental');
-    //character.fatigue.AddMuscleRate(180000,1,'mental');
-    //character.fatigue.AddMuscleRate(240000,-3,'mental');
-    //character.fatigue.AddMuscleRate(60000*60,1,'mental');
-    //character.fatigue.AddMuscleRate(60000*61,-1,'mental');
-    //character.fatigue.AddMuscleRate(60000*60*3,1,'mental');
-    //character.fatigue.AddMuscleRate(60000*61*3,-1,'mental');
-    //character.fatigue.AddMuscleRate(60000*60*10,1,'mental');
-    //console.log(character.fatigue);
-    //console.log(character.fatigue.Penalty('aerobic',60000*61*3));
   }
 
 }

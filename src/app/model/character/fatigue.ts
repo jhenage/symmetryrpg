@@ -19,7 +19,7 @@ export interface FatigueData {
 //  Aerobic fatigue uses Endurance, and currently only needs adjustment per muscle group size
 //  Muscle fatigue needs the values entered to be divided by Endurance still
 //  Both need a scale to convert actions into fatigue values.
-//   Note that Aerobic buckets are 30*End, Muscle Buckets are 60,000
+//   Note that Aerobic buckets are 30*Endurance, Muscle Buckets are 60,000
 
 const muscleCarryover = 0.3; // Percent that gets added to subsequent bucket
 
@@ -192,6 +192,9 @@ export class Fatigue {
     if ( this._data.muscles[location][i-1].time > time ) {
       throw new Error('Invalid time '+time);
     }
+
+    rate = 6000 * rate / this.character.Endurance(time);
+
     if ( this._data.muscles[location][i-1].time == time ) {
       this._data.muscles[location][i-1].rate += rate;
       return;
