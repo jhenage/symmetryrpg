@@ -22,10 +22,10 @@ export class AppComponent  {
   ngOnInit() {
     this.mode = 'sheet';
     this.campaign = this.dataService.campaign;
-    this.campaign.now = 0; // For Debugging
+    //this.campaign.now = 0; // For Debugging
 
     this.campaign.characters.forEach((character) => {
-      character.resetAll(); // For Debugging
+      //character.resetAll(); // For Debugging
       this.logService.import(character);
     });
   }

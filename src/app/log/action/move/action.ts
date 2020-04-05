@@ -61,7 +61,7 @@ export class MoveActionFactory implements ActionFactory {
                 location.velx = (action.data.path[i].x - location.x) / duration;
                 location.vely = (action.data.path[i].y - location.y) / duration;
                 action.character.setLocation(location);
-                action.data.fatigue = .04 * action.data.path[i].speed ** 2;
+                action.data.fatigue = .08 * action.data.path[i].speed ** 2;
                 action.character.fatigue.AddMuscleRate(action.data.nextExecution,action.data.fatigue/6,"leftLeg");
                 action.character.fatigue.AddMuscleRate(action.data.nextExecution,action.data.fatigue/6,"rightLeg");
                 action.character.fatigue.AddAerobicRate(action.data.nextExecution,action.data.fatigue);

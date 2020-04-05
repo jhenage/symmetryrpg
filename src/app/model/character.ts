@@ -51,7 +51,7 @@ export function ChangeModifiedValue(time:number,data:ModifiableStat,amount:numbe
     data.modified[i-1].amount = amount;
   }
 
-  if ( data.modified[i-1].time < time ) {
+  if ( data.modified[i-1].time > time ) {
     throw new Error('Invalid time '+time);
   }
   

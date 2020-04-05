@@ -24,8 +24,11 @@ export class MoveExecuteComponent implements ActionExecuteComponent {
   //  return 'is sprinting';
   //}
 
-  // convert action into MoveProcessActionObject
+  
   execute() {
+    this.action.data.path.forEach((path) => {
+      path.speed = Number(path.speed);
+    });
     this.logService.executeAction(this.action);
   }
 

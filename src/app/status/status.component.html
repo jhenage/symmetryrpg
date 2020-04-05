@@ -19,3 +19,17 @@
     </table>
   
 </div>
+<div class="fatigue container">
+    <div>
+        Top Speed: {{character.MaxSpeed(timer.time,['leftLeg','rightLeg'],0)}}
+    </div>
+    <div>
+        Aerobic Penalty {{character.fatigue.Penalty('aerobic',timer.time)}}, Total {{character.fatigue.AerobicTotal(timer.time)}}
+    </div>
+    <div>
+        Mental Penalty {{character.fatigue.Penalty('mental',timer.time)}}, Halflife {{character.fatigue.MuscleHalflife(timer.time,'mental')}}
+    </div>
+    <div *ngFor="let muscle of character.creatureType.limbList">
+        {{muscle|titlecase}} Penalty {{character.fatigue.Penalty(muscle,timer.time)}}, Halflife {{character.fatigue.MuscleHalflife(timer.time,muscle)}}
+    </div>
+</div>
