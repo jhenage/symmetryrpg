@@ -24,13 +24,15 @@ import { ExecuteActionwrapComponent } from './log/execute/actionwrap.component';
 import { SkillsComponent } from './sheet/skills/skills.component';
 import { SpecialtiesComponent } from './sheet/specialties/specialties.component';
 import { AboutComponent } from './sheet/about/about.component';
+import { StatusComponent } from './status/status.component';
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule ],
   declarations: [ AppComponent, SheetComponent, MapComponent, ExecuteComponent, LogComponent, QueueComponent, HistoryComponent, ActionDirective, 
     AspecttestHistoryComponent, SkilltestHistoryComponent, MoveHistoryComponent, MoveExecuteComponent, MoveQueueComponent,
     HistoryActionwrapComponent, AspectsComponent, SkillsComponent, AboutComponent, QueueActionwrapComponent, ExecuteActionwrapComponent,
-    SpecialtiesComponent
+    SpecialtiesComponent,
+    StatusComponent
    ],
   entryComponents: [ AspecttestHistoryComponent, SkilltestHistoryComponent, MoveHistoryComponent, MoveExecuteComponent, MoveQueueComponent ],
   bootstrap:    [ AppComponent ]

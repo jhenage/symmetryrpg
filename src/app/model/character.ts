@@ -36,6 +36,7 @@ export function ModifiedValue(time:number,data:ModifiableStat): number {
 
 export function ChangeModifiedValue(time:number,data:ModifiableStat,amount:number): void {
   
+  amount = Number(amount);
   if ( amount == ModifiedValue(time,data) ) {
     return;
   }
@@ -50,7 +51,7 @@ export function ChangeModifiedValue(time:number,data:ModifiableStat,amount:numbe
     data.modified[i-1].amount = amount;
   }
 
-  if ( data.modified[i-1].time == time ) {
+  if ( data.modified[i-1].time < time ) {
     throw new Error('Invalid time '+time);
   }
   
@@ -229,10 +230,14 @@ export class Character {
     return ModifiedValue(time,this._data.qi);
   }
 
-  MaxQi(): number { return 10; }
+  MaxQi(time?: number): number { return 10; }
 
   AddQi(time: number, amount: number): void {
     return ChangeModifiedValue(time,this._data.qi,ModifiedValue(time,this._data.qi)+amount);
+  }
+
+  SetQi(time: number, amount: number): void {
+    return ChangeModifiedValue(time,this._data.qi,amount);
   }
 
   location(time:number): LocationData {

@@ -98,17 +98,28 @@ export class About {
   }
 
   HeightMeter(time?: number): number {
-    if ( typeof time === undefined ) {
+    if ( typeof time === "undefined" ) {
       return this._data.height.amount;
     }
     return ModifiedValue(time,this._data.height);
   }
 
   HeightInch(time?: number): number {
-    if ( typeof time === undefined ) {
+    if ( typeof time === "undefined" ) {
       return this._data.height.amount * 100 / 2.54;
     }
     return ModifiedValue(time,this._data.height) * 100 / 2.54;
+  }
+
+  setHeight(time:number,height:string) {
+    let regex = /^(\d+)'(\d+)"/;
+    let res = regex.exec(height);
+    if (res) {
+      ChangeModifiedValue(time,this._data.height,(Number(res[1]) * 12 + Number(res[2])) * 2.54 / 100);
+    }
+ }
+  getHeight(time:number){
+    return Math.floor(this.HeightInch(time) / 12) + '\'' + Math.round(this.HeightInch(time) % 12) + '"';
   }
 
   get improvementPoints(): number {
