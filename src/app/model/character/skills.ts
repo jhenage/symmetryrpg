@@ -25,9 +25,9 @@ export class Skills {
 
   protected _data: SkillsData;
   character: Character;
-  readonly MINIMUM_VALUE = -14;
-  readonly MAXIMUM_VALUE = 30;
-  readonly INCREMENT = 0.2;
+  readonly MINIMUM_VALUE = -7;
+  readonly MAXIMUM_VALUE = 15;
+  readonly RESOLUTION = 10; // number of steps per standard deviation
  
   constructor(character: Character,data?: SkillsData) {
     this.character = character;
@@ -68,20 +68,23 @@ export class Skills {
     return this._data[skillName];
   }
 
-  setSkillRank(skillName: string, rank: number) {
+  setSkillRank(skillName: string, rank: number) { // force rank to be within bounds and the right resolution avoiding rounding errors
     if(this._data.hasOwnProperty(skillName)) {
-      let newRank = Math.round(rank/this.INCREMENT)*this.INCREMENT;
-      this._data[skillName] = Math.min(this.MAXIMUM_VALUE,Math.max(this.MINIMUM_VALUE,newRank));
+      let sign = Math.sign(rank)
+      rank = Math.abs(rank);
+      let base = Math.floor(rank)
+      let newRank = base + Math.round((rank-base)*this.RESOLUTION)/this.RESOLUTION;
+      this._data[skillName] = Math.min(this.MAXIMUM_VALUE,Math.max(this.MINIMUM_VALUE,newRank*sign));
     }
   }
 
   getBaseResult(aspectRank: number, skillName: string, missingSpecializationRanks?: number): number {
     missingSpecializationRanks = missingSpecializationRanks || 0;
-    let skillRank = this.getSkillRank(skillName) - 4*missingSpecializationRanks;
-    if(missingSpecializationRanks > 3) skillRank -= 2*(missingSpecializationRanks-3);
+    let skillRank = this.getSkillRank(skillName) - 2*missingSpecializationRanks;
+    if(missingSpecializationRanks > 3) skillRank -= missingSpecializationRanks-3;
     let low = Math.min(aspectRank, skillRank);
     let delta = Math.max(aspectRank, skillRank) - low;
-    delta = Math.min(delta,0.8*delta+0.6,0.5*delta+2.4,0.2*delta+5.1);
+    delta = Math.min(delta,0.8*delta+0.3,0.5*delta+1.2,0.2*delta+2.7);
     return 2 * low + delta;
   }
 
@@ -104,8 +107,8 @@ export class Skills {
   getSpentIP(rank: number): number { // returns the IP cost of a single skill of the specified rank
     let sign = Math.sign(rank);
     rank = sign * rank;
-    let base = Math.floor(rank)
-    return sign * Math.round(0.25 * (base * base + base) + (rank - base) * (rank + 1) * 5);
+    let base = Math.floor(2*rank)
+    return sign * Math.round(2.5 * (base * base + base) + 5 * (2 * rank - base) * (1 + base) );
   }
 
 }

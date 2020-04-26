@@ -160,7 +160,6 @@ export class Character {
     this._data.fatigue.muscles = {};
     this._data.location = [];
     this._data.qi.modified = [];
-    this._data.about.bodyType.modified = [];
     this._data.about.height.modified = [];
     this.aspects.aspectsList.forEach((aspect) => {
       this._data.aspects[aspect].modified = [];
@@ -179,7 +178,6 @@ export class Character {
     }
     this._data.location = [this.location(time)];
     this._data.qi = {amount:this.MaxQi(),modified:[{time:time,amount:this.Qi(time)}]};
-    this._data.about.bodyType.modified = [{time:time,amount:this.about.CurrentBodyType(time)}];
     this._data.about.height.modified = [{time:time,amount:this.about.HeightMeter(time)}];
     this.aspects.aspectsList.forEach((aspect) => {
       this._data.aspects[aspect].modified = [{time:time,amount:this.aspects.Current(time,aspect)}];
@@ -195,22 +193,31 @@ export class Character {
     return this.WeightKg(time) * 2.2;
   }
 
-  // This is based off of BMI. Human BMI is 6 + 12*bodyType + (0.4+0.4*bodyType)*(0.7*brawn+0.3*toughness)
-  // extreme body Types require minimum aspect scores for normal functioning and can even be lethal
+  // 
   WeightKg(time:number): number {
-    let bmi = this.creatureType.weight.bmiOffset;
-    bmi += this.creatureType.weight.bodyTypeFactor * this.about.CurrentBodyType(time);
-    let aspectValue = this.creatureType.weight.brawnFactor*this.aspects.Current(time,'brawn') + 
-                      (1 - this.creatureType.weight.brawnFactor)*this.aspects.Current(time,'toughness');
-    let aspectMultiplier = this.creatureType.weight.aspectFactor + 
-                           this.about.CurrentBodyType(time)*this.creatureType.weight.combinedFactor;
-    bmi += aspectValue*aspectMultiplier;
-    let height = this.about.HeightMeter(time);
-    return height * height * bmi;
+    let weight = this.creatureType.weight;
+    let frameSizeFactor = this.interpretSymmetric(this.about.frameSize, weight.frameSizeFactor);
+    let fatMassFactor = this.interpretSymmetric(this.about.bodyFat, weight.fatMassFactor);
+    let boneFrameFactor = this.interpretSymmetric(this.about.frameSize, weight.boneFrameFactor);
+    let boneToughnessFactor = this.interpretSymmetric(this.aspects.Current(time,"toughness"), weight.boneToughnessFactor);
+    let muscleBulkFactor = this.interpretSymmetric(this.about.muscleBulk, weight.muscleBulkFactor);
+    let muscleBrawnFactor = this.interpretSymmetric(this.aspects.Current(time,"brawn"), weight.muscleBrawnFactor);
+    let result = weight.organWeightFactor + fatMassFactor + boneFrameFactor + boneToughnessFactor;
+    result += muscleBrawnFactor * muscleBulkFactor;
+    return result * ( this.about.HeightMeter(time) ** (1 + frameSizeFactor) );
+  }
+
+  // for normal or log-normal distributions; data.minimum signals the use of log-normal distributions
+  interpretSymmetric(symmetric: number, data: {minimum?: number, average: number, stddev: number}) {
+    if(symmetric >= 0 || isNaN(data.minimum) ) {
+      return data.average + data.stddev * symmetric;
+    } else {
+      return data.minimum + (data.average - data.minimum) * Math.exp(symmetric);
+    }
   }
 
   Endurance(time:number): number { 
-    let endurance = this.aspects.Current(time,'toughness') / this.about.CurrentBodyType(time);
+    let endurance = (7.5 + 0.5*this.aspects.Current(time,'toughness')) * ((8 - this.about.muscleBulk) ** 2) / 64;
     //if ( this.traits.endurance ) {
     //  if ( this.traits.greatEndurance ) {
     //    if ( this.traits.epicEndurance ) {
@@ -287,20 +294,24 @@ export class Character {
       result *= 0.7 ** this.wounds.Penalty(limb,time);
     });
     result **= 1 / limbList.length; // finish taking geometric mean
-    result *= 0.7 ** this.fatigue.Penalty('aerobic',time);
+    result *= 0.8 ** this.fatigue.Penalty('aerobic',time);
     return result;
   }
 
   MaxSpeed(time: number, limbList: string[], carriedWeight: number): number { // spd in m/s
-    var result = this.skills.getBaseResult(this.aspects.Current(time,'brawn'),'athlete',0) - 1;
-    if(result <=0) return 0;
+    var result = this.skills.getBaseResult(this.aspects.Current(time,'brawn'),'athlete',0);
+    result < 0 ? result = result * 0.6 : result = result / 0.6;
+    result += 9;
     result *= 0.5 * this.LimbsMovementFactor(time,limbList) * this.about.HeightMeter(time);
     result *= (100/(this.WeightKg(time)+carriedWeight))**0.25;
     return result;
   }
 
   MaxAcceleration(time: number, limbList: string[], carriedWeight: number): number { // accel in m/s/s
-    var result = (this.aspects.Current(time,'brawn') / 5) ** 1.5;
+    var result = (this.aspects.Current(time,'brawn'));
+    result < 0 ? result = result * 0.12 : result = result / 3;
+    result++;
+    result **= 1.5;
     result *= 100 * this.LimbsMovementFactor(time,limbList) / (this.WeightKg(time)+carriedWeight);
     return result;
   }

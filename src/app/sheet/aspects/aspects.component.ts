@@ -12,8 +12,6 @@ export class AspectsComponent implements OnInit {
 
   @Input() aspects: Aspects;
   inputsOutOfRange = {};
-  readonly MIN_RANK = 0;
-  readonly MAX_RANK = 25;
 
   constructor(private logService: LogService) {}
 
@@ -24,11 +22,11 @@ export class AspectsComponent implements OnInit {
   }
 
   setAspectRank(aspectName: string,rank: number) {
-    if(rank < this.MIN_RANK) {
-      rank = this.MIN_RANK;
+    if(rank < this.aspects.MINIMUM_VALUE) {
+      rank = this.aspects.MINIMUM_VALUE;
       this.inputsOutOfRange[aspectName] = true;
-    } else if(rank > this.MAX_RANK) {
-      rank = this.MAX_RANK;
+    } else if(rank > this.aspects.MAXIMUM_VALUE) {
+      rank = this.aspects.MAXIMUM_VALUE;
       this.inputsOutOfRange[aspectName] = true;
     } else {
       this.inputsOutOfRange[aspectName] = false;

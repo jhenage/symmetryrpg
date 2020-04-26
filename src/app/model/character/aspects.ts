@@ -15,9 +15,9 @@ export class Aspects {
 
   protected _data: AspectsData;
   character: Character;
-  readonly MINIMUM_VALUE = -14;
-  readonly MAXIMUM_VALUE = 30;
-  readonly RESOLUTION = 0.1;
+  readonly MINIMUM_VALUE = -7;
+  readonly MAXIMUM_VALUE = 15;
+  readonly RESOLUTION = 10; // number of steps per standard deviation
   
   constructor(character: Character,data?: AspectsData) {
     this.character = character;
@@ -56,10 +56,13 @@ export class Aspects {
     return this._data[aspectName].amount;
   }
 
-  setAspectRank(aspectName: string, rank: number) {
+  setAspectRank(aspectName: string, rank: number) { // force rank to be within bounds and the right resolution avoiding rounding errors
     if(this._data.hasOwnProperty(aspectName)) {
-      let newRank = Math.round(rank/this.RESOLUTION)*this.RESOLUTION;
-      this._data[aspectName].amount = Math.min(this.MAXIMUM_VALUE,Math.max(this.MINIMUM_VALUE,newRank));
+      let sign = Math.sign(rank)
+      rank = Math.abs(rank);
+      let base = Math.floor(rank)
+      let newRank = base + Math.round((rank-base)*this.RESOLUTION)/this.RESOLUTION;
+      this._data[aspectName].amount = Math.min(this.MAXIMUM_VALUE,Math.max(this.MINIMUM_VALUE,newRank*sign));
     }
   }
 
@@ -70,19 +73,19 @@ export class Aspects {
   protected getBaseReactionTime(rank: number, penalty: number, diceTotal: number, isSurprised: boolean): number {
     let result = 0.001;
     if(rank < 0) {
-      result *= 38 + rank * rank;
-      result += diceTotal * 0.01 * (24 + 2 * rank * rank);
+      result *= 38 + 4 * rank * rank;
+      result += diceTotal * 0.01 * (24 + 8 * rank * rank);
     } else if (rank > 8) {
-      result *= 30 - rank;
-      result += diceTotal * 0.01 * (20 - 0.5 * rank);
+      result *= 30 - 2 * rank;
+      result += diceTotal * 0.01 * (20 - rank);
     } else {
-      result *= 38 - 2 * rank;
-      result += diceTotal * 0.01 * (24 - rank);
+      result *= 38 - 4 * rank;
+      result += diceTotal * 0.01 * (24 - 2 * rank);
     }
     if(penalty) result *= 1.1 ** penalty;
     if(isSurprised) {
-      if(rank < 0) result *= 10 - 0.5 * rank;
-      else result *= 10 - 0.2 * rank;
+      if(rank < 0) result *= 10 - rank;
+      else result *= 10 - 0.4 * rank;
     }
     return result;
   }
@@ -100,7 +103,7 @@ export class Aspects {
 
   protected getActionTime(actionTime: number, rank: number, actionPenalty: ActionPenalty): number { //time is in seconds
     let result = rank < 0 ? 0.8 : 0.9;
-    result **= rank;
+    result **= 2 * rank;
     result *= actionTime;
     result *= 2 ** actionPenalty.targetedPenalty;
     result *= 1.2 ** actionPenalty.genericPenalty;
@@ -127,8 +130,8 @@ export class Aspects {
   getSpentIP(rank: number): number { // returns the IP cost of a single aspect of the specified rank
     let sign = Math.sign(rank);
     rank = sign * rank;
-    let base = Math.floor(rank)
-    return sign * Math.round(0.5 * (base * base + base) + (rank - base) * (rank + 1) * 10);
+    let base = Math.floor(2*rank)
+    return sign * Math.round(5 * (base * base + base) + 10 * (2 * rank - base) * (1 + base) );
   }
 
 }

@@ -20,21 +20,16 @@ export class DataService {
         leftLeg:  { dexterity: 1, locomotion: 0.85, muscleSize: 3, reach: 0.5 },
         rightLeg: { dexterity: 1, locomotion: 0.85, muscleSize: 3, reach: 0.5 },
       },
-      height: { average: 1.7, stddev: 0.1 },
-      bodyTypes: [
-        {label: 'Skeletal', amount: 0.5},
-        {label: 'Severely Thin', amount: 0.6},
-        {label: 'Very Thin', amount: 0.7},
-        {label: 'Thin', amount: 0.8},
-        {label: 'Average', amount: 1},
-        {label: 'Solid', amount: 1.2},
-        {label: 'Bulky', amount: 1.4},
-        {label: 'Hefty', amount: 1.6},
-        {label: 'Very Large', amount: 2.2},
-        {label: 'Exceptionally Large', amount: 3},
-        {label: 'Incredibly Large', amount: 4}
-      ],
-      weight: { bmiOffset: 6, bodyTypeFactor: 12, aspectFactor: 0.4, combinedFactor: 0.4, brawnFactor: 0.7 },
+      height: { average: 1.692, stddev: 0.127 },
+      weight: {
+        frameSizeFactor: { average: 1, stddev: 0.05 },
+        boneFrameFactor: { minimum: 1.5, average: 2.5, stddev: 0.5 },
+        boneToughnessFactor: { minimum: 0, average: 0.6, stddev: 0.2 },
+        organWeightFactor: 5.6,
+        muscleBrawnFactor: { minimum: NaN, average: 9, stddev: 1 },
+        muscleBulkFactor: { minimum: 0.6, average: 1, stddev: 0.09 },
+        fatMassFactor: { minimum: 0.4, average: 5, stddev: 10 }
+      }
     }]
   };
   constructor() { }

@@ -12,8 +12,6 @@ export class SkillsComponent implements OnInit {
 
   @Input() skills: Skills;
   inputsOutOfRange = {};
-  readonly MIN_RANK = 0;
-  readonly MAX_RANK = 25;
 
   constructor(private logService: LogService) { }
 
@@ -24,11 +22,11 @@ export class SkillsComponent implements OnInit {
   }
 
   setSkillRank(skillName: string,rank: number) {
-    if(rank < this.MIN_RANK) {
-      rank = this.MIN_RANK;
+    if(rank < this.skills.MINIMUM_VALUE) {
+      rank = this.skills.MINIMUM_VALUE;
       this.inputsOutOfRange[skillName] = true;
-    } else if(rank > this.MAX_RANK) {
-      rank = this.MAX_RANK;
+    } else if(rank > this.skills.MAXIMUM_VALUE) {
+      rank = this.skills.MAXIMUM_VALUE;
       this.inputsOutOfRange[skillName] = true;
     } else {
       this.inputsOutOfRange[skillName] = false;

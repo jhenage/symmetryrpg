@@ -1,3 +1,36 @@
+export interface WeightData {
+  frameSizeFactor: { // mass is proportional to height ** (1 + frameSizeFactor)
+    average: number; // human = 1, ie. mass proportional to height squared
+    stddev: number; // human = 0.05
+  };
+  boneFrameFactor: { // mass of bones proportionality constant for portion from frame size symmetric
+    minimum: number; // human = 1.5
+    average: number; // human = 2.5
+    stddev: number; // human = 0.5
+  };
+  boneToughnessFactor: { // mass of bones proportionality constant for portion from toughness
+    minimum: number; // human = 0
+    average: number; // human = 0.6
+    stddev: number; // human = 0.2
+  };
+  organWeightFactor: number; // mass of organs proportionality constant, human = 5.6
+  muscleBrawnFactor: { // mass of muscle proportionality constant dependent on brawn
+    minimum: number; // human = NaN (indicates to use a normal instead of log-normal distribution)
+    average: number; // human = 9
+    stddev: number; // human = 1
+  };
+  muscleBulkFactor: { // mass of muscle scaling factor for muscle bulk symmetric
+    minimum: number; // human = 0.6
+    average: number; // human = 1
+    stddev: number; // human = 0.09
+  };
+  fatMassFactor: { // mass of fat porportionality constant dependent on body fat symmetric
+    minimum: number; // human 0.05
+    average: number; // human 0.25
+    stddev: number; // human 0.80
+  };
+}
+
 export interface CreatureTypeData {
   name: string;
   limbs: {
@@ -12,17 +45,7 @@ export interface CreatureTypeData {
     average: number;
     stddev: number;
   };
-  bodyTypes: {
-    label: string;
-    amount: number; // between 0 and 10, human average = 1, reflecting more variation on heavier side (1-10) than on thin side (0-1)
-  }[];
-  weight: { // = bmi * height^2 (using SI units); bmi calculated from the factors in this object
-    bmiOffset: number; // min 0, increases minimum bmi (humans = 6)
-    bodyTypeFactor: number; // min 0, increases base effect of body type (humans = 12)
-    aspectFactor: number; // min 0, increases base effect of aspect scores (humans = 0.4)
-    combinedFactor: number; // min 0, increases effect of body type and aspect scores on each other (humans = 0.4)
-    brawnFactor: number; // between 0 and 1, fraction of brawn vs toughness (humans = 0.7)
-  };
+  weight: WeightData;
 }
 
 
@@ -36,14 +59,6 @@ export class CreatureType {
     }
   }
   
-  get weight() {
-    return this._data.weight;
-  }
-
-  get bodyTypes() {
-    return this._data.bodyTypes;
-  }
-
   get name() {
     return this._data.name;
   }
@@ -54,6 +69,14 @@ export class CreatureType {
 
   get limbList() {
     return Object.keys(this._data.limbs);
+  }
+
+  get height(): {average: number, stddev: number} {
+    return this._data.height;
+  }
+
+  get weight(): WeightData {
+    return this._data.weight;
   }
 
 }

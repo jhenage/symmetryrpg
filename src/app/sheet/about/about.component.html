@@ -9,11 +9,17 @@
     <label>Height</label>
     <input [(ngModel)]="about.height" />
   </div>
-  <div class="field name">
-    <label>Body Type</label>
-    <select [(ngModel)]="about.bodyType" >
-      <option *ngFor="let bt of about.character.creatureType.bodyTypes" [value]="bt.amount">{{bt.label}}</option>
-    </select>
+  <div class="field frame-size">
+    <label>Frame Size</label>
+    <input [(ngModel)]="about.frameSize" />
+  </div>
+  <div class="field muscle-bulk">
+    <label>Muscle Bulk</label>
+    <input [(ngModel)]="about.muscleBulk" />
+  </div>
+  <div class="field body-fat">
+    <label>Body Fat</label>
+    <input [(ngModel)]="about.bodyFat" />
   </div>
   Weight: {{about.character.WeightLbs(0) | number:'1.0-0'}}<br/>
   Endurance: {{about.character.Endurance(0) | number:'1.0-1'}}<br/>

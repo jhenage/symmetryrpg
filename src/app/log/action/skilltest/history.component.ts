@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
   <div class="result">
       <select [(ngModel)]="action.data.luck">
           <option value="low">Low Luck</option>
+          <option value="standard">Standard</option>
           <option value="high">High Luck</option>
       </select>
       <select [(ngModel)]="action.data.missingSpecialty">
@@ -28,7 +29,9 @@ export class SkilltestHistoryComponent implements ActionHistoryComponent {
   constructor() { }
 
   result(): number {
-    let result = this.action.data.luck=="low" ? this.action.roll.lowluckResult : this.action.roll.standardResult;
+    let result = this.action.data.luck=="low" ? this.action.roll.lowluckResult 
+                 : this.action.data.luck=="high" ? this.action.roll.highluckResult
+                 : this.action.roll.standardResult;
     result += this.action.data.modifierBySpecialty[this.action.data.missingSpecialty];
     return result;
   }

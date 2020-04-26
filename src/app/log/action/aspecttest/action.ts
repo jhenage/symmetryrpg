@@ -11,7 +11,7 @@ export interface ActionPenalty {
 
 interface AspectTestActionData extends ActionData {
     aspect: string;
-    luck: string; // 'low' or 'high'
+    luck: string; // 'low', 'standard', or 'high'
     dice: number[]; // the two dice
     modifier: number;
 }
@@ -27,7 +27,7 @@ export class AspectTestActionFactory implements ActionFactory {
         let data = datainit as AspectTestActionData;
         data.type = 'aspecttest';
         data.executed = true;
-        data.luck = data.luck || 'high';
+        data.luck = data.luck || 'standard';
 
         let roll = new DiceRoll();
         data.dice = roll.result;

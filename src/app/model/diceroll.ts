@@ -17,38 +17,34 @@ export class DiceRoll {
     }
 
     get standardResult(): number {
-        return this.result[0] + this.result[1] + this.modifier;
+        return this.getGenericResult(1);
     }
 
     get lowluckResult(): number {
-        let lowluckResult = this.modifier;
-        for(let i=0; i<2; i++) {
-            if(this.result[i] < -1) {
-                lowluckResult--;
-            } else if(this.result[i] >1) {
-                lowluckResult++;
-            }
-        }
-        return lowluckResult;
+        return this.getGenericResult(0.5);
     }
 
-    get genericResult(): number {
-        let result = this.modifier;
+    get highluckResult(): number {
+        return this.getGenericResult(2);
+    }
+
+    getGenericResult(diceMultiplier:number): number {
+        let genericResult = this.modifier;
         this.result.forEach((die) => {
-            result += die;
+            genericResult += die * diceMultiplier;
         });
-        return result;
+        return genericResult;
     }
 
     getDieRoll(sides: number): number {
         return 1 + Math.floor(Math.random()*sides);
     }
 
-    standardDice(): number[] { // returns array of two numbers between -3 and 3, with 0 twice as likely
-        let result = [];
-        for(let i=0; i<2; i++) {
-            result[i] = this.getDieRoll(8);
-            result[i] = result[i] == 1 ? 0 : result[i] - 5;
+    standardDice(): number[] { // returns array of three numbers between -1 and 1 in 0.01 step increments, careful about rounding errors
+        let result = [];       // this gives a total of -3 to 3 with a standard deviation of about 1.0025
+        for(let i=0; i<3; i++) {
+            result[i] = Math.floor(Math.random()*101)/100;
+            if(Math.random() < 0.5) result[i] = -result[i];
         }
         return result;
     }
