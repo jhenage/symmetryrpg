@@ -30,7 +30,44 @@ export class DataService {
         muscleBulkFactor: { minimum: 0.6, average: 1, stddev: 0.09 },
         fatMassFactor: { minimum: 0.4, average: 5, stddev: 10 }
       }
-    }]
+    }],
+    commonSpecialties: {
+      archeology: ["academic"], biology:["academic","medical"],chemistry:["academic","technology"],
+      economics:["academic"],education:["academic"],history:["academic"],mathematics:["academic"],
+      philosophy:["academic"],physics:["academic","technology"],research:["academic"],
+      calligraphy:["art"],cosmetics:["art"],illustration:["art"],jewelry:["art"],needlework:["art"],
+      photography:["art"],poetry:["art"],sculpture:["art"],tattoos:["art"],clay:["crafting"],
+      clothing:["crafting"],culinaryArts:["crafting"],leatherworking:["crafting"],metalworking:["crafting"],
+      stoneworking:["crafting"],woodworking:["crafting"],arson:["criminology"],bindings:["criminology"],
+      forensics:["criminology"],law:["criminology"],securitySystems:["criminology","espionage"],streetCulture:["criminology"],
+      cryptography:["espionage"],disguise:["art","espionage"],locks:["espionage","technology"],pickingPockets:["espionage"],
+      seduction:["espionage","social"],tailing:["espionage"],automatics:["fighting"],axes:["fighting"],
+      bows:["fighting"],chainWeapons:["fighting"],clubs:["fighting"],crossbows:["fighting"],knives:["fighting"],
+      longarms:["fighting"],pistols:["fighting"],slings:["fighting"],sniping:["fighting"],spears:["fighting"],
+      staves:["fighting"],swords:["fighting"],unarmedCombat:["fighting"],anatomy:["medical"],diseases:["medical"],
+      drugs:["medical"],genetics:["medical"],physicalTherapy:["medical"],psychology:["medical"],reproductiveHealth:["medical"],
+      surgery:["medical"],armor:["military"],artillery:["fighting","military"],explosives:["military"],
+      interrogation:["military","social"],militaryCulture:["military"],militaryTactics:["military"],brass:["music"],
+      composing:["music"],keyboards:["music"],percussion:["music"],singing:["music"],strings:["music"],woodwinds:["music"],
+      enchantments:["mystic"],magicalBeasts:["mystic"],meditation:["mystic"],occult:["mystic"],qi:["mystic"],
+      residues:["mystic"],ritualMagic:["mystic"],spellcasting:["mystic"],animalCare:["nature"],animalTraining:["nature"],
+      aquatic:["nature"],arctic:["nature"],cartography:["nature"],caverns:["nature"],deserts:["nature"],
+      ecology:["nature"],farming:["nature"],jungles:["nature"],landscaping:["nature"],meteorology:["nature"],
+      mountains:["nature"],swamps:["nature"],tracking:["nature"],comedy:["performance"],dancing:["performance"],
+      firePerformance:["performance"],juggling:["performance"],legerdemain:["performance"],storytelling:["art","performance"],
+      theater:["performance"],anthropology:["social"],bureacracy:["social"],business:["social"],highSociety:["social"],
+      intimidation:["social"],marketing:["social"],negotiation:["social"],politics:["social"],religion:["social"],
+      acrobatics:["sports"],climbing:["sports"],cycling:["sports"],parkour:["sports"],skiing:["sports"],skydiving:["sports"],
+      swimming:["sports"],architecture:["technology"],artificialIntelligence:["technology"],bionics:["medical","technology"],
+      civilEngineering:["technology"],cloaking:["technology"],communications:["technology"],construction:["crafting","technology"],
+      conversionPlants:["technology"],electricity:["technology"],gravitics:["technology"],integratedCircuits:["technology"],
+      jumpDrives:["technology"],mechanics:["technology"],metallurgy:["technology"],mining:["technology"],
+      nanotechnology:["technology"],networkSecurity:["technology"],nuclearTechnology:["technology"],optics:["technology"],
+      qiGenerators:["technology"],robotics:["technology"],software:["technology"],syntheticMaterials:["crafting","technology"],
+      airplanes:["vehicles"],automobiles:["vehicles"],carts:["vehicles"],helicopters:["vehicles"],militaryVehicles:["military","vehicles"],
+      motorboats:["vehicles"],riding:["vehicles"],sailboats:["vehicles"],spacecraft:["vehicles"],submarines:["vehicles"],
+      trains:["vehicles"]
+    }
   };
   constructor() { }
 

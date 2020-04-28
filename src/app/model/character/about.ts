@@ -143,6 +143,10 @@ export class About {
     this._data.frameSize = Math.min(7,Math.max(-7,fs));
   }
 
+  get frameSizeDescription(): string {
+    return this.character.getProbabilityDescription(this.frameSize);
+  }
+
   get muscleBulk(): number {
     return this._data.muscleBulk;
   }
@@ -151,12 +155,20 @@ export class About {
     this._data.muscleBulk = Math.min(7,Math.max(-7,mb));
   }
 
+  get muscleBulkDescription(): string {
+    return this.character.getProbabilityDescription(this.muscleBulk);
+  }
+
   get bodyFat(): number {
     return this._data.bodyFat;
   }
 
   set bodyFat(bf: number) {
     this._data.bodyFat = Math.min(7,Math.max(-7,bf));
+  }
+
+  get bodyFatDescription(): string {
+    return this.character.getProbabilityDescription(this.bodyFat);
   }
 
   get descriptionsList(): string[] {

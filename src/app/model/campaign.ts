@@ -7,6 +7,7 @@ export interface CampaignData {
     allCharacters: {name:string,versions:number[]}[];
     now: number; // The current time
     creatureTypes: CreatureTypeData[];
+    commonSpecialties: {[specialtyName: string]: string[]};
 }
 
 export class Campaign {

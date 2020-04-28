@@ -86,6 +86,11 @@ export class Character {
     token: string; // url to image
   }
   readonly id: number;
+  readonly attributeProbabilities = ["50%","54%","58%","62%","66%","69%","73%","76%","79%","82%","84%","86%","88%",
+    "10","12","15","18","22","28","35","44","56","72","93","120","160","220","300","400","500","700","1000","1500",
+    "2000","3000","4000","6000","9000","14k","21k","32k","48k","75k","120k","180k","300k","500k","800k","1.3m","2m",
+    "3.5m","6m","10m","17m","30m","53m","93m","170m","300m","550m","1b","1.9b","3.5b","6.7b","13b","25b","49b","96b",
+    "190b","380b","780b"];
 
   about: About;
   actions: Actions;
@@ -322,6 +327,18 @@ export class Character {
 
   get isOverBudget(): boolean {
     return this.about.improvementPoints < 0;
+  }
+
+  // returns a descriptive string representing the status/probability of a symmetric with this value
+  // rounds symmetric to the nearest 0.1, 
+  getProbabilityDescription(symmetric: number): string {
+    if(symmetric < -7) return "subnatural";
+    if(symmetric > 7) return "supernatural";
+    let prefix = symmetric < 0 ? "<" : ">";
+    let index = Math.round(Math.abs(symmetric)*10);
+    let result = this.attributeProbabilities[index];
+    if(result.slice(-1) != "%") prefix = "1 in ";
+    return prefix + result;
   }
 
 }
