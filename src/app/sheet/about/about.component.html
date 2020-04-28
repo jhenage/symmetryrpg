@@ -12,17 +12,17 @@
   <div class="field frame-size">
     <label>Frame Size</label>
     <input [(ngModel)]="about.frameSize" type="range" min="-7" max="7" step="0.1"/>
-    ({{about.frameSizeDescription}})
+    ({{about.frameSizeProbabilityDescription}})
   </div>
   <div class="field muscle-bulk">
     <label>Muscle Bulk</label>
     <input [(ngModel)]="about.muscleBulk" type="range" min="-7" max="7" step="0.1"/>
-    ({{about.muscleBulkDescription}})
+    ({{about.muscleBulkProbabilityDescription}})
   </div>
   <div class="field body-fat">
     <label>Body Fat</label>
     <input [(ngModel)]="about.bodyFat" type="range" min="-7" max="7" step="0.1"/>
-    ({{about.bodyFatDescription}})
+    ({{about.bodyFatProbabilityDescription}})
   </div>
   Weight: {{about.character.WeightLbs(0) | number:'1.0-0'}}<br/>
   Endurance: {{about.character.Endurance(0) | number:'1.0-1'}}<br/>

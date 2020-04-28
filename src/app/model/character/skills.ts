@@ -78,6 +78,10 @@ export class Skills {
     }
   }
 
+  getSkillProbabilityDescription(skillName: string): string {
+    return this.character.getProbabilityDescription(this.getSkillRank(skillName));
+  }
+
   getBaseResult(aspectRank: number, skillName: string, missingSpecializationRanks?: number): number {
     missingSpecializationRanks = missingSpecializationRanks || 0;
     let skillRank = this.getSkillRank(skillName) - 2*missingSpecializationRanks;
@@ -105,10 +109,14 @@ export class Skills {
   }
 
   getSpentIP(rank: number): number { // returns the IP cost of a single skill of the specified rank
-    let sign = Math.sign(rank);
-    rank = sign * rank;
-    let base = Math.floor(2*rank)
-    return sign * Math.round(2.5 * (base * base + base) + 5 * (2 * rank - base) * (1 + base) );
+    if(rank > 0) {
+      let base = Math.floor(2*rank)
+      return Math.round(2.5 * (base * base + base) + 5 * (2 * rank - base) * (1 + base) );
+    } else if(rank > -1) {
+      return 10 * rank;
+    } else if(rank > -3) {
+      return Math.ceil(5 * (rank - 1));
+    } else return -20;
   }
 
 }

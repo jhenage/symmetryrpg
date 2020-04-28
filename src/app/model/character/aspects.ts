@@ -66,6 +66,10 @@ export class Aspects {
     }
   }
 
+  getAspectProbabilityDescription(aspectName: string): string {
+    return this.character.getProbabilityDescription(this.getAspectRank(aspectName));
+  }
+
   getBaseResult(time:number, aspectName:string): number {
     return 2*this.Current(time,aspectName);
   }
@@ -128,10 +132,16 @@ export class Aspects {
   }
 
   getSpentIP(rank: number): number { // returns the IP cost of a single aspect of the specified rank
-    let sign = Math.sign(rank);
-    rank = sign * rank;
-    let base = Math.floor(2*rank)
-    return sign * Math.round(5 * (base * base + base) + 10 * (2 * rank - base) * (1 + base) );
+    if(rank > 0) {
+      let base = Math.floor(2*rank)
+      return Math.round(5 * (base * base + base) + 10 * (2 * rank - base) * (1 + base) );
+    } else if(rank > -1) {
+      return rank * 20;
+    } else if(rank > -3) {
+      return 10 * (rank  - 1); 
+    } else if(rank > -5) {
+      return Math.ceil(5 * (rank - 5));
+    } else return -50;
   }
 
 }

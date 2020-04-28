@@ -143,7 +143,7 @@ export class About {
     this._data.frameSize = Math.min(7,Math.max(-7,fs));
   }
 
-  get frameSizeDescription(): string {
+  get frameSizeProbabilityDescription(): string {
     return this.character.getProbabilityDescription(this.frameSize);
   }
 
@@ -155,7 +155,7 @@ export class About {
     this._data.muscleBulk = Math.min(7,Math.max(-7,mb));
   }
 
-  get muscleBulkDescription(): string {
+  get muscleBulkProbabilityDescription(): string {
     return this.character.getProbabilityDescription(this.muscleBulk);
   }
 
@@ -167,7 +167,7 @@ export class About {
     this._data.bodyFat = Math.min(7,Math.max(-7,bf));
   }
 
-  get bodyFatDescription(): string {
+  get bodyFatProbabilityDescription(): string {
     return this.character.getProbabilityDescription(this.bodyFat);
   }
 
