@@ -1,9 +1,24 @@
 import { Character } from '../character'
 export interface WoundData {
-  [propName: string]: { // Location (e.g. leftArm,head,torso)
-    initial: {}; // the initial wound object
-    recovery: {}; // actions taken toward recover, and results
-  }[]
+  bleed: {
+    time: number;
+    bloodLoss: number; // 0-49 only fatigue, 50-99 penalties, at 100 organs shut down 
+    bleedRate: number; // bloodLoss per second
+  }[];
+  wounds: {
+    [propName: string]: { // Location (e.g. leftArm,head,torso)
+      initial: { // the initial wound object
+        time: number;
+        impact: number;
+        cutting: number;
+        elemental: number;
+      };
+      recovery: { // actions taken toward recover, and results
+
+      };
+    }[]    
+  }
+
 }
 
 export class Wounds {
@@ -19,7 +34,7 @@ export class Wounds {
   }
 
   initialize(): WoundData {
-    this._data = {};
+    this._data = {bleed:[],wounds:{}};
     return this._data;
   }
 
