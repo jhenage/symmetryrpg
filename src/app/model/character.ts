@@ -105,7 +105,7 @@ export class Character {
   wounds: Wounds;
   creatureType: CreatureType;
 
-  constructor(id: number,creatureType: CreatureType,data: any) {
+  constructor(id: number,creatureType: CreatureType,data: any,commonSpecialties?: any) {
     this.id = id;
     this.creatureType = creatureType;
 
@@ -128,7 +128,7 @@ export class Character {
                     actions: this.actions.initialize(),
                     aspects: this.aspects.initialize(),
                     skills: this.skills.initialize(),
-                    specialties: this.specialties.initialize(),
+                    specialties: this.specialties.initialize(commonSpecialties),
                     spells: this.spells.initialize(),
                     traits: this.traits.initialize(),
                     wounds: this.wounds.initialize(),
@@ -308,7 +308,7 @@ export class Character {
     result < 0 ? result = result * 0.6 : result = result / 0.6;
     result += 9;
     result *= 0.5 * this.LimbsMovementFactor(time,limbList) * this.about.HeightMeter(time);
-    result *= (100/(this.WeightKg(time)+carriedWeight))**0.25;
+    result *= (100/(this.WeightKg(time)+carriedWeight))**0.5;
     return result;
   }
 

@@ -1,7 +1,7 @@
 import { Character, ModifiableStat, ModifiedValue, ChangeModifiedValue } from '../character'
 export interface AboutData {
   name: string;
-  height: ModifiableStat; // in meters
+  height: ModifiableStat; // in meters, retrievable as symmetric via function call
   age: number;
   frameSize: number; // symmetric
   muscleBulk: number; // symmetric
@@ -112,6 +112,10 @@ export class About {
     return this.HeightMeter(time) / 0.0254;
   }
 
+  HeightSymmetric(time?: number): number {
+    return (this.HeightMeter(time) - this.character.creatureType.height.average) / this.character.creatureType.height.stddev;
+  }
+
   setHeight(time:number,height:string) {
     let regex = /^(\d+)'(\d+)"/;
     let res = regex.exec(height);
@@ -189,6 +193,18 @@ export class About {
 
   set url(val: string) {
     this._data.token.url = val;
+  }
+
+  physicalEccentricity(time?: number): number {
+    let result = this.symmetricEccentricity(this.HeightSymmetric(time));
+    result += this.symmetricEccentricity(this.frameSize);
+    result += this.symmetricEccentricity(this.muscleBulk);
+    result += this.symmetricEccentricity(this.bodyFat);
+    return result / 4;
+  }
+
+  symmetricEccentricity(symmetric: number): number {
+    return Math.max(0,Math.abs(symmetric) - 0.8);
   }
 
 

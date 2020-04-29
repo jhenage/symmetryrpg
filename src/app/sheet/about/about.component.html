@@ -26,6 +26,7 @@
   </div>
   Weight: {{about.character.WeightLbs(0) | number:'1.0-0'}}<br/>
   Endurance: {{about.character.Endurance(0) | number:'1.0-1'}}<br/>
+  Physical Eccentricity: {{about.physicalEccentricity(0).toFixed(1)}}<br/>
   <div class="field potential-rating six-digit">
     <label>Potential Rating</label>
     <input [(ngModel)]="about.potentialRating" type="number" />
