@@ -43,16 +43,7 @@ export class Fatigue {
   Penalty(location: string, time: number): number {
     if ( location == 'aerobic' || location == 'general' ) {
       let buckets = this.AerobicTotal(time);
-      if ( buckets > 7 ) {
-        return 2 * (buckets - 7) + 3;
-      }
-      if ( buckets > 4 ) {
-        return buckets - 4;
-      }
-      if ( buckets > 2 ) {
-        return buckets/2 - 2;
-      }
-      return -buckets / 2;
+      return .2 * (buckets - 2) **2 - .8;
     }
     if ( !this._data.muscles.hasOwnProperty(location) ) {
       return 0;
@@ -73,19 +64,8 @@ export class Fatigue {
         if ( this._data.aerobic[i-1].time <= time ) {
           let result = this.AerobicOverTime(this._data.aerobic[i-1].amount,this._data.aerobic[i-1].malfatigue,this._data.aerobic[i-1].rate,this._data.aerobic[i-1].time,time);
           let buckets2 = this.AerobicBuckets(time,result.amount+result.malfatigue);
-          if(buckets2>=4) {
-            return buckets2;
-          }
           let buckets1 = this.AerobicBuckets(time,result.amount);
-          if(buckets1>=2) {
-            return buckets2;
-          }
-          if(buckets2<=2) {
-            return buckets1;
-          }
-          return -buckets1/2 <= buckets2/2-2 ? buckets2 : buckets1;
-
-       
+          return .2 * (buckets1 - 2) **2 - .8 > .2 * (buckets2 - 2) **2 - .8 ? buckets1 : buckets2;
         }
       }
       return 0;
@@ -138,10 +118,7 @@ export class Fatigue {
 
   // return fatigue per milisecond
   protected AerobicRecoverySpeed(time:number,buckets: number): number {
-    if ( buckets > 6 ) {
-      return this.character.Endurance(time) * .0016;
-    }
-    return this.character.Endurance(time) * 0.0002 * (buckets+1);
+    return this.character.Endurance(time) * 0.0002 * (Math.floor(buckets)**1.5+1);
   }
 
   protected AerobicOverTime(amount:number,malfatigue:number,rate:number,start:number,end:number): {amount:number,malfatigue:number} {
