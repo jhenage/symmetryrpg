@@ -86,6 +86,11 @@ export class Character {
     token: string; // url to image
   }
   readonly id: number;
+  readonly attributeProbabilities = ["50%","54%","58%","62%","66%","69%","73%","76%","79%","82%","84%","86%","88%",
+    "10","12","15","18","22","28","35","44","56","72","93","120","160","220","300","400","500","700","1000","1500",
+    "2000","3000","4000","6000","9000","14k","21k","32k","48k","75k","120k","180k","300k","500k","800k","1.3m","2m",
+    "3.5m","6m","10m","17m","30m","53m","93m","170m","300m","550m","1b","1.9b","3.5b","6.7b","13b","25b","49b","96b",
+    "190b","380b","780b"];
 
   about: About;
   actions: Actions;
@@ -100,7 +105,7 @@ export class Character {
   wounds: Wounds;
   creatureType: CreatureType;
 
-  constructor(id: number,creatureType: CreatureType,data: any) {
+  constructor(id: number,creatureType: CreatureType,data: any,commonSpecialties?: any) {
     this.id = id;
     this.creatureType = creatureType;
 
@@ -123,7 +128,7 @@ export class Character {
                     actions: this.actions.initialize(),
                     aspects: this.aspects.initialize(),
                     skills: this.skills.initialize(),
-                    specialties: this.specialties.initialize(),
+                    specialties: this.specialties.initialize(commonSpecialties),
                     spells: this.spells.initialize(),
                     traits: this.traits.initialize(),
                     wounds: this.wounds.initialize(),
@@ -160,7 +165,6 @@ export class Character {
     this._data.fatigue.muscles = {};
     this._data.location = [];
     this._data.qi.modified = [];
-    this._data.about.bodyType.modified = [];
     this._data.about.height.modified = [];
     this.aspects.aspectsList.forEach((aspect) => {
       this._data.aspects[aspect].modified = [];
@@ -179,7 +183,6 @@ export class Character {
     }
     this._data.location = [this.location(time)];
     this._data.qi = {amount:this.MaxQi(),modified:[{time:time,amount:this.Qi(time)}]};
-    this._data.about.bodyType.modified = [{time:time,amount:this.about.CurrentBodyType(time)}];
     this._data.about.height.modified = [{time:time,amount:this.about.HeightMeter(time)}];
     this.aspects.aspectsList.forEach((aspect) => {
       this._data.aspects[aspect].modified = [{time:time,amount:this.aspects.Current(time,aspect)}];
@@ -195,22 +198,31 @@ export class Character {
     return this.WeightKg(time) * 2.2;
   }
 
-  // This is based off of BMI. Human BMI is 6 + 12*bodyType + (0.4+0.4*bodyType)*(0.7*brawn+0.3*toughness)
-  // extreme body Types require minimum aspect scores for normal functioning and can even be lethal
+  // 
   WeightKg(time:number): number {
-    let bmi = this.creatureType.weight.bmiOffset;
-    bmi += this.creatureType.weight.bodyTypeFactor * this.about.CurrentBodyType(time);
-    let aspectValue = this.creatureType.weight.brawnFactor*this.aspects.Current(time,'brawn') + 
-                      (1 - this.creatureType.weight.brawnFactor)*this.aspects.Current(time,'toughness');
-    let aspectMultiplier = this.creatureType.weight.aspectFactor + 
-                           this.about.CurrentBodyType(time)*this.creatureType.weight.combinedFactor;
-    bmi += aspectValue*aspectMultiplier;
-    let height = this.about.HeightMeter(time);
-    return height * height * bmi;
+    let weight = this.creatureType.weight;
+    let frameSizeFactor = this.interpretSymmetric(this.about.frameSize, weight.frameSizeFactor);
+    let fatMassFactor = this.interpretSymmetric(this.about.bodyFat, weight.fatMassFactor);
+    let boneFrameFactor = this.interpretSymmetric(this.about.frameSize, weight.boneFrameFactor);
+    let boneToughnessFactor = this.interpretSymmetric(this.aspects.Current(time,"toughness"), weight.boneToughnessFactor);
+    let muscleBulkFactor = this.interpretSymmetric(this.about.muscleBulk, weight.muscleBulkFactor);
+    let muscleBrawnFactor = this.interpretSymmetric(this.aspects.Current(time,"brawn"), weight.muscleBrawnFactor);
+    let result = weight.organWeightFactor + fatMassFactor + boneFrameFactor + boneToughnessFactor;
+    result += muscleBrawnFactor * muscleBulkFactor;
+    return result * ( this.about.HeightMeter(time) ** (1 + frameSizeFactor) );
+  }
+
+  // for normal or log-normal distributions; data.minimum signals the use of log-normal distributions
+  interpretSymmetric(symmetric: number, data: {minimum?: number, average: number, stddev: number}) {
+    if(symmetric >= 0 || isNaN(data.minimum) ) {
+      return data.average + data.stddev * symmetric;
+    } else {
+      return data.minimum + (data.average - data.minimum) * Math.exp(symmetric);
+    }
   }
 
   Endurance(time:number): number { 
-    let endurance = this.aspects.Current(time,'toughness') / this.about.CurrentBodyType(time);
+    let endurance = (7.5 + 0.5*this.aspects.Current(time,'toughness')) * ((8 - this.about.muscleBulk) ** 2) / 64;
     //if ( this.traits.endurance ) {
     //  if ( this.traits.greatEndurance ) {
     //    if ( this.traits.epicEndurance ) {
@@ -287,20 +299,24 @@ export class Character {
       result *= 0.7 ** this.wounds.Penalty(limb,time);
     });
     result **= 1 / limbList.length; // finish taking geometric mean
-    result *= 0.7 ** this.fatigue.Penalty('aerobic',time);
+    result *= 0.8 ** this.fatigue.Penalty('aerobic',time);
     return result;
   }
 
   MaxSpeed(time: number, limbList: string[], carriedWeight: number): number { // spd in m/s
-    var result = this.skills.getBaseResult(this.aspects.Current(time,'brawn'),'athlete',0) - 1;
-    if(result <=0) return 0;
+    var result = this.skills.getBaseResult(this.aspects.Current(time,'brawn'),'athlete',0);
+    result < 0 ? result = result * 0.6 : result = result / 0.6;
+    result += 9;
     result *= 0.5 * this.LimbsMovementFactor(time,limbList) * this.about.HeightMeter(time);
-    result *= (100/(this.WeightKg(time)+carriedWeight))**0.25;
+    result *= (100/(this.WeightKg(time)+carriedWeight))**0.5;
     return result;
   }
 
   MaxAcceleration(time: number, limbList: string[], carriedWeight: number): number { // accel in m/s/s
-    var result = (this.aspects.Current(time,'brawn') / 5) ** 1.5;
+    var result = (this.aspects.Current(time,'brawn'));
+    result < 0 ? result = result * 0.12 : result = result / 3;
+    result++;
+    result **= 1.5;
     result *= 100 * this.LimbsMovementFactor(time,limbList) / (this.WeightKg(time)+carriedWeight);
     return result;
   }
@@ -311,6 +327,18 @@ export class Character {
 
   get isOverBudget(): boolean {
     return this.about.improvementPoints < 0;
+  }
+
+  // returns a descriptive string representing the status/probability of a symmetric with this value
+  // rounds symmetric to the nearest 0.1, 
+  getProbabilityDescription(symmetric: number): string {
+    if(symmetric < -7) return "subnatural";
+    if(symmetric > 7) return "supernatural";
+    let prefix = symmetric < 0 ? "<" : ">";
+    let index = Math.round(Math.abs(symmetric)*10);
+    let result = this.attributeProbabilities[index];
+    if(result.slice(-1) != "%") prefix = "1 in ";
+    return prefix + result;
   }
 
 }

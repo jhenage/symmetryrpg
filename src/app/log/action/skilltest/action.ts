@@ -23,7 +23,7 @@ export class SkillTestActionFactory implements ActionFactory {
         let data = datainit as SkillTestActionData;
         data.type = 'skilltest';
         data.executed = true;
-        data.luck = data.luck || 'high';
+        data.luck = data.luck || 'standard';
         data.missingSpecialty = 0;
 
         let roll = new DiceRoll();

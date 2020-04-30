@@ -11,9 +11,10 @@ import { SkillTestActionFactory } from 'src/app/log/action/skilltest/action';
 export class SkillsComponent implements OnInit {
 
   @Input() skills: Skills;
+  readonly MINIMUM_VALUE = -7;
+  readonly MAXIMUM_VALUE = 15;
+  readonly PRECISION = 1; // number of digits after decimal point to keep track of
   inputsOutOfRange = {};
-  readonly MIN_RANK = 0;
-  readonly MAX_RANK = 25;
 
   constructor(private logService: LogService) { }
 
@@ -24,16 +25,16 @@ export class SkillsComponent implements OnInit {
   }
 
   setSkillRank(skillName: string,rank: number) {
-    if(rank < this.MIN_RANK) {
-      rank = this.MIN_RANK;
+    if(rank < this.MINIMUM_VALUE) {
+      rank = this.MINIMUM_VALUE;
       this.inputsOutOfRange[skillName] = true;
-    } else if(rank > this.MAX_RANK) {
-      rank = this.MAX_RANK;
+    } else if(rank > this.MAXIMUM_VALUE) {
+      rank = this.MAXIMUM_VALUE;
       this.inputsOutOfRange[skillName] = true;
     } else {
       this.inputsOutOfRange[skillName] = false;
     }
-    this.skills.setSkillRank(skillName,rank);
+    this.skills.setSkillRank(skillName,Number(Number(rank).toFixed(this.PRECISION)));
   }
 
 

@@ -7,9 +7,12 @@ import { ActionHistoryComponent } from '../history.component';
   <div class="result">
       <select [(ngModel)]="action.data.luck">
           <option value="low">Low Luck</option>
+          <option value="standard">Standard</option>
           <option value="high">High Luck</option>
       </select>
-      {{action.data.luck=="low" ? action.roll.lowluckResult : action.roll.standardResult}}
+      {{action.data.luck=="low" ? action.roll.lowluckResult 
+        : action.data.luck=="high" ? action.roll.highluckResult
+        : action.roll.standardResult}}
   </div>`
 })
 export class AspecttestHistoryComponent implements ActionHistoryComponent {

@@ -25,8 +25,7 @@ export class Skills {
 
   protected _data: SkillsData;
   character: Character;
-  readonly SKILL_IP_COSTS = [0,1,3,6,10,15,21,28,36,45,55,66,78,91,105,120,136,153,171,190,210,231,253,276,300,325];
- 
+
   constructor(character: Character,data?: SkillsData) {
     this.character = character;
     if(data) {
@@ -66,20 +65,24 @@ export class Skills {
     return this._data[skillName];
   }
 
-  setSkillRank(skillName: string, rank: number) {
+  setSkillRank(skillName: string, rank: number) { // force rank to be within bounds and the right resolution avoiding rounding errors
     if(this._data.hasOwnProperty(skillName)) {
       this._data[skillName] = rank;
     }
   }
 
+  getSkillProbabilityDescription(skillName: string): string {
+    return this.character.getProbabilityDescription(this.getSkillRank(skillName));
+  }
+
   getBaseResult(aspectRank: number, skillName: string, missingSpecializationRanks?: number): number {
     missingSpecializationRanks = missingSpecializationRanks || 0;
-    let skillRank = this.getSkillRank(skillName) - 4*missingSpecializationRanks;
-    if(missingSpecializationRanks > 3) skillRank -= 2*(missingSpecializationRanks-3);
-    let high = Math.max(aspectRank, skillRank);
+    let skillRank = this.getSkillRank(skillName) - 2*missingSpecializationRanks;
+    if(missingSpecializationRanks > 3) skillRank -= missingSpecializationRanks-3;
     let low = Math.min(aspectRank, skillRank);
-    high = Math.max(0,Math.min(high,low*2,low+5));
-    return (high + low + aspectRank + skillRank)/2;
+    let delta = Math.max(aspectRank, skillRank) - low;
+    delta = Math.min(delta,0.8*delta+0.3,0.5*delta+1.2,0.2*delta+2.7);
+    return 2 * low + delta;
   }
 
   getTestModifiers(aspectRank: number, skillName: string): number[] {
@@ -93,9 +96,20 @@ export class Skills {
   getSpentIPTotal(): number {
     let result = 0;
     this.skillsList.forEach( (skillName) => {
-      result += this.SKILL_IP_COSTS[this._data[skillName]];
+      result += this.getSpentIP(this._data[skillName]);
     });
     return result;
+  }
+
+  getSpentIP(rank: number): number { // returns the IP cost of a single skill of the specified rank
+    if(rank > 0) {
+      let base = Math.floor(2*rank)
+      return Math.round(2.5 * (base * base + base) + 5 * (2 * rank - base) * (1 + base) );
+    } else if(rank > -1) {
+      return 10 * rank;
+    } else if(rank > -3) {
+      return Math.ceil(5 * (rank - 1));
+    } else return -20;
   }
 
 }

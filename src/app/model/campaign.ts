@@ -7,6 +7,7 @@ export interface CampaignData {
     allCharacters: {name:string,versions:number[]}[];
     now: number; // The current time
     creatureTypes: CreatureTypeData[];
+    commonSpecialties: {[specialtyName: string]: string[]};
 }
 
 export class Campaign {
@@ -57,7 +58,7 @@ export class Campaign {
     }
 
     newCharacter(): Character {
-        let character = new Character(this._data.allCharacters.length,this.creatureTypes[0],this._data.now);
+        let character = new Character(this._data.allCharacters.length,this.creatureTypes[0],this._data.now,this._data.commonSpecialties);
         this.characters.push(character);
         this._data.characters.push({id:character.id,version:character.createdAt});
         this._data.allCharacters.push({name:'',versions:[character.createdAt]});

@@ -1,9 +1,11 @@
 import { Character, ModifiableStat, ModifiedValue, ChangeModifiedValue } from '../character'
 export interface AboutData {
   name: string;
-  height: ModifiableStat; // in meters (100in/254cm)(100cm/1m)
+  height: ModifiableStat; // in meters, retrievable as symmetric via function call
   age: number;
-  bodyType: ModifiableStat; // between 0 and 10, descriptive label from creatureType
+  frameSize: number; // symmetric
+  muscleBulk: number; // symmetric
+  bodyFat: number; // symmetric
   token: {
     url: string;
   }
@@ -43,7 +45,9 @@ export class About {
       name: "",
       height: {amount:1.7},
       age: 18,
-      bodyType: {amount:1},
+      frameSize: 0,
+      muscleBulk: 0,
+      bodyFat: 0,
       token: {url:""},
       potentialRating: 0,
       descriptions: { 
@@ -105,17 +109,18 @@ export class About {
   }
 
   HeightInch(time?: number): number {
-    if ( typeof time === "undefined" ) {
-      return this._data.height.amount * 100 / 2.54;
-    }
-    return ModifiedValue(time,this._data.height) * 100 / 2.54;
+    return this.HeightMeter(time) / 0.0254;
+  }
+
+  HeightSymmetric(time?: number): number {
+    return (this.HeightMeter(time) - this.character.creatureType.height.average) / this.character.creatureType.height.stddev;
   }
 
   setHeight(time:number,height:string) {
     let regex = /^(\d+)'(\d+)"/;
     let res = regex.exec(height);
     if (res) {
-      ChangeModifiedValue(time,this._data.height,(Number(res[1]) * 12 + Number(res[2])) * 2.54 / 100);
+      ChangeModifiedValue(time,this._data.height,(Number(res[1]) * 12 + Number(res[2])) * 0.0254);
     }
  }
   getHeight(time:number){
@@ -134,20 +139,40 @@ export class About {
     this._data.age = Number(age) || 18;
   }
 
-  get bodyType(): number {
-    return this._data.bodyType.amount;
+  get frameSize(): number {
+    return this._data.frameSize;
   }
 
-  set bodyType(bt) {
-    this._data.bodyType.amount = Number(bt) || 1;
+  set frameSize(fs: number) {
+    this._data.frameSize = Math.min(7,Math.max(-7,fs));
   }
 
-  CurrentBodyType(time:number): number {
-    return ModifiedValue(time,this._data.bodyType);
+  get frameSizeProbabilityDescription(): string {
+    return this.character.getProbabilityDescription(this.frameSize);
   }
 
-  AlterBodyType(time:number,amount:number) {
-    ChangeModifiedValue(time,this._data.bodyType,amount);
+  get muscleBulk(): number {
+    return this._data.muscleBulk;
+  }
+
+  set muscleBulk(mb: number) {
+    this._data.muscleBulk = Math.min(7,Math.max(-7,mb));
+  }
+
+  get muscleBulkProbabilityDescription(): string {
+    return this.character.getProbabilityDescription(this.muscleBulk);
+  }
+
+  get bodyFat(): number {
+    return this._data.bodyFat;
+  }
+
+  set bodyFat(bf: number) {
+    this._data.bodyFat = Math.min(7,Math.max(-7,bf));
+  }
+
+  get bodyFatProbabilityDescription(): string {
+    return this.character.getProbabilityDescription(this.bodyFat);
   }
 
   get descriptionsList(): string[] {
@@ -168,6 +193,18 @@ export class About {
 
   set url(val: string) {
     this._data.token.url = val;
+  }
+
+  physicalEccentricity(time?: number): number {
+    let result = this.symmetricEccentricity(this.HeightSymmetric(time));
+    result += this.symmetricEccentricity(this.frameSize);
+    result += this.symmetricEccentricity(this.muscleBulk);
+    result += this.symmetricEccentricity(this.bodyFat);
+    return result / 4;
+  }
+
+  symmetricEccentricity(symmetric: number): number {
+    return Math.max(0,Math.abs(symmetric) - 0.8);
   }
 
 

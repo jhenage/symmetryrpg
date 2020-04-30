@@ -1,5 +1,4 @@
 import { Character, ModifiableStat, ModifiedValue, ChangeModifiedValue } from '../character'
-import { DiceRoll } from '../diceroll'
 import { ActionPenalty } from 'src/app/log/action/aspecttest/action';
 export interface AspectsData {
   brawn: ModifiableStat;
@@ -16,12 +15,7 @@ export class Aspects {
 
   protected _data: AspectsData;
   character: Character;
-  readonly BASE_REACTION_TIMES = [160,100,65,45,36,34,32,30,28,26,24,22,20,18,16,14,12,10,8,6,4,3,2,1,0];
-  readonly REACTION_FLUX_TIMES = [100,60,40,30,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5];
-  readonly SURPRISE_MULTIPLIERS = [15,13,12,11,10,9.75,9.5,9.25,9,8.75,8.5,8.25,8,7.75,7.5,7.25,7,6.75,6.5,6.25,6,5.75,5.5,5.25,5];
-  readonly BASE_ACTION_DURATIONS = [5000,2750,1750,1250,1000,900,810,729,656,591,531,478,431,387,349,307,270,238,209,184,162,143,125,110,97];
-  readonly ASPECT_IP_COSTS = [0,4,10,18,28,40,54,70,88,108,130,154,180,208,238,270,304,340,378,418,460,504,550,598,648];
-
+  
   constructor(character: Character,data?: AspectsData) {
     this.character = character;
     if(data) {
@@ -31,24 +25,20 @@ export class Aspects {
 
   initialize(): AspectsData {
     this._data = {
-      brawn: {amount:5},
-      toughness: {amount:5},
-      agility: {amount:5},
-      reflex: {amount:5},
-      impression: {amount:5},
-      serenity: {amount:5},
-      cleverness: {amount:5},
-      awareness: {amount:5}
+      brawn: {amount:0},
+      toughness: {amount:0},
+      agility: {amount:0},
+      reflex: {amount:0},
+      impression: {amount:0},
+      serenity: {amount:0},
+      cleverness: {amount:0},
+      awareness: {amount:0}
     };
     return this._data;
   }
 
   Current(time:number,aspect:string): number {
     return ModifiedValue(time,this._data[aspect]);
-  }
-
-  CurrentRank(time:number,aspect:string): number { // when you need an integer between 1 and 25
-    return Math.max(1,Math.min(25,Math.round(this.Current(time,aspect))));
   }
 
   TempChange(time:number,aspect:string,amount:number): void {
@@ -65,58 +55,86 @@ export class Aspects {
 
   setAspectRank(aspectName: string, rank: number) {
     if(this._data.hasOwnProperty(aspectName)) {
-      this._data[aspectName].amount = Math.max(0,Math.min(25,rank));
+      this._data[aspectName].amount = rank;
     }
+  }
+
+  getAspectProbabilityDescription(aspectName: string): string {
+    return this.character.getProbabilityDescription(this.getAspectRank(aspectName));
   }
 
   getBaseResult(time:number, aspectName:string): number {
     return 2*this.Current(time,aspectName);
   }
 
-  protected getBaseReactionTime(rank: number, penalty: number, isSurprised: boolean): number {
-    let result = this.BASE_REACTION_TIMES[rank-1];
-    let roller = new DiceRoll([]);
-    for(let i=0; i<2; i++) result += roller.getDieRoll(this.REACTION_FLUX_TIMES[rank-1]);
+  protected getBaseReactionTime(rank: number, penalty: number, diceTotal: number, isSurprised: boolean): number {
+    let result = 0.001;
+    if(rank < 0) {
+      result *= 38 + 4 * rank * rank;
+      result += diceTotal * 0.01 * (24 + 8 * rank * rank);
+    } else if (rank > 8) {
+      result *= 30 - 2 * rank;
+      result += diceTotal * 0.01 * (20 - rank);
+    } else {
+      result *= 38 - 4 * rank;
+      result += diceTotal * 0.01 * (24 - 2 * rank);
+    }
     if(penalty) result *= 1.1 ** penalty;
-    if(isSurprised) result *= this.SURPRISE_MULTIPLIERS[rank-1];
-    return Math.round(result);
+    if(isSurprised) {
+      if(rank < 0) result *= 10 - rank;
+      else result *= 10 - 0.4 * rank;
+    }
+    return result;
   }
 
-  getMentalReactionTime(time:number, penalty: number, isSurprised: boolean): number { //time is in milliseconds
-    let awareRank = this.CurrentRank(time,'awareness');
-    return this.getBaseReactionTime(awareRank,penalty,isSurprised) +
-           this.getBaseReactionTime(awareRank,penalty,isSurprised);
+  getMentalReactionTime(time:number, penalty: number, diceResult: number[], isSurprised: boolean): number { //time is in seconds
+    let awareness = this.Current(time,'awareness');
+    return this.getBaseReactionTime(awareness,penalty,diceResult[0]+diceResult[1],isSurprised) +
+           this.getBaseReactionTime(awareness,penalty,diceResult[2]+diceResult[3],isSurprised);
   }
 
-  getPhysicalReactionTime(time:number, penalty: number, isSurprised: boolean): number { //time is in milliseconds
-    let awareRank = this.CurrentRank(time,'awareness');
-    let reflexRank = this.CurrentRank(time,'reflex');
-    return this.getBaseReactionTime(awareRank,penalty,isSurprised) +
-           this.getBaseReactionTime(reflexRank,penalty,false);
+  getPhysicalReactionTime(time:number, penalty: number, diceResult: number[], isSurprised: boolean): number { //time is in seconds
+    return this.getBaseReactionTime(this.Current(time,'awareness'),penalty,diceResult[0]+diceResult[1],isSurprised) +
+           this.getBaseReactionTime(this.Current(time,'reflex'),penalty,diceResult[2]+diceResult[3],false);
   }
 
-  protected getActionTime(actionTime: number, rank: number, actionPenalty: ActionPenalty): number {
-    let result = actionTime * this.BASE_ACTION_DURATIONS[rank-1];
+  protected getActionTime(actionTime: number, rank: number, actionPenalty: ActionPenalty): number { //time is in seconds
+    let result = rank < 0 ? 0.8 : 0.9;
+    result **= 2 * rank;
+    result *= actionTime;
     result *= 2 ** actionPenalty.targetedPenalty;
     result *= 1.2 ** actionPenalty.genericPenalty;
     result *= 1.05 ** actionPenalty.incidentalPenalty;
-    return Math.max(1,Math.round(result));
+    return result;
   }
 
   getMentalActionTime(time:number, actionTime: number, actionPenalty: ActionPenalty) {
-    return this.getActionTime(actionTime,this.CurrentRank(time,'cleverness'),actionPenalty);
+    return this.getActionTime(actionTime,this.Current(time,'cleverness'),actionPenalty);
   }
 
   getPhysicalActionTime(time:number, actionTime: number, actionPenalty: ActionPenalty) {
-    return this.getActionTime(actionTime,this.CurrentRank(time,'agility'),actionPenalty);
+    return this.getActionTime(actionTime,this.Current(time,'agility'),actionPenalty);
   }
 
   getSpentIPTotal(): number {
     let result = 0;
     this.aspectsList.forEach( (aspectName) => {
-      result += this.ASPECT_IP_COSTS[Math.max(0,this._data[aspectName].amount - 1)];
+      result += this.getSpentIP(this._data[aspectName].amount);
     });
     return result;
+  }
+
+  getSpentIP(rank: number): number { // returns the IP cost of a single aspect of the specified rank
+    if(rank > 0) {
+      let base = Math.floor(2*rank)
+      return Math.round(5 * (base * base + base) + 10 * (2 * rank - base) * (1 + base) );
+    } else if(rank > -1) {
+      return rank * 20;
+    } else if(rank > -3) {
+      return 10 * (rank  - 1); 
+    } else if(rank > -5) {
+      return Math.ceil(5 * (rank - 5));
+    } else return -50;
   }
 
 }
