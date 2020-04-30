@@ -2,9 +2,9 @@
 <div class="specialties container">
     <h4>Specialties</h4>
     <div *ngFor="let specialty of specialties.getSpecialtiesList()" class="field specialty one-digit">
-        <input type="number" step="1" min="{{specialties.MIN_RANK}}" max="{{specialties.MAX_RANK}}"
+        <input type="number" step="1" min="{{MINIMUM_VALUE}}" max="{{MAXIMUM_VALUE}}"
         [value]="specialties.getSpecialtyRank(specialty)"
-        (input)="specialties.setSpecialtyRank(specialty,$event.target.value)" />
+        (input)="setSpecialtyRank(specialty,$event.target.value)" />
         <label>{{specialties.getDisplayName(specialty) | titlecase}}</label>
     </div>
 </div>

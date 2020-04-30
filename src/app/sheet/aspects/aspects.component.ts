@@ -11,6 +11,9 @@ import { AspectTestActionFactory } from '../../log/action/aspecttest/action';
 export class AspectsComponent implements OnInit {
 
   @Input() aspects: Aspects;
+  readonly MINIMUM_VALUE = -7;
+  readonly MAXIMUM_VALUE = 15;
+  readonly PRECISION = 1; // number of digits after decimal point to keep track of
   inputsOutOfRange = {};
 
   constructor(private logService: LogService) {}
@@ -22,16 +25,16 @@ export class AspectsComponent implements OnInit {
   }
 
   setAspectRank(aspectName: string,rank: number) {
-    if(rank < this.aspects.MINIMUM_VALUE) {
-      rank = this.aspects.MINIMUM_VALUE;
+    if(rank < this.MINIMUM_VALUE) {
+      rank = this.MINIMUM_VALUE;
       this.inputsOutOfRange[aspectName] = true;
-    } else if(rank > this.aspects.MAXIMUM_VALUE) {
-      rank = this.aspects.MAXIMUM_VALUE;
+    } else if(rank > this.MAXIMUM_VALUE) {
+      rank = this.MAXIMUM_VALUE;
       this.inputsOutOfRange[aspectName] = true;
     } else {
       this.inputsOutOfRange[aspectName] = false;
     }
-    this.aspects.setAspectRank(aspectName,rank);
+    this.aspects.setAspectRank(aspectName,Number(Number(rank).toFixed(this.PRECISION)));
   }
 
 

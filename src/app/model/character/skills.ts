@@ -25,10 +25,7 @@ export class Skills {
 
   protected _data: SkillsData;
   character: Character;
-  readonly MINIMUM_VALUE = -7;
-  readonly MAXIMUM_VALUE = 15;
-  readonly RESOLUTION = 10; // number of steps per standard deviation
- 
+
   constructor(character: Character,data?: SkillsData) {
     this.character = character;
     if(data) {
@@ -70,11 +67,7 @@ export class Skills {
 
   setSkillRank(skillName: string, rank: number) { // force rank to be within bounds and the right resolution avoiding rounding errors
     if(this._data.hasOwnProperty(skillName)) {
-      let sign = Math.sign(rank)
-      rank = Math.abs(rank);
-      let base = Math.floor(rank)
-      let newRank = base + Math.round((rank-base)*this.RESOLUTION)/this.RESOLUTION;
-      this._data[skillName] = Math.min(this.MAXIMUM_VALUE,Math.max(this.MINIMUM_VALUE,newRank*sign));
+      this._data[skillName] = rank;
     }
   }
 

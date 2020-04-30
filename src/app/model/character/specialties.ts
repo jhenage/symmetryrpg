@@ -10,8 +10,6 @@ export class Specialties {
 
   protected _data: SpecialtiesData;
   character: Character;
-  readonly MIN_RANK = 0;
-  readonly MAX_RANK = 3;
  
   constructor(character: Character,data?: SpecialtiesData) {
     this.character = character;
@@ -36,7 +34,7 @@ export class Specialties {
   }
 
   setSpecialtyRank(specialtyName: string, newRank: number) {
-    this._data[specialtyName].rank = Math.min(this.MAX_RANK,Math.max(this.MIN_RANK,newRank));   
+    this._data[specialtyName].rank = newRank;   
   }
 
   getDisplayName(specialtyKey: string): string {

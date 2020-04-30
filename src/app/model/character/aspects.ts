@@ -15,9 +15,6 @@ export class Aspects {
 
   protected _data: AspectsData;
   character: Character;
-  readonly MINIMUM_VALUE = -7;
-  readonly MAXIMUM_VALUE = 15;
-  readonly RESOLUTION = 10; // number of steps per standard deviation
   
   constructor(character: Character,data?: AspectsData) {
     this.character = character;
@@ -41,7 +38,7 @@ export class Aspects {
   }
 
   Current(time:number,aspect:string): number {
-    return Math.min(this.MAXIMUM_VALUE,Math.max(this.MINIMUM_VALUE,ModifiedValue(time,this._data[aspect])));
+    return ModifiedValue(time,this._data[aspect]);
   }
 
   TempChange(time:number,aspect:string,amount:number): void {
@@ -56,13 +53,9 @@ export class Aspects {
     return this._data[aspectName].amount;
   }
 
-  setAspectRank(aspectName: string, rank: number) { // force rank to be within bounds and the right resolution avoiding rounding errors
+  setAspectRank(aspectName: string, rank: number) {
     if(this._data.hasOwnProperty(aspectName)) {
-      let sign = Math.sign(rank)
-      rank = Math.abs(rank);
-      let base = Math.floor(rank)
-      let newRank = base + Math.round((rank-base)*this.RESOLUTION)/this.RESOLUTION;
-      this._data[aspectName].amount = Math.min(this.MAXIMUM_VALUE,Math.max(this.MINIMUM_VALUE,newRank*sign));
+      this._data[aspectName].amount = rank;
     }
   }
 
