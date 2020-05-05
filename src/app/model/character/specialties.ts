@@ -52,6 +52,40 @@ export class Specialties {
     return Object.keys(this.character.campaign.commonSpecialties).sort();
   }
 
+  getCategoriesList(): string[] {
+    let categoryList = [];
+    let specialtyCategories = this.character.campaign.commonSpecialties;
+    Object.keys(specialtyCategories).forEach((specialty) => {
+      for(let i=0; i<specialtyCategories[specialty].length; i++) {
+        if(!categoryList.includes(specialtyCategories[specialty][i])) {
+          categoryList.push(specialtyCategories[specialty][i]);
+        }
+      }
+    });
+    return categoryList.sort();
+  }
+
+  getSpecialtiesByCategory(category:string): string[] {
+    let result = [];
+    let specialtyCategories = this.character.campaign.commonSpecialties;
+    Object.keys(specialtyCategories).forEach((specialty) => {
+      if(specialtyCategories[specialty].includes(category)) result.push(specialty);
+    });
+    return result;
+  }
+
+  isUnknownCategory(category:string): boolean {
+    let specialties = this.getSpecialtiesByCategory(category);
+    for(let i=0; i<specialties.length; i++) {
+      if(this.getSpecialtyRank(specialties[i])>0) return false;
+    }
+    return true;
+  }
+
+  isMultiCategory(specialty:string): boolean {
+    return this.character.campaign.commonSpecialties[specialty].length > 1;
+  }
+
   getSpentIPTotal(): number {
     let specialtyCategories = this.character.campaign.commonSpecialties;
     let maxPenaltyByCategory = {}; // First, find penalties/discounts for each category & rank

@@ -23,4 +23,8 @@ export class SpecialtiesComponent implements OnInit {
     this.specialties.setSpecialtyRank(specialtyName,newRank);
   }
 
+  getMultiCategoryFlag(specialty:string): string {
+    return this.specialties.isMultiCategory(specialty) ? "*" : "";
+  }
+
 }
