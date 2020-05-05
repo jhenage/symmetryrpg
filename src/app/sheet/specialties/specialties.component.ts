@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Specialties } from 'src/app/model/character/specialties';
+import { DataService } from 'src/app/data.service'
 
 @Component({
   selector: 'app-specialties',
@@ -12,7 +13,7 @@ export class SpecialtiesComponent implements OnInit {
   readonly MINIMUM_VALUE = 0;
   readonly MAXIMUM_VALUE = 3;
   
-  constructor() { }
+  constructor(private dataService: DataService) { }
 
   ngOnInit(): void {
   }

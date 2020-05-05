@@ -1,13 +1,13 @@
 import { Character } from './character'
 import { CreatureType, CreatureTypeData } from './creaturetype';
-import { DataService } from '../data.service';
+import { SpecialtyCategories } from './character/specialties';
 
 export interface CampaignData {
     characters: {id:number,version:number}[];
     allCharacters: {name:string,versions:number[]}[];
     now: number; // The current time
     creatureTypes: CreatureTypeData[];
-    commonSpecialties: {[specialtyName: string]: string[]};
+    commonSpecialties: SpecialtyCategories; // each specialty should have no more than 4 categories
 }
 
 export class Campaign {
@@ -29,8 +29,7 @@ export class Campaign {
         this.characters = [];
         for ( let char of data.characters ) {
             let character = getcharacters(char.id,char.version);
-            let creaturetype = this.creatureTypes[character.creatureType];
-            this.characters.push(new Character(char.id,creaturetype,character));
+            this.characters.push(new Character(char.id,character.creatureType,character,this));
         }
     }
 
@@ -40,6 +39,10 @@ export class Campaign {
 
     set now(time:number) {
         this._data.now = time;
+    }
+
+    get commonSpecialties(): SpecialtyCategories {
+        return this._data.commonSpecialties;
     }
 
     serialize(): string {
@@ -58,7 +61,7 @@ export class Campaign {
     }
 
     newCharacter(): Character {
-        let character = new Character(this._data.allCharacters.length,this.creatureTypes[0],this._data.now,this._data.commonSpecialties);
+        let character = new Character(this._data.allCharacters.length,0,this._data.now,this);
         this.characters.push(character);
         this._data.characters.push({id:character.id,version:character.createdAt});
         this._data.allCharacters.push({name:'',versions:[character.createdAt]});
