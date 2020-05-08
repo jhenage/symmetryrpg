@@ -1,8 +1,19 @@
+.sheet-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%
+}
+
+.sheet-container > * {
+    flex-grow: 1;
+}
+
 .container {
     border: 2px solid black;
     border-radius: 5px;
     margin: 5px;
     padding: 3px;
+    height: calc(100% - 20px);
 }
 
 .over-budget+.container {

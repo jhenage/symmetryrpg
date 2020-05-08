@@ -12,6 +12,7 @@ export class SpecialtiesComponent implements OnInit {
   @Input() specialties: Specialties
   readonly MINIMUM_VALUE = 0;
   readonly MAXIMUM_VALUE = 3;
+  readonly ROWS_PER_COLUMN = 10;
   
   constructor(private dataService: DataService) { }
 
@@ -25,6 +26,24 @@ export class SpecialtiesComponent implements OnInit {
 
   getMultiCategoryFlag(specialty:string): string {
     return this.specialties.isMultiCategory(specialty) ? "*" : "";
+  }
+
+  getSpecialtiesGrid(): string[][] {
+    let result = []
+    let specialties = this.specialties.getSpecialtiesList();
+    let row = 0;
+    let column = 0;
+    for(let i=0; i<specialties.length; i++) {
+      result[column][row] = specialties[i];
+      row++
+      if(row >= this.ROWS_PER_COLUMN) {
+        row = 0;
+        column++;
+      } else {
+        row++;
+      } 
+    }
+    return result;
   }
 
 }

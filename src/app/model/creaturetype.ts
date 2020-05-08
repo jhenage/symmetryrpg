@@ -43,6 +43,12 @@ export interface CreatureTypeData {
     stddev: number;
   };
   weight: WeightData;
+  quickness: { // duration = (base duration) * (physical or mental) * (action or reaction)
+    physical: number; // speed of physical activity, human = 1.0
+    mental: number; // speed of mental activity, human = 1.0 
+    action: number; // speed of actions, human = 1.0
+    reaction: number; // speed of reactions, human = 1.0
+  };
 }
 
 
@@ -74,6 +80,10 @@ export class CreatureType {
 
   get weight(): WeightData {
     return this._data.weight;
+  }
+
+  get quickness(): {physical: number, mental: number, action: number, reaction: number} {
+    return this._data.quickness;
   }
 
 }
