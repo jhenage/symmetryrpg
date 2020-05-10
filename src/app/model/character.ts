@@ -193,7 +193,7 @@ export class Character {
       this._data.fatigue.muscles[muscle].splice(0,this._data.fatigue.muscles[muscle].length-1);
     }
     this._data.location = [this.location(time)];
-    this._data.qi = {amount:this.MaxQi(),modified:[{time:time,amount:this.Qi(time)}]};
+    this._data.qi = {amount:this.maxQi,modified:[{time:time,amount:this.Qi(time)}]};
     this._data.about.height.modified = [{time:time,amount:this.about.HeightMeter(time)}];
     this.aspects.aspectsList.forEach((aspect) => {
       this._data.aspects[aspect].modified = [{time:time,amount:this.aspects.Current(time,aspect)}];
@@ -263,7 +263,10 @@ export class Character {
     return ModifiedValue(time,this._data.qi);
   }
 
-  MaxQi(time?: number): number { return 10; }
+  get maxQi(): number { 
+    let result = this.creatureType.qi.average + this.creatureType.qi.stddev * this.aspects.getAspectRank("serenity");
+    return Math.max(this.creatureType.qi.minimum,Math.round(result));
+  }
 
   AddQi(time: number, amount: number): void {
     return ChangeModifiedValue(time,this._data.qi,ModifiedValue(time,this._data.qi)+amount);
@@ -328,6 +331,7 @@ export class Character {
     var result = this.skills.getBaseResult(this.aspects.Current(time,'brawn'),'athlete',0);
     result < 0 ? result = result * 0.6 : result = result / 0.6;
     result += 9;
+    if(result <= 0) return 0;
     result *= 0.5 * this.LimbsMovementFactor(time,limbList) * this.about.HeightMeter(time);
     result *= (100/(this.WeightKg(time)+carriedWeight))**0.5;
     return result;
@@ -337,9 +341,18 @@ export class Character {
     var result = (this.aspects.Current(time,'brawn'));
     result < 0 ? result = result * 0.12 : result = result / 3;
     result++;
+    if(result <=0) return 0;
     result **= 1.5;
     result *= 100 * this.LimbsMovementFactor(time,limbList) / (this.WeightKg(time)+carriedWeight);
     return result;
+  }
+
+  PhysicalDefense(time: number): number {
+    return this.skills.getBaseResult(this.aspects.Current(time,"reflex"),"fighter") - 1;
+  }
+
+  MagicalDefense(time: number): number {
+    return this.skills.getBaseResult(this.aspects.Current(time,"awareness"),"mage") - 1;
   }
 
   getSpentIPTotal(): number {

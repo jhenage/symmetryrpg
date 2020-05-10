@@ -31,7 +31,8 @@ export class DataService {
         toughnessFactor: { minimum: 0.9, average: 1, stddev: 0.01 },
         muscleBulkFactor: { minimum: 0.75, average: 1, stddev: 0.1 }
       },
-      quickness: { physical: 1, mental: 1, action: 1, reaction: 1}
+      quickness: { physical: 1, mental: 1, action: 1, reaction: 1},
+      qi: {minimum: 1, average: 10, stddev: 2}
     }],
     commonSpecialties: {
       archeology: ["academic"], biology:["academic","medical"],chemistry:["academic","technology"],

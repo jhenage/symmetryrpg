@@ -49,6 +49,11 @@ export interface CreatureTypeData {
     action: number; // speed of actions, human = 1.0
     reaction: number; // speed of reactions, human = 1.0
   };
+  qi: {
+    minimum: number;
+    average: number;
+    stddev: number;
+  }
 }
 
 
@@ -84,6 +89,10 @@ export class CreatureType {
 
   get quickness(): {physical: number, mental: number, action: number, reaction: number} {
     return this._data.quickness;
+  }
+
+  get qi(): {minimum: number, average: number, stddev: number} {
+    return this._data.qi;
   }
 
 }

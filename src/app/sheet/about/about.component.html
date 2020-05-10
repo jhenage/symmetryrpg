@@ -24,9 +24,12 @@
     <input [(ngModel)]="about.bodyFat" type="range" min="-7" max="7" step="0.1"/>
     ({{about.bodyFatProbabilityDescription}})
   </div>
-  Weight: {{about.character.WeightLbs(0) | number:'1.0-0'}}<br/>
+  Weight: {{about.character.WeightLbs(0) | number:'1.0-0'}} lbs<br/>
   Endurance: {{about.character.Endurance(0) | number:'1.0-1'}}<br/>
   Physical Eccentricity: {{about.physicalEccentricity(0).toFixed(1)}}<br/>
+  Qi Capacity: {{about.character.maxQi}}<br/>
+  Physical Defense: {{about.character.PhysicalDefense(0).toFixed(2)}}<br/>
+  Magical Defense: {{about.character.MagicalDefense(0).toFixed(2)}}<br/>
   <div class="field potential-rating six-digit">
     <label>Potential Rating</label>
     <input [(ngModel)]="about.potentialRating" type="number" />
