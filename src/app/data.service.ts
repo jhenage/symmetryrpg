@@ -80,6 +80,7 @@ export class DataService {
       let data = this.parse(localStorage.getItem('campaign'));
       if(data) {
         data.creatureTypes = this._campaignblank.creatureTypes; // For Debugging
+        data.commonSpecialties = this._campaignblank.commonSpecialties; // For Debugging
         this._campaign = new Campaign(data,(id,version)=>this.getCharacter(id,version));
       }
       else {

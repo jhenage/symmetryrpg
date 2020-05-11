@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, Input, OnInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, Input, OnInit, OnChanges } from '@angular/core';
 import { About } from 'src/app/model/character/about';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
@@ -7,9 +7,10 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.less', '../sheet.component.less']
 })
-export class AboutComponent implements OnInit {
+export class AboutComponent implements OnInit, OnChanges {
 
   @Input() about: About;
+  @Input() brawn: number;
   @ViewChild('portrait', { static: true }) 
   portrait: ElementRef<HTMLCanvasElement>;
   private ctx: CanvasRenderingContext2D;
@@ -19,6 +20,10 @@ export class AboutComponent implements OnInit {
 
   ngOnInit(): void {
     this.ctx = this.portrait.nativeElement.getContext('2d');
+  }
+
+  ngOnChanges(): void {
+    this.drawPortrait();
   }
 
   log(evt: any) {
