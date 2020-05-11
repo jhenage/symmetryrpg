@@ -18,7 +18,8 @@ input[type=checkbox].hide.blank-descriptions~.descriptions.container .descriptio
     display: block;
 }
 
-input[type=checkbox].display.descriptions:checked~.blank-descriptions {
+input[type=checkbox].display.descriptions:checked~.blank-descriptions,
+input[type=checkbox].display.portrait:checked~.portrait-frame {
     display: inline-block;
 }
 
@@ -28,4 +29,9 @@ label {
 
 .about.container .descriptions.container {
     height: auto;
+}
+
+.portrait-frame {
+    border: 1px solid black;
+    display: none;
 }
