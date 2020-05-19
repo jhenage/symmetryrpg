@@ -23,7 +23,9 @@ export class AboutComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    this.drawPortrait();
+    if(this.ctx) {
+      this.drawPortrait();
+    }
   }
 
   log(evt: any) {
@@ -68,11 +70,11 @@ export class AboutComponent implements OnInit, OnChanges {
     mb *= Math.min(1.75,(7+this.about.character.aspects.getAspectRank("brawn"))**1.5/30); // 0 - 7.525, avg = 0.09
     let bf = 0.01 + (7+this.bodyFat)**3/1000; // body fat, 0.01 - 2.75, avg = 0.35
     let offsets = [
-      [0,1],[0.3,1],[0.3,2],[0.15+0.05*bf,2], // head
+      [0,0.9],[0.4,1],[0.4,1.6],[0.3,2],[0.15+0.05*bf,2], // head
       [0.15+0.1*mb+0.08*bf,Math.max(2,2.5-0.8*mb-0.05*bf)],[so,2.5-0.3*mb-0.07*bf], // neck to shoulder
       [so+0.5,2.5-Math.max(0.08*bf,mb+0.05*bf)],[so+1,2.5-Math.max(0.08*bf,mb+0.05*bf)],[so+1.5,2.5-0.07*bf], // bicep
       [so+1.8,2.5-Math.max(0.08*bf,0.5*mb+0.05*bf)],[so+2.2,2.5-Math.max(0.08*bf,0.5*mb+0.05*bf)],[so+3,2.5-0.02*bf], // forearm top
-      [so+3,2.3],[so+3.3,2.3],[so+3.3,3],[so+3,3],[so+3,2.8], // hand
+      [so+3,2],[so+3.2,2.1],[so+3.2,2.4],[so+3.8,2.3],[so+3.9,2.5],[so+3.8,2.9],[so+3,2.8], // hand
       [so+3,2.8+0.02*bf],[so+2.2,2.8+Math.max(0.08*bf,0.5*mb+0.05*bf)],[so+1.8,2.8+Math.max(0.08*bf,0.5*mb+0.05*bf)], // forearm bottom
       [so+1.5,2.8+0.07*bf],[so+1,2.8+Math.max(0.08*bf,mb+0.05*bf)],[so+0.5,2.8+Math.max(0.08*bf,mb+0.05*bf)],[so+0.1*bf,3+0.3*mb+0.05*bf], // tricep
       [0.8*so+0.7*bf,3.3],[0.1+0.2*so+1.5*bf,4],[0.1+0.2*so+1.5*bf,4.2+0.2*bf], // torso
