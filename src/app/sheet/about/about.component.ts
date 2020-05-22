@@ -76,9 +76,9 @@ export class AboutComponent implements OnInit, OnChanges {
       [so+1.8,2.5-Math.max(0.08*bf,0.5*mb+0.05*bf)],[so+2.2,2.5-Math.max(0.08*bf,0.5*mb+0.05*bf)],[so+3,2.5-0.02*bf], // forearm top
       [so+3,2],[so+3.2,2.1],[so+3.2,2.4],[so+3.8,2.3],[so+3.9,2.5],[so+3.8,2.9],[so+3,2.8], // hand
       [so+3,2.8+0.02*bf],[so+2.2,2.8+Math.max(0.08*bf,0.5*mb+0.05*bf)],[so+1.8,2.8+Math.max(0.08*bf,0.5*mb+0.05*bf)], // forearm bottom
-      [so+1.5,2.8+0.07*bf],[so+1,2.8+Math.max(0.08*bf,mb+0.05*bf)],[so+0.5,2.8+Math.max(0.08*bf,mb+0.05*bf)],[so+0.1*bf,3+0.3*mb+0.05*bf], // tricep
-      [0.8*so+0.7*bf,3.3],[0.1+0.2*so+1.5*bf,4],[0.1+0.2*so+1.5*bf,4.2+0.2*bf], // torso
-      [0.2+1.5*bf,4.85],[0.5+0.9*bf+0.5*mb,5.3],[0.5+0.6*bf+0.5*mb,6],[0.4+0.3*bf,6.6], // thigh
+      [so+1.5,2.8+0.07*bf],[so+1,2.8+Math.max(0.08*bf,mb+0.05*bf)],[so+0.5+0.1*bf,2.8+Math.max(0.08*bf,mb+0.05*bf)],[so+0.3*bf,3+0.3*mb+0.05*bf], // tricep
+      [0.8*so+0.7*bf,3.3],[0.1+0.2*so+1.4*bf,4+0.2*bf],[0.1+0.2*so+1.5*bf,4.2+0.4*bf], // torso
+      [0.2+1.45*bf,4.5+0.45*bf],[0.5+1.2*bf+0.5*mb,5.3+0.3*bf],[0.5+0.7*bf+0.5*mb,6+0.4*bf],[0.4+0.4*bf,6.6+0.3*bf], // thigh
       [0.4+0.4*mb+0.3*bf,7.4],[0.4+0.4*mb+0.3*bf,7.6],[0.3+0.3*bf,8.5], // calf
       [0.6+0.1*bf,9],[0,9] // foot
     ];
