@@ -29,12 +29,13 @@
     <canvas #portrait width="{{CANVAS_SIZE}}" height="{{CANVAS_SIZE}}"></canvas>
   </div>
   <div class="derived-attributes">
-    Weight: {{about.character.WeightLbs(0) | number:'1.0-0'}} lbs<br/>
-    Endurance: {{about.character.Endurance(0) | number:'1.0-1'}}<br/>
-    Physical Eccentricity: {{about.physicalEccentricity(0).toFixed(1)}}<br/>
-    Qi Capacity: {{about.character.maxQi}}<br/>
-    Physical Defense: {{about.character.PhysicalDefense(0).toFixed(2)}}<br/>
-    Magical Defense: {{about.character.MagicalDefense(0).toFixed(2)}}<br/>
+    Weight: {{weightLbs | number:'1.0-0'}} lbs<br/>
+    Endurance: {{endurance | number:'1.0-1'}}<br/>
+    Physical Eccentricity: {{physicalEccentricity}}<br/>
+    Qi Capacity: {{maxQi}}<br/>
+    Qi Multiplier: {{about.character.qiMultiplier}}<br/>
+    Physical Defense: {{physicalDefense}}<br/>
+    Magical Defense: {{magicalDefense}}<br/>
   </div>
   <div class="field potential-rating six-digit">
     <label>Potential Rating</label>
@@ -43,7 +44,8 @@
   Improvement Points: {{about.improvementPoints}} <br/>
   IP Spent on Aspects: {{about.character.aspects.getSpentIPTotal()}} <br/>
   IP Spent on Skills: {{about.character.skills.getSpentIPTotal()}} <br/>
-  IP Spend on Specialties: {{about.character.specialties.getSpentIPTotal()}} <br/>
+  IP Spent on Specialties: {{about.character.specialties.getSpentIPTotal()}} <br/>
+  IP Spent on Traits: {{about.character.traits.getSpentIPTotal()}} <br/>
   <input type="checkbox" class="display descriptions" /><label>Show Descriptions</label>
   <input type="checkbox" class="hide blank-descriptions" /><label class="blank-descriptions">Hide Blank</label>
   <div class="descriptions container">

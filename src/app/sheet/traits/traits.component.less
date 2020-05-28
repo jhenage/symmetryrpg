@@ -1,0 +1,92 @@
+.trait.categories {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.trait.container {
+    flex-grow: 1;
+    flex-basis: 0;
+    height: auto;
+}
+
+.trait-container-label {
+    font-weight: bold;
+    text-align: center;
+    margin: 4px 0px 4px 0px;
+}
+
+.display.unknown-traits:checked~.trait.categories .single.trait.unknown {
+    display: block;
+}
+
+.display.unknown-traits~.trait.categories .single.trait.unknown {
+    display: none;
+}
+
+.single.trait {
+    white-space: nowrap;
+    position: relative;
+}
+
+.single.trait.available label {
+    font-weight: normal;
+    color: black;
+}
+
+.single.trait:not(.available) input:checked~label {
+    font-weight: bold;
+    color: red;
+}
+
+.single.trait label {
+    color: #bbb;
+}
+
+.documentation.mouseover {
+    visibility: hidden;
+    background-color: black;
+    color: white;
+    text-align: center;
+    font-size: smaller;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    right: 105%;
+    white-space: normal;
+    width: 300px;
+}
+
+.single.trait:hover .documentation.mouseover {
+    visibility: visible;
+}
+
+.documentation.mouseover .description,
+.documentation.mouseover .requirements {
+    display: inline;
+}
+
+.failed,
+.documentation.mouseover .requirements {
+    font-weight: bold;
+    font-style: italic;
+    margin-left: 3px;
+}
+
+.passed,
+.available .documentation.mouseover .requirements {
+    color: #bbb;
+    font-weight: normal;
+    font-style: normal;
+}
+
+.passed,
+.failed {
+    margin-right: 3px;
+    display: inline-block;
+}
+
+.documentation.mouseover .requirements .reqs:first-child::before {
+    content: "Requires: ";
+}

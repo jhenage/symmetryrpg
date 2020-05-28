@@ -46,4 +46,10 @@ export class SpecialtiesComponent implements OnInit {
     return result;
   }
 
+  getDisplayName(specialtyKey: string): string {
+    return specialtyKey.replace(/(?<=[^-])[A-Z]/g, function (x) {
+      return " "+x;
+    });
+  }
+
 }

@@ -38,7 +38,17 @@ export class Aspects {
   }
 
   Current(time:number,aspect:string): number {
-    return ModifiedValue(time,this._data[aspect]);
+    let myList = [];
+    let result = 0;
+    if(this.flatAxisList.includes(aspect)) {
+      this.aspectsList.forEach(aspectName => {
+        if(this.getAspectDescriptors(aspectName).includes(aspect)) myList.push(aspectName);
+      });
+    } else myList.push(aspect);
+    myList.forEach(aspectName => {
+      result += ModifiedValue(time,this._data[aspectName]);
+    });
+    return result;
   }
 
   TempChange(time:number,aspect:string,amount:number): void {
@@ -47,6 +57,40 @@ export class Aspects {
 
   get aspectsList(): string[] {
     return Object.keys(this._data);
+  }
+
+  get axisList(): string[][] {
+    return [["body","mind"],["strength","finesse"],["action","balance"]];
+  }
+
+  get flatAxisList(): string[] {
+    let result = [];
+    this.axisList.forEach(axis => {
+      result = result.concat(axis);
+    });
+    return result;
+  }
+
+  getAspectDescriptors(aspectName:string): string[] {
+    switch(aspectName) {
+      case "brawn":
+        return ["body","strength","action"];
+      case "toughness":
+        return ["body","strength","balance"];
+      case "agility":
+        return ["body","finesse","action"];
+      case "reflex":
+        return ["body","finesse","balance"];
+      case "impression":
+        return ["mind","strength","action"];
+      case "serenity":
+        return ["mind","strength","balance"];
+      case "cleverness":
+        return ["mind","finesse","action"];
+      case "awareness":
+        return ["mind","finesse","balance"];
+    }
+    return [];
   }
 
   getAspectRank(aspectName: string): number {

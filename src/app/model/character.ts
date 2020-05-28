@@ -193,7 +193,7 @@ export class Character {
       this._data.fatigue.muscles[muscle].splice(0,this._data.fatigue.muscles[muscle].length-1);
     }
     this._data.location = [this.location(time)];
-    this._data.qi = {amount:this.maxQi,modified:[{time:time,amount:this.Qi(time)}]};
+    this._data.qi = {amount:this.MaxQi(time),modified:[{time:time,amount:this.Qi(time)}]};
     this._data.about.height.modified = [{time:time,amount:this.about.HeightMeter(time)}];
     this.aspects.aspectsList.forEach((aspect) => {
       this._data.aspects[aspect].modified = [{time:time,amount:this.aspects.Current(time,aspect)}];
@@ -242,30 +242,55 @@ export class Character {
     }
   }
 
+  getBaseEndurance(toughness: number): number {
+    return Math.max(0.5,(8 + toughness) * ((1 - this.about.muscleBulk/14) ** 2));
+  }
+
   Endurance(time:number): number { 
-    let endurance = (7.5 + 0.5*this.aspects.Current(time,'toughness')) * ((8 - this.about.muscleBulk) ** 2) / 64;
-    //if ( this.traits.endurance ) {
-    //  if ( this.traits.greatEndurance ) {
-    //    if ( this.traits.epicEndurance ) {
-    //      if ( this.traits.ultEndurance ) {
-    //        return endurance + 15;
-    //      }
-    //      return endurance + 9;
-    //    }
-    //    return endurance + 5;
-    //  }
-    //  return endurance + 2;
-    //}
+    let endurance = this.getBaseEndurance(this.aspects.Current(time,"toughness"));
+    if ( this.traits.hasTrait("endurance") ) {
+      if ( this.traits.hasTrait("greatEndurance") ) {
+        if ( this.traits.hasTrait("epicEndurance") ) {
+          if ( this.traits.hasTrait("supremeEndurance") ) {
+            endurance += 6;
+          }
+          endurance += 4;
+        }
+        endurance += 3;
+      }
+      endurance += 2;
+    } else if ( this.traits.hasTrait("anemia") ) {
+      if ( this.traits.hasTrait("severeAnemia") ) {
+        endurance --;
+      }
+      endurance--;
+    }
     return endurance;
   }
 
   Qi(time: number): number {
-    return ModifiedValue(time,this._data.qi);
+    return Math.min(ModifiedValue(time,this._data.qi),this.MaxQi(time));
   }
 
-  get maxQi(): number { 
-    let result = this.creatureType.qi.average + this.creatureType.qi.stddev * this.aspects.getAspectRank("serenity");
-    return Math.max(this.creatureType.qi.minimum,Math.round(result));
+  MaxQi(time: number): number { 
+    let result = this.creatureType.qi.average + this.creatureType.qi.stddev * this.aspects.Current(time,"serenity");
+    return Math.max(this.creatureType.qi.minimum,Math.round(result)) * this.qiMultiplier;
+  }
+
+  get qiMultiplier(): number {
+    let multiplier = 1;
+    if(this.traits.hasTrait("qiAwareness")) {
+      multiplier++;
+      ["Action","Body","Finesse","Mind","Reaction","Strength"].forEach(aspectGroup => {
+        ["philosophyOf","focused","dedicatedTo"].forEach(philosophyLevel => {
+          if(this.traits.hasTrait(philosophyLevel + aspectGroup)) multiplier++;
+        });
+      });
+      if(this.traits.hasTrait("qiReserves")) multiplier += 2;
+      if(this.traits.hasTrait("greaterQiReserves")) multiplier += 3;
+      if(multiplier > 10) multiplier = 10;
+    }
+    return multiplier;
   }
 
   AddQi(time: number, amount: number): void {
@@ -329,6 +354,8 @@ export class Character {
 
   MaxSpeed(time: number, limbList: string[], carriedWeight: number): number { // spd in m/s
     var result = this.skills.getBaseResult(this.aspects.Current(time,'brawn'),'athlete',0);
+    if(this.traits.hasTrait("swift")) result++;
+    if(this.traits.hasTrait("epicSwiftness")) result += 2;
     result < 0 ? result = result * 0.6 : result = result / 0.6;
     result += 9;
     if(result <= 0) return 0;
@@ -339,6 +366,8 @@ export class Character {
 
   MaxAcceleration(time: number, limbList: string[], carriedWeight: number): number { // accel in m/s/s
     var result = (this.aspects.Current(time,'brawn'));
+    if(this.traits.hasTrait("swift")) result++;
+    if(this.traits.hasTrait("epicSwiftness")) result += 2;
     result < 0 ? result = result * 0.12 : result = result / 3;
     result++;
     if(result <=0) return 0;
@@ -348,16 +377,22 @@ export class Character {
   }
 
   PhysicalDefense(time: number): number {
-    return this.skills.getBaseResult(this.aspects.Current(time,"reflex"),"fighter") - 1;
+    let result = this.skills.getBaseResult(this.aspects.Current(time,"reflex"),"fighter") - 3;
+    let unarmed = this.specialties.getSpecialtyRank("unarmedCombat")
+    if(unarmed > 0) result += 1.5;
+    if(unarmed > 1) result += 0.5;
+    return result;
   }
 
   MagicalDefense(time: number): number {
-    return this.skills.getBaseResult(this.aspects.Current(time,"awareness"),"mage") - 1;
+    let result = this.skills.getBaseResult(this.aspects.Current(time,"awareness"),"mage") - 3;
+    if(this.traits.hasTrait("qiAwareness")) result += 2;
+    return result;
   }
 
   getSpentIPTotal(): number {
     return this.aspects.getSpentIPTotal() + this.skills.getSpentIPTotal() + 
-           this.specialties.getSpentIPTotal();
+           this.specialties.getSpentIPTotal() + this.traits.getSpentIPTotal();
   }
 
   get isOverBudget(): boolean {

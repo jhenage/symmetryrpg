@@ -41,12 +41,6 @@ export class Specialties {
     }
   }
 
-  getDisplayName(specialtyKey: string): string {
-    return specialtyKey.replace(/(?<=[^-])[A-Z]/g, function (x) {
-      return " "+x;
-    });
-  }
-
   // returns a list of all the specialty keys in alphabetical order
   getSpecialtiesList(): string[] {
     return Object.keys(this.character.campaign.commonSpecialties).sort();
