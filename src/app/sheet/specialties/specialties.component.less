@@ -1,0 +1,32 @@
+input[type=checkbox].display.by-category~.specialties.display-group.by-category,
+input[type=checkbox].display.by-category:checked~.specialties.display-group.alphabetical,
+input[type=checkbox].display.unknown-specialties~.specialties.display-group .specialty.unknown {
+    display: none;
+}
+
+input[type=checkbox].display.by-category:checked~.specialties.display-group.by-category,
+input[type=checkbox].display.by-category~.specialties.display-group.alphabetical {
+    display: flex;
+}
+
+input[type=checkbox].display.unknown-specialties:checked~.specialties.display-group .specialty.unknown {
+    display: block;
+}
+
+.specialties.display-group {
+    flex-wrap: wrap;
+}
+
+.specialties.display-group > * {
+    flex-grow: 1;
+    flex-basis: 0;
+    height: auto;
+}
+
+.specialties.display-group.alphabetical {
+    flex-direction: column;
+}
+
+.field.specialty {
+    white-space: nowrap;
+}

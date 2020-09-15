@@ -1,33 +1,30 @@
 export interface WeightData {
-  frameSizeFactor: { // mass is proportional to height ** (1 + frameSizeFactor)
-    average: number; // human = 1, ie. mass proportional to height squared
+  frameSizeFactor: { // total weight proportionality constant for frame size symmetric
+    average: number; // human = 1.0
     stddev: number; // human = 0.05
   };
-  boneFrameFactor: { // mass of bones proportionality constant for portion from frame size symmetric
-    minimum: number; // human = 1.5
-    average: number; // human = 2.5
-    stddev: number; // human = 0.5
+  organMassFactor: number; // mass of organs proportionality constant, human = 6.2
+  fatMassFactor: { // mass of fat porportionality constant for body fat symmetric
+    minimum: number; // human 0.0
+    average: number; // human 6.2
+    stddev: number; // human 10.0
   };
-  boneToughnessFactor: { // mass of bones proportionality constant for portion from toughness
-    minimum: number; // human = 0
-    average: number; // human = 0.6
-    stddev: number; // human = 0.2
+  boneMassFactor: number; // mass of bones proportionality constant, human = 3.5
+  muscleMassFactor: number; // mass of muscles proportionality constant, human = 10.5
+  brawnFactor: { // brawn proportionality constant affects for bone and muscle
+    minimum: number; // human = 0.75 
+    average: number; // human = 1.0
+    stddev: number; // human = 0.05
   };
-  organWeightFactor: number; // mass of organs proportionality constant, human = 5.6
-  muscleBrawnFactor: { // mass of muscle proportionality constant dependent on brawn
-    minimum: number; // human = NaN (indicates to use a normal instead of log-normal distribution)
-    average: number; // human = 9
-    stddev: number; // human = 1
+  toughnessFactor: { // toughness proportionality constant for bone and muscle
+    minimum: number; // human = 0.9
+    average: number; // human = 1.0
+    stddev: number; // human = 0.01
   };
-  muscleBulkFactor: { // mass of muscle scaling factor for muscle bulk symmetric
-    minimum: number; // human = 0.6
-    average: number; // human = 1
-    stddev: number; // human = 0.09
-  };
-  fatMassFactor: { // mass of fat porportionality constant dependent on body fat symmetric
-    minimum: number; // human 0.05
-    average: number; // human 0.25
-    stddev: number; // human 0.80
+  muscleBulkFactor: { // mass of bone and muscle scaling factor for muscle bulk symmetric
+    minimum: number; // human = 0.75
+    average: number; // human = 1.0
+    stddev: number; // human = 0.1
   };
 }
 
@@ -46,6 +43,17 @@ export interface CreatureTypeData {
     stddev: number;
   };
   weight: WeightData;
+  quickness: { // duration = (base duration) * (physical or mental) * (action or reaction)
+    physical: number; // speed of physical activity, human = 1.0
+    mental: number; // speed of mental activity, human = 1.0 
+    action: number; // speed of actions, human = 1.0
+    reaction: number; // speed of reactions, human = 1.0
+  };
+  qi: {
+    minimum: number;
+    average: number;
+    stddev: number;
+  };
   targets: {
     torso: TargetData;
     [propName: string]: TargetData;
@@ -112,6 +120,14 @@ export class CreatureType {
 
   get tissues() {
     return this._data.tissues;
+  }
+  
+  get quickness(): {physical: number, mental: number, action: number, reaction: number} {
+    return this._data.quickness;
+  }
+
+  get qi(): {minimum: number, average: number, stddev: number} {
+    return this._data.qi;
   }
 
 }

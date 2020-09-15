@@ -13,7 +13,8 @@ export class AspectsComponent implements OnInit {
   @Input() aspects: Aspects;
   readonly MINIMUM_VALUE = -7;
   readonly MAXIMUM_VALUE = 15;
-  readonly PRECISION = 1; // number of digits after decimal point to keep track of
+  readonly ASPECT_PRECISION = 1; // number of digits after decimal point to keep track of
+  readonly TIME_PRECISION = 3;
   inputsOutOfRange = {};
 
   constructor(private logService: LogService) {}
@@ -34,13 +35,37 @@ export class AspectsComponent implements OnInit {
     } else {
       this.inputsOutOfRange[aspectName] = false;
     }
-    this.aspects.setAspectRank(aspectName,Number(Number(rank).toFixed(this.PRECISION)));
+    this.aspects.setAspectRank(aspectName,Number(Number(rank).toFixed(this.ASPECT_PRECISION)));
   }
-
 
   makeAspectTest(aspectName:string) {
     let factory = new AspectTestActionFactory();
     let action = factory.build(this.aspects.character,{time:this.logService.now,aspect:aspectName});
     this.logService.newAction(action);
   }
+
+  get mentalActionDuration(): string {
+    let result = this.aspects.getMentalActionTime(0,1,{targetedPenalty:0,genericPenalty:0,incidentalPenalty:0});
+    return result.toFixed(this.TIME_PRECISION) + " sec";
+  }
+
+  get physicalActionDuration(): string {
+    let result = this.aspects.getPhysicalActionTime(0,1,{targetedPenalty:0,genericPenalty:0,incidentalPenalty:0});
+    return result.toFixed(this.TIME_PRECISION) + " sec";
+  }
+
+  get mentalReactionTimeRange(): string {
+    let result = this.aspects.getMentalReactionTime(0,0,[0,0,0,0],false).toFixed(this.TIME_PRECISION) + " - ";
+    return result + this.aspects.getMentalReactionTime(0,0,[50,50,50,50],false).toFixed(this.TIME_PRECISION) + " sec"; 
+  }
+
+  get physicalReactionTimeRange(): string {
+    let result = this.aspects.getPhysicalReactionTime(0,0,[0,0,0,0],false).toFixed(this.TIME_PRECISION) + " - ";
+    return result + this.aspects.getPhysicalReactionTime(0,0,[50,50,50,50],false).toFixed(this.TIME_PRECISION) + " sec"; 
+  }
+
+  get surpriseMultiplier(): string {
+    return this.aspects.getSurpriseMultiplier(this.aspects.getAspectRank("awareness")).toFixed(this.ASPECT_PRECISION + 1);
+  }
+
 }

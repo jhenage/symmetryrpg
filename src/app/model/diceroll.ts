@@ -43,8 +43,8 @@ export class DiceRoll {
     standardDice(): number[] { // returns array of three numbers between -1 and 1 in 0.01 step increments, careful about rounding errors
         let result = [];       // this gives a total of -3 to 3 with a standard deviation of about 1.0025
         for(let i=0; i<3; i++) {
-            result[i] = Math.floor(Math.random()*101)/100;
-            if(Math.random() < 0.5) result[i] = -result[i];
+            result[i] = Math.floor(Math.random()*101)/100;  // finite precision makes extreme values slightly less likely (intentional)
+            if(Math.random() < 0.5) result[i] = -result[i]; // 0 result twice as likely (intentional)
         }
         return result;
     }

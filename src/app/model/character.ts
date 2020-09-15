@@ -4,12 +4,13 @@ import { Aspects, AspectsData } from './character/aspects';
 import { Equipment, EquipmentData } from './character/equipment';
 import { Fatigue, FatigueData } from './character/fatigue';
 import { Skills, SkillsData } from './character/skills';
-import { Specialties, SpecialtiesData } from './character/specialties';
+import { Specialties, SpecialtiesData, SpecialtyCategories } from './character/specialties';
 import { Spells, SpellsData } from './character/spells';
 import { Tap, TapData } from './character/tap';
 import { Traits, TraitsData } from './character/traits';
 import { Wounds, WoundData } from './character/wounds';
 import { CreatureType } from './creaturetype';
+import { Campaign } from './campaign';
 
 export interface ModifiableStat {
   amount: number;
@@ -17,6 +18,13 @@ export interface ModifiableStat {
     time: number;
     amount: number;
   }[];
+}
+
+export interface MassBreakdown {
+  boneMass: number;
+  fatMass: number;
+  muscleMass: number;
+  organMass: number;
 }
 
 export function ModifiedValue(time:number,data:ModifiableStat): number {
@@ -103,11 +111,13 @@ export class Character {
   tap: Tap;
   traits: Traits;
   wounds: Wounds;
-  creatureType: CreatureType;
+  campaign: Campaign;
+  creatureTypeIndex: number;
 
-  constructor(id: number,creatureType: CreatureType,data: any,commonSpecialties?: any) {
+  constructor(id: number,creatureTypeIndex: number,data: any,campaign: Campaign) {
     this.id = id;
-    this.creatureType = creatureType;
+    this.creatureTypeIndex = creatureTypeIndex;
+    this.campaign = campaign;
 
     if ( typeof data === "number" ) {
       this.about = new About(this);
@@ -122,13 +132,13 @@ export class Character {
       this.tap = new Tap(this);
       this.fatigue = new Fatigue(this);
 
-      this._data = {createdAt:data,location:[],token:'',creatureType:0,
+      this._data = {createdAt:data,location:[],token:'',creatureType:creatureTypeIndex,
                     qi:{amount:0},
                     about:this.about.initialize(),
                     actions: this.actions.initialize(),
                     aspects: this.aspects.initialize(),
                     skills: this.skills.initialize(),
-                    specialties: this.specialties.initialize(commonSpecialties),
+                    specialties: this.specialties.initialize(),
                     spells: this.spells.initialize(),
                     traits: this.traits.initialize(),
                     wounds: this.wounds.initialize(),
@@ -158,6 +168,7 @@ export class Character {
 
   serialize(): string { return JSON.stringify(this._data); }
   get createdAt(): number { return this._data.createdAt; }
+  get creatureType(): CreatureType { return this.campaign.creatureTypes[this.creatureTypeIndex]; }
 
   // clear all temporary data. For after cloning character
   resetAll() {
@@ -182,7 +193,7 @@ export class Character {
       this._data.fatigue.muscles[muscle].splice(0,this._data.fatigue.muscles[muscle].length-1);
     }
     this._data.location = [this.location(time)];
-    this._data.qi = {amount:this.MaxQi(),modified:[{time:time,amount:this.Qi(time)}]};
+    this._data.qi = {amount:this.maxQi,modified:[{time:time,amount:this.Qi(time)}]};
     this._data.about.height.modified = [{time:time,amount:this.about.HeightMeter(time)}];
     this.aspects.aspectsList.forEach((aspect) => {
       this._data.aspects[aspect].modified = [{time:time,amount:this.aspects.Current(time,aspect)}];
@@ -198,18 +209,28 @@ export class Character {
     return this.WeightKg(time) * 2.2;
   }
 
-  // 
   WeightKg(time:number): number {
+    let breakdown = this.WeightKgBreakdown(time);
+    return breakdown.boneMass + breakdown.fatMass + breakdown.muscleMass + breakdown.organMass;
+  }
+
+  WeightKgBreakdown(time:number): MassBreakdown {
     let weight = this.creatureType.weight;
     let frameSizeFactor = this.interpretSymmetric(this.about.frameSize, weight.frameSizeFactor);
     let fatMassFactor = this.interpretSymmetric(this.about.bodyFat, weight.fatMassFactor);
-    let boneFrameFactor = this.interpretSymmetric(this.about.frameSize, weight.boneFrameFactor);
-    let boneToughnessFactor = this.interpretSymmetric(this.aspects.Current(time,"toughness"), weight.boneToughnessFactor);
+    let brawnFactor = this.interpretSymmetric(this.aspects.Current(time,"brawn"), weight.brawnFactor);
+    let toughnessFactor = this.interpretSymmetric(this.aspects.Current(time,"toughness"), weight.toughnessFactor);
     let muscleBulkFactor = this.interpretSymmetric(this.about.muscleBulk, weight.muscleBulkFactor);
-    let muscleBrawnFactor = this.interpretSymmetric(this.aspects.Current(time,"brawn"), weight.muscleBrawnFactor);
-    let result = weight.organWeightFactor + fatMassFactor + boneFrameFactor + boneToughnessFactor;
-    result += muscleBrawnFactor * muscleBulkFactor;
-    return result * ( this.about.HeightMeter(time) ** (1 + frameSizeFactor) );
+    let scale = (this.about.HeightMeter(time) ** 2) * frameSizeFactor;
+    let organMass = weight.organMassFactor * scale;
+    let fatMass = fatMassFactor * scale;
+    scale *= brawnFactor * toughnessFactor * muscleBulkFactor;
+    return {
+      boneMass: weight.boneMassFactor * scale,
+      fatMass: fatMass,
+      muscleMass: weight.muscleMassFactor * scale,
+      organMass: organMass
+    };
   }
 
   // for normal or log-normal distributions; data.minimum signals the use of log-normal distributions
@@ -228,6 +249,19 @@ export class Character {
       target = target ? target.targets[element] : this.creatureType.targets[element];
     });
 
+    let brawnFactor = this.creatureType.weight.brawnFactor;
+    let toughnessFactor = this.creatureType.weight.toughnessFactor;
+    let brawn = this.interpretSymmetric(this.aspects.Current(time,"brawn"), {
+      minimum: brawnFactor.minimum/brawnFactor.average,
+      average: 1,
+      stddev: brawnFactor.stddev/brawnFactor.average
+    });
+    let toughness = this.interpretSymmetric(this.aspects.Current(time,"toughness"), {
+      minimum: toughnessFactor.minimum/toughnessFactor.average,
+      average: 1,
+      stddev: toughnessFactor.stddev/toughnessFactor.average
+    });
+    
     var give = 0;
     var tissues = [];
     target.layers.forEach(element => {
@@ -238,28 +272,20 @@ export class Character {
         thickness = this.interpretSymmetric(this.about.bodyFat, {
           minimum: fmf.minimum*thickness/fmf.average,
           average: thickness,
-          stddev: fmf.stddev*thickness/fmf.average});
+          stddev: fmf.stddev*thickness/fmf.average
+        });
       }
       if(element.tissue == 'muscle') {
         let bulkFactor = this.creatureType.weight.muscleBulkFactor;
-        let brawnFactor = this.creatureType.weight.muscleBrawnFactor;
         let bulk = this.interpretSymmetric(this.about.muscleBulk, {
           minimum: bulkFactor.minimum/bulkFactor.average,
           average: 1,
-          stddev: bulkFactor.stddev/bulkFactor.average});
-        let brawn = this.interpretSymmetric(this.aspects.Current(time,"brawn"), {
-          minimum: brawnFactor.minimum/brawnFactor.average,
-          average: 1,
-          stddev: brawnFactor.stddev/brawnFactor.average});
-        thickness *= bulk * brawn;
+          stddev: bulkFactor.stddev/bulkFactor.average
+        });
+        thickness *= bulk * brawn * toughness;
       }
       if(element.tissue == 'bone') {
-        let btf = this.creatureType.weight.boneToughnessFactor;
-        let boneFactor = this.interpretSymmetric(this.aspects.Current(time,"toughness"), {
-          minimum: btf.minimum/btf.average,
-          average: 1,
-          stddev: btf.stddev/btf.average});
-        thickness *= boneFactor;
+        thickness *= brawn * toughness;
       }
       tissues.push({tissue:element.tissue,thickness:thickness});
     });
@@ -296,7 +322,10 @@ export class Character {
     return ModifiedValue(time,this._data.qi);
   }
 
-  MaxQi(time?: number): number { return 10; }
+  get maxQi(): number { 
+    let result = this.creatureType.qi.average + this.creatureType.qi.stddev * this.aspects.getAspectRank("serenity");
+    return Math.max(this.creatureType.qi.minimum,Math.round(result));
+  }
 
   AddQi(time: number, amount: number): void {
     return ChangeModifiedValue(time,this._data.qi,ModifiedValue(time,this._data.qi)+amount);
@@ -361,6 +390,7 @@ export class Character {
     var result = this.skills.getBaseResult(this.aspects.Current(time,'brawn'),'athlete',0);
     result < 0 ? result = result * 0.6 : result = result / 0.6;
     result += 9;
+    if(result <= 0) return 0;
     result *= 0.5 * this.LimbsMovementFactor(time,limbList) * this.about.HeightMeter(time);
     result *= (100/(this.WeightKg(time)+carriedWeight))**0.5;
     return result;
@@ -370,13 +400,23 @@ export class Character {
     var result = (this.aspects.Current(time,'brawn'));
     result < 0 ? result = result * 0.12 : result = result / 3;
     result++;
+    if(result <=0) return 0;
     result **= 1.5;
     result *= 100 * this.LimbsMovementFactor(time,limbList) / (this.WeightKg(time)+carriedWeight);
     return result;
   }
 
+  PhysicalDefense(time: number): number {
+    return this.skills.getBaseResult(this.aspects.Current(time,"reflex"),"fighter") - 1;
+  }
+
+  MagicalDefense(time: number): number {
+    return this.skills.getBaseResult(this.aspects.Current(time,"awareness"),"mage") - 1;
+  }
+
   getSpentIPTotal(): number {
-    return this.aspects.getSpentIPTotal() + this.skills.getSpentIPTotal();
+    return this.aspects.getSpentIPTotal() + this.skills.getSpentIPTotal() + 
+           this.specialties.getSpentIPTotal();
   }
 
   get isOverBudget(): boolean {

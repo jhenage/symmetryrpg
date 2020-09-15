@@ -23,13 +23,16 @@ export class DataService {
       height: { average: 1.692, stddev: 0.127 },
       weight: {
         frameSizeFactor: { average: 1, stddev: 0.05 },
-        boneFrameFactor: { minimum: 1.5, average: 2.5, stddev: 0.5 },
-        boneToughnessFactor: { minimum: 0, average: 0.6, stddev: 0.2 },
-        organWeightFactor: 5.6,
-        muscleBrawnFactor: { minimum: NaN, average: 9, stddev: 1 },
-        muscleBulkFactor: { minimum: 0.6, average: 1, stddev: 0.09 },
-        fatMassFactor: { minimum: 0.4, average: 5, stddev: 10 }
+        organMassFactor: 6.2,
+        fatMassFactor: { minimum: 0, average: 6.2, stddev: 10 },
+        boneMassFactor: 3.5,
+        muscleMassFactor: 10.5,
+        brawnFactor: { minimum: 0.75, average: 1, stddev: 0.05 },
+        toughnessFactor: { minimum: 0.9, average: 1, stddev: 0.01 },
+        muscleBulkFactor: { minimum: 0.75, average: 1, stddev: 0.1 }
       },
+      quickness: { physical: 1, mental: 1, action: 1, reaction: 1},
+      qi: {minimum: 1, average: 10, stddev: 2},
       tissues: {
         skin: {
           impact: { absorb: 1, give: .8, break: 100 },
@@ -162,6 +165,7 @@ export class DataService {
       let data = this.parse(localStorage.getItem('campaign'));
       if(data) {
         data.creatureTypes = this._campaignblank.creatureTypes; // For Debugging
+        data.commonSpecialties = this._campaignblank.commonSpecialties; // For Debugging
         this._campaign = new Campaign(data,(id,version)=>this.getCharacter(id,version));
       }
       else {

@@ -25,6 +25,7 @@ import { SkillsComponent } from './sheet/skills/skills.component';
 import { SpecialtiesComponent } from './sheet/specialties/specialties.component';
 import { AboutComponent } from './sheet/about/about.component';
 import { StatusComponent } from './status/status.component';
+import { TraitsComponent } from './sheet/traits/traits.component';
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule ],
@@ -32,7 +33,8 @@ import { StatusComponent } from './status/status.component';
     AspecttestHistoryComponent, SkilltestHistoryComponent, MoveHistoryComponent, MoveExecuteComponent, MoveQueueComponent,
     HistoryActionwrapComponent, AspectsComponent, SkillsComponent, AboutComponent, QueueActionwrapComponent, ExecuteActionwrapComponent,
     SpecialtiesComponent,
-    StatusComponent
+    StatusComponent,
+    TraitsComponent
    ],
   entryComponents: [ AspecttestHistoryComponent, SkilltestHistoryComponent, MoveHistoryComponent, MoveExecuteComponent, MoveQueueComponent ],
   bootstrap:    [ AppComponent ]

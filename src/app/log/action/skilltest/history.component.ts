@@ -20,7 +20,7 @@ import { CommonModule } from '@angular/common';
           <option value="5">5 Missing Specialties</option>
           <option value="6">6 Missing Specialties</option>
       </select>
-      {{result()}}
+      {{result().toFixed(2)}}
   </div>`
 })
 export class SkilltestHistoryComponent implements ActionHistoryComponent {
