@@ -221,6 +221,60 @@ export class Character {
     }
   }
 
+  TissueSizes(time:number, location:string): { give:number, tissues: {tissue:string,thickness:number}[] } {
+    var target = this.creatureType.targets.torso;
+    target = undefined;
+    location.split('.').forEach(element => {
+      target = target ? target.targets[element] : this.creatureType.targets[element];
+    });
+
+    var give = 0;
+    var tissues = [];
+    target.layers.forEach(element => {
+      give += this.creatureType.tissues[element.tissue].impact.give * element.thickness;
+      let thickness = element.thickness;
+      if(element.tissue == 'fat') {
+        let fmf = this.creatureType.weight.fatMassFactor;
+        thickness = this.interpretSymmetric(this.about.bodyFat, {
+          minimum: fmf.minimum*thickness/fmf.average,
+          average: thickness,
+          stddev: fmf.stddev*thickness/fmf.average});
+      }
+      if(element.tissue == 'muscle') {
+        let bulkFactor = this.creatureType.weight.muscleBulkFactor;
+        let brawnFactor = this.creatureType.weight.muscleBrawnFactor;
+        let bulk = this.interpretSymmetric(this.about.muscleBulk, {
+          minimum: bulkFactor.minimum/bulkFactor.average,
+          average: 1,
+          stddev: bulkFactor.stddev/bulkFactor.average});
+        let brawn = this.interpretSymmetric(this.aspects.Current(time,"brawn"), {
+          minimum: brawnFactor.minimum/brawnFactor.average,
+          average: 1,
+          stddev: brawnFactor.stddev/brawnFactor.average});
+        thickness *= bulk * brawn;
+      }
+      if(element.tissue == 'bone') {
+        let btf = this.creatureType.weight.boneToughnessFactor;
+        let boneFactor = this.interpretSymmetric(this.aspects.Current(time,"toughness"), {
+          minimum: btf.minimum/btf.average,
+          average: 1,
+          stddev: btf.stddev/btf.average});
+        thickness *= boneFactor;
+      }
+      tissues.push({tissue:element.tissue,thickness:thickness});
+    });
+    return {give:give,tissues:tissues};
+  }
+
+  TargetLength(time:number, location:string): number {
+    var target = this.creatureType.targets.torso;
+    target = undefined;
+    location.split('.').forEach(element => {
+      target = target ? target.targets[element] : this.creatureType.targets[element];
+    });
+    return target.length * this.about.HeightMeter(time) / this.creatureType.height.average;
+  }
+
   Endurance(time:number): number { 
     let endurance = (7.5 + 0.5*this.aspects.Current(time,'toughness')) * ((8 - this.about.muscleBulk) ** 2) / 64;
     //if ( this.traits.endurance ) {

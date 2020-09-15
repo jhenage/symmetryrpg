@@ -15,7 +15,7 @@ export class DataService {
     creatureTypes: [{
       name: 'Human',
       limbs: {
-        leftArm:  { dexterity: 5, locomotion: 0.05, muscleSize: 2, reach: 0.375 },
+        leftArm:  { dexterity: 5, locomotion: 0.05, muscleSize: 2, reach: 0.375 }, // reach and muscle size might need to calculate from target sizes
         rightArm: { dexterity: 5, locomotion: 0.05, muscleSize: 2, reach: 0.375 },
         leftLeg:  { dexterity: 1, locomotion: 0.85, muscleSize: 3, reach: 0.5 },
         rightLeg: { dexterity: 1, locomotion: 0.85, muscleSize: 3, reach: 0.5 },
@@ -29,6 +29,91 @@ export class DataService {
         muscleBrawnFactor: { minimum: NaN, average: 9, stddev: 1 },
         muscleBulkFactor: { minimum: 0.6, average: 1, stddev: 0.09 },
         fatMassFactor: { minimum: 0.4, average: 5, stddev: 10 }
+      },
+      tissues: {
+        skin: {
+          impact: { absorb: 1, give: .8, break: 100 },
+          cutting: { break: 0 }
+        },
+        fat: {
+          impact: { absorb: 1, give: .8, break: 100 },
+          cutting: { break: 0 }
+        },
+        muscle: {
+          impact: { absorb: 5, give: .5, break: 300 },
+          cutting: { break: 0 }
+        },
+        bone: {
+          impact: { absorb: 30, give: 0, break: 200 },
+          cutting: { break: 0 }
+        },
+        lung: {
+          impact: { absorb: 5, give: 0.05, break: 100 },
+          cutting: { break: 0 }
+        },
+        brain: {
+          impact: { absorb: 5, give: 0.05, break: 100 },
+          cutting: { break: 0 }
+        }
+
+      },
+      targets: {
+        torso: { 
+          length: 645, // probably should calculate from height 686
+          layers: [
+            {tissue:"skin",thickness:2},
+            {tissue:"fat",thickness:20},
+            {tissue:"muscle",thickness:25},
+            {tissue:"bone",thickness:15},
+            {tissue:"lung",thickness:110}
+          ]
+        },
+        head: { 
+          length: 235, // probably should calculate from height 254
+          layers: [
+            {tissue:"skin",thickness:2},
+            {tissue:"bone",thickness:30},
+            {tissue:"brain",thickness:55}
+          ]
+        },
+        leftArm: { 
+          length: 695, // probably should be calculated 737
+          layers: [
+            {tissue:"skin",thickness:2},
+            {tissue:"fat",thickness:10},
+            {tissue:"muscle",thickness:30},
+            {tissue:"bone",thickness:15}
+          ]
+        },
+        rightArm: { 
+          length: 695, // probably should be calculated
+          layers: [
+            {tissue:"skin",thickness:2},
+            {tissue:"fat",thickness:10},
+            {tissue:"muscle",thickness:30},
+            {tissue:"bone",thickness:15}
+          ]
+        },
+        leftLeg: { 
+          length: 810, // probably should be calculated 864
+          layers: [
+            {tissue:"skin",thickness:2},
+            {tissue:"fat",thickness:10},
+            {tissue:"muscle",thickness:60},
+            {tissue:"bone",thickness:20}
+          ]
+        },
+        rightLeg: { 
+          length: 810, // probably should be calculated
+          layers: [
+            {tissue:"skin",thickness:2},
+            {tissue:"fat",thickness:10},
+            {tissue:"muscle",thickness:60},
+            {tissue:"bone",thickness:20}
+          ]
+        }
+        
+
       }
     }],
     commonSpecialties: {
