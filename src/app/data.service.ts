@@ -523,7 +523,12 @@ export class DataService {
         weightyObligation: {ipCost:-60,prerequisites:{aspects:{},skills:{},specialties:{},traits:["obligation"],other:{}},
           description:"Your obligation(s) demand enormous amounts of time and resources."}
       }
-    }
+    },
+    currencyIntervals: [{ipMax: 200, computation: "linear", parameters: [0,2]},
+                        {ipMax: 1000, computation: "quadratic", parameters: [400,-2,0.01]},
+                        {ipMax: 9000, computation: "exponential", parameters: [1800,0.0025,-1782]},
+                        {ipMax: 10000, computation: "quadratic", parameters: [-7.3032e+10,85000,1024]},
+                        {ipMax: Infinity, computation: "linear", parameters: [-1.7548e+11,20570000]}]
   };
   constructor() { }
 

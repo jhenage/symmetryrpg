@@ -2,6 +2,7 @@ import { Character } from './character'
 import { CreatureType, CreatureTypeData } from './creaturetype';
 import { SpecialtyCategories } from './character/specialties';
 import { TraitDetails } from './character/traits';
+import { CurrencyInterval } from './character/equipment';
 
 export interface CampaignData {
     characters: {id:number,version:number}[];
@@ -15,7 +16,8 @@ export interface CampaignData {
         bestowed: {[propName:string]: TraitDetails};
         epic: {[propName:string]: TraitDetails};
         roleplaying: {[propName:string]: TraitDetails};
-    }
+    };
+    currencyIntervals: CurrencyInterval[];
 }
 
 export class Campaign {
@@ -55,6 +57,10 @@ export class Campaign {
 
     get traitTypes(): string[] {
         return Object.keys(this._data.traitsDetails);
+    }
+
+    get currencyIntervals(): CurrencyInterval[] {
+        return this._data.currencyIntervals;
     }
 
     getTraitList(traitType: string): string[] {
