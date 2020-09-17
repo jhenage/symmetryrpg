@@ -53,6 +53,33 @@ export interface CreatureTypeData {
     minimum: number;
     average: number;
     stddev: number;
+  };
+  targets: {
+    torso: TargetData;
+    [propName: string]: TargetData;
+  };
+  tissues: {  // damage properties of each tissue layer
+    [propName: string]: {
+      impact: {
+        absorb: number; // amount of damage absorbed per cubic mm
+        give: number; // percent[0-1] of the layer that can compress under pressure
+        break: number; // amount of damage per cubic mm before tissue is punctured
+      };
+      cutting: {
+        break: number; // amount of damage before penetration
+      };
+    };
+  };
+}
+
+interface TargetData {
+  length: number; // typical length in mm of body part (as a cylinder)
+  layers?: { // Tissue layers. Must have layers or targets.
+    tissue: string; // tissue ID
+    thickness: number; // average thickness in mm
+  }[]; 
+  targets?: { // Sub targets if this is a group
+    [propName: string]: TargetData;
   }
 }
 
@@ -87,6 +114,14 @@ export class CreatureType {
     return this._data.weight;
   }
 
+  get targets() {
+    return this._data.targets;
+  }
+
+  get tissues() {
+    return this._data.tissues;
+  }
+  
   get quickness(): {physical: number, mental: number, action: number, reaction: number} {
     return this._data.quickness;
   }

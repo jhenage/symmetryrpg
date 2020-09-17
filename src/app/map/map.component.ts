@@ -156,6 +156,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     this.openMenu = false;
   }
 
+  openMenuSelectPunch() {
+    //let factory = new MoveActionFactory();
+    //let action = factory.build(this.character,{time:time,path:[{x:x,y:y,speed:0.5}]});
+    //this.logService.newAction(action);
+  }
+
   deleteMove(action: MoveActionObject) {
     if(action.data.executed) {
       return;

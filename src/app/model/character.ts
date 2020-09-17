@@ -245,6 +245,65 @@ export class Character {
   getBaseEndurance(toughness: number): number {
     return Math.max(0.5,(8 + toughness) * ((1 - this.about.muscleBulk/14) ** 2));
   }
+  
+  TissueSizes(time:number, location:string): { give:number, tissues: {tissue:string,thickness:number}[] } {
+    var target = this.creatureType.targets.torso;
+    target = undefined;
+    location.split('.').forEach(element => {
+      target = target ? target.targets[element] : this.creatureType.targets[element];
+    });
+
+    let brawnFactor = this.creatureType.weight.brawnFactor;
+    let toughnessFactor = this.creatureType.weight.toughnessFactor;
+    let brawn = this.interpretSymmetric(this.aspects.Current(time,"brawn"), {
+      minimum: brawnFactor.minimum/brawnFactor.average,
+      average: 1,
+      stddev: brawnFactor.stddev/brawnFactor.average
+    });
+    let toughness = this.interpretSymmetric(this.aspects.Current(time,"toughness"), {
+      minimum: toughnessFactor.minimum/toughnessFactor.average,
+      average: 1,
+      stddev: toughnessFactor.stddev/toughnessFactor.average
+    });
+    
+    var give = 0;
+    var tissues = [];
+    target.layers.forEach(element => {
+      give += this.creatureType.tissues[element.tissue].impact.give * element.thickness;
+      let thickness = element.thickness;
+      if(element.tissue == 'fat') {
+        let fmf = this.creatureType.weight.fatMassFactor;
+        thickness = this.interpretSymmetric(this.about.bodyFat, {
+          minimum: fmf.minimum*thickness/fmf.average,
+          average: thickness,
+          stddev: fmf.stddev*thickness/fmf.average
+        });
+      }
+      if(element.tissue == 'muscle') {
+        let bulkFactor = this.creatureType.weight.muscleBulkFactor;
+        let bulk = this.interpretSymmetric(this.about.muscleBulk, {
+          minimum: bulkFactor.minimum/bulkFactor.average,
+          average: 1,
+          stddev: bulkFactor.stddev/bulkFactor.average
+        });
+        thickness *= bulk * brawn * toughness;
+      }
+      if(element.tissue == 'bone') {
+        thickness *= brawn * toughness;
+      }
+      tissues.push({tissue:element.tissue,thickness:thickness});
+    });
+    return {give:give,tissues:tissues};
+  }
+
+  TargetLength(time:number, location:string): number {
+    var target = this.creatureType.targets.torso;
+    target = undefined;
+    location.split('.').forEach(element => {
+      target = target ? target.targets[element] : this.creatureType.targets[element];
+    });
+    return target.length * this.about.HeightMeter(time) / this.creatureType.height.average;
+  }
 
   Endurance(time:number): number { 
     let endurance = this.getBaseEndurance(this.aspects.Current(time,"toughness"));
