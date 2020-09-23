@@ -96,9 +96,9 @@ export class Character {
   readonly id: number;
   readonly attributeProbabilities = ["50%","54%","58%","62%","66%","69%","73%","76%","79%","82%","84%","86%","88%",
     "10","12","15","18","22","28","35","44","56","72","93","120","160","220","300","400","500","700","1000","1500",
-    "2000","3000","4000","6000","9000","14k","21k","32k","48k","75k","120k","180k","300k","500k","800k","1.3m","2m",
-    "3.5m","6m","10m","17m","30m","53m","93m","170m","300m","550m","1b","1.9b","3.5b","6.7b","13b","25b","49b","96b",
-    "190b","380b","780b"];
+    "2000","3000","4000","6000","9000","14K","21K","32K","48K","75K","120K","180K","300K","500K","800K","1.3M","2M",
+    "3.5M","6M","10M","17M","30M","53M","93M","170M","300M","550M","1B","1.9B","3.5B","6.7B","13B","25B","49B","96B",
+    "190B","380B","780B"];
 
   about: About;
   actions: Actions;
@@ -195,7 +195,7 @@ export class Character {
       this._data.fatigue.muscles[muscle].splice(0,this._data.fatigue.muscles[muscle].length-1);
     }
     this._data.location = [this.location(time)];
-    this._data.qi = {amount:this.maxQi,modified:[{time:time,amount:this.Qi(time)}]};
+    this._data.qi = {amount:this.MaxQi(time),modified:[{time:time,amount:this.Qi(time)}]};
     this._data.about.height.modified = [{time:time,amount:this.about.HeightMeter(time)}];
     this.aspects.aspectsList.forEach((aspect) => {
       this._data.aspects[aspect].modified = [{time:time,amount:this.aspects.Current(time,aspect)}];
@@ -245,10 +245,14 @@ export class Character {
     if(symmetric >= 0 || isNaN(data.minimum) ) {
       return data.average + data.stddev * symmetric;
     } else {
-      return data.minimum + (data.average - data.minimum) * Math.exp(symmetric);
+      return data.minimum + (data.average - data.minimum) * Math.exp(symmetric*0.6931472); // each full point below zero gets half way to the minimum value
     }
   }
 
+  getBaseEndurance(toughness: number): number {
+    return Math.max(0.5,(8 + toughness) * ((1 - this.about.muscleBulk/14) ** 2));
+  }
+  
   TissueSizes(time:number, location:string): { give:number, tissues: {tissue:string,thickness:number}[] } {
     var target = this.creatureType.targets.torso;
     target = undefined;
@@ -309,29 +313,50 @@ export class Character {
   }
 
   Endurance(time:number): number { 
-    let endurance = (7.5 + 0.5*this.aspects.Current(time,'toughness')) * ((8 - this.about.muscleBulk) ** 2) / 64;
-    //if ( this.traits.endurance ) {
-    //  if ( this.traits.greatEndurance ) {
-    //    if ( this.traits.epicEndurance ) {
-    //      if ( this.traits.ultEndurance ) {
-    //        return endurance + 15;
-    //      }
-    //      return endurance + 9;
-    //    }
-    //    return endurance + 5;
-    //  }
-    //  return endurance + 2;
-    //}
+    let endurance = this.getBaseEndurance(this.aspects.Current(time,"toughness"));
+    if ( this.traits.hasTrait("endurance") ) {
+      if ( this.traits.hasTrait("greatEndurance") ) {
+        if ( this.traits.hasTrait("epicEndurance") ) {
+          if ( this.traits.hasTrait("supremeEndurance") ) {
+            endurance += 6;
+          }
+          endurance += 4;
+        }
+        endurance += 3;
+      }
+      endurance += 2;
+    } else if ( this.traits.hasTrait("anemia") ) {
+      if ( this.traits.hasTrait("severeAnemia") ) {
+        endurance --;
+      }
+      endurance--;
+    }
     return endurance;
   }
 
   Qi(time: number): number {
-    return ModifiedValue(time,this._data.qi);
+    return Math.min(ModifiedValue(time,this._data.qi),this.MaxQi(time));
   }
 
-  get maxQi(): number { 
-    let result = this.creatureType.qi.average + this.creatureType.qi.stddev * this.aspects.getAspectRank("serenity");
-    return Math.max(this.creatureType.qi.minimum,Math.round(result));
+  MaxQi(time: number): number { 
+    let result = this.creatureType.qi.average + this.creatureType.qi.stddev * this.aspects.Current(time,"serenity");
+    return Math.max(this.creatureType.qi.minimum,Math.round(result)) * this.qiMultiplier;
+  }
+
+  get qiMultiplier(): number {
+    let multiplier = 1;
+    if(this.traits.hasTrait("qiAwareness")) {
+      multiplier++;
+      ["Action","Body","Finesse","Mind","Reaction","Strength"].forEach(aspectGroup => {
+        ["philosophyOf","focused","dedicatedTo"].forEach(philosophyLevel => {
+          if(this.traits.hasTrait(philosophyLevel + aspectGroup)) multiplier++;
+        });
+      });
+      if(this.traits.hasTrait("qiReserves")) multiplier += 2;
+      if(this.traits.hasTrait("greaterQiReserves")) multiplier += 3;
+      if(multiplier > 10) multiplier = 10;
+    }
+    return multiplier;
   }
 
   AddQi(time: number, amount: number): void {
@@ -395,6 +420,8 @@ export class Character {
 
   MaxSpeed(time: number, limbList: string[], carriedWeight: number): number { // spd in m/s
     var result = this.skills.getBaseResult(this.aspects.Current(time,'brawn'),'athlete',0);
+    if(this.traits.hasTrait("swift")) result++;
+    if(this.traits.hasTrait("epicSwiftness")) result += 2;
     result < 0 ? result = result * 0.6 : result = result / 0.6;
     result += 9;
     if(result <= 0) return 0;
@@ -405,6 +432,8 @@ export class Character {
 
   MaxAcceleration(time: number, limbList: string[], carriedWeight: number): number { // accel in m/s/s
     var result = (this.aspects.Current(time,'brawn'));
+    if(this.traits.hasTrait("swift")) result++;
+    if(this.traits.hasTrait("epicSwiftness")) result += 2;
     result < 0 ? result = result * 0.12 : result = result / 3;
     result++;
     if(result <=0) return 0;
@@ -414,16 +443,23 @@ export class Character {
   }
 
   PhysicalDefense(time: number): number {
-    return this.skills.getBaseResult(this.aspects.Current(time,"reflex"),"fighter") - 1;
+    let result = this.skills.getBaseResult(this.aspects.Current(time,"reflex"),"fighter") - 3;
+    let unarmed = this.specialties.getSpecialtyRank("unarmedCombat")
+    if(unarmed > 0) result += 1.5;
+    if(unarmed > 1) result += 0.5;
+    return result;
   }
 
   MagicalDefense(time: number): number {
-    return this.skills.getBaseResult(this.aspects.Current(time,"awareness"),"mage") - 1;
+    let result = this.skills.getBaseResult(this.aspects.Current(time,"awareness"),"mage") - 3;
+    if(this.traits.hasTrait("qiAwareness")) result += 2;
+    return result;
   }
 
   getSpentIPTotal(): number {
     return this.aspects.getSpentIPTotal() + this.skills.getSpentIPTotal() + 
-           this.specialties.getSpentIPTotal();
+           this.specialties.getSpentIPTotal() + this.traits.getSpentIPTotal() +
+           this.equipment.getSpentIPTotal();
   }
 
   get isOverBudget(): boolean {
@@ -435,6 +471,7 @@ export class Character {
   getProbabilityDescription(symmetric: number): string {
     if(symmetric < -7) return "subnatural";
     if(symmetric > 7) return "supernatural";
+    if(symmetric == 0) return "average";
     let prefix = symmetric < 0 ? "<" : ">";
     let index = Math.round(Math.abs(symmetric)*10);
     let result = this.attributeProbabilities[index];

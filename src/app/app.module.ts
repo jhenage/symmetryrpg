@@ -30,6 +30,7 @@ import { AboutComponent } from './sheet/about/about.component';
 import { StatusComponent } from './status/status.component';
 import { TraitsComponent } from './sheet/traits/traits.component';
 import { TimeButtonDirective } from './log/time-button.directive';
+import { EquipmentComponent } from './sheet/equipment/equipment.component';
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule ],
@@ -40,7 +41,8 @@ import { TimeButtonDirective } from './log/time-button.directive';
     SpecialtiesComponent,
     StatusComponent,
     TraitsComponent,
-    TimeButtonDirective
+    TimeButtonDirective,
+    EquipmentComponent
    ],
   entryComponents: [ AspecttestHistoryComponent, SkilltestHistoryComponent, MoveHistoryComponent, MoveExecuteComponent, MoveQueueComponent ],
   bootstrap:    [ AppComponent ]

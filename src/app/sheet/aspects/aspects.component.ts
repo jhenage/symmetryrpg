@@ -45,27 +45,35 @@ export class AspectsComponent implements OnInit {
   }
 
   get mentalActionDuration(): string {
-    let result = this.aspects.getMentalActionTime(0,1,{targetedPenalty:0,genericPenalty:0,incidentalPenalty:0});
+    let result = this.aspects.getMentalActionTime(this.now,1,{targetedPenalty:0,genericPenalty:0,incidentalPenalty:0});
     return result.toFixed(this.TIME_PRECISION) + " sec";
   }
 
   get physicalActionDuration(): string {
-    let result = this.aspects.getPhysicalActionTime(0,1,{targetedPenalty:0,genericPenalty:0,incidentalPenalty:0});
+    let result = this.aspects.getPhysicalActionTime(this.now,1,{targetedPenalty:0,genericPenalty:0,incidentalPenalty:0});
     return result.toFixed(this.TIME_PRECISION) + " sec";
   }
 
   get mentalReactionTimeRange(): string {
-    let result = this.aspects.getMentalReactionTime(0,0,[0,0,0,0],false).toFixed(this.TIME_PRECISION) + " - ";
-    return result + this.aspects.getMentalReactionTime(0,0,[50,50,50,50],false).toFixed(this.TIME_PRECISION) + " sec"; 
+    let result = this.aspects.getMentalReactionTime(this.now,0,[0,0,0,0],false).toFixed(this.TIME_PRECISION) + " - ";
+    return result + this.aspects.getMentalReactionTime(this.now,0,[50,50,50,50],false).toFixed(this.TIME_PRECISION) + " sec"; 
   }
 
   get physicalReactionTimeRange(): string {
-    let result = this.aspects.getPhysicalReactionTime(0,0,[0,0,0,0],false).toFixed(this.TIME_PRECISION) + " - ";
-    return result + this.aspects.getPhysicalReactionTime(0,0,[50,50,50,50],false).toFixed(this.TIME_PRECISION) + " sec"; 
+    let result = this.aspects.getPhysicalReactionTime(this.now,0,[0,0,0,0],false).toFixed(this.TIME_PRECISION) + " - ";
+    return result + this.aspects.getPhysicalReactionTime(this.now,0,[50,50,50,50],false).toFixed(this.TIME_PRECISION) + " sec"; 
   }
 
   get surpriseMultiplier(): string {
-    return this.aspects.getSurpriseMultiplier(this.aspects.getAspectRank("awareness")).toFixed(this.ASPECT_PRECISION + 1);
+    return this.aspects.getSurpriseMultiplier(this.aspects.Current(this.now,"awareness")).toFixed(this.ASPECT_PRECISION + 1);
+  }
+
+  get now(): number {
+    return this.aspects.character.campaign.now;
+  }
+
+  displayValue(value: number) {
+    return value.toFixed(this.ASPECT_PRECISION);
   }
 
 }

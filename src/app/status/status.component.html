@@ -9,7 +9,7 @@
         <tr>
             <td>Qi</td>
             <td><input type="number" [value]="character.Qi(timer.time)" (input)="character.SetQi(timer.time,$event.target.value)" [disabled]="timer.time!=now"/></td>
-            <td>{{character.maxQi}}</td>
+            <td>{{character.MaxQi(timer.time)}}</td>
         </tr>
         <tr *ngFor="let aspect of character.aspects.aspectsList">
             <td>{{aspect|titlecase}}</td>

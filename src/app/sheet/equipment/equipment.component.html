@@ -1,0 +1,12 @@
+<div class="equipment container">
+    <h4>Equipment</h4>
+    <div  class="six-digit">
+        Income IP: <input type="number" min="0" step="1" [(ngModel)]="equipment.incomeIP"/>
+        Value: {{incomeValue}} <br/>
+        Lifestyle IP: <input type="number" min="0" step="1" [(ngModel)]="equipment.lifestyleIP" class="six-digit"/>
+        Value: {{lifestyleValue}}
+    </div>
+    Assets:<br/>
+    <textarea [(ngModel)]="equipment.notes">
+    </textarea>
+</div>

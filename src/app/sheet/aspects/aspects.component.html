@@ -10,6 +10,14 @@
         <div class="probability_description">({{aspects.getAspectProbabilityDescription(aspect)}})</div>
       <button [class]="aspect" (click)="makeAspectTest(aspect)"></button>
     </div>
+    <div class="axis-container">
+      <div *ngFor="let axis of aspects.axisList" class="axis">
+        <label class="end first name">{{axis[0]|titlecase}}</label>
+        <label class="end first value">{{displayValue(aspects.Current(now,axis[0]))}}</label>
+        <label class="end second value">{{displayValue(aspects.Current(now,axis[1]))}}</label>
+        <label class="end second name">{{axis[1]|titlecase}}</label>
+      </div>
+    </div>
     Physical Action Duration: {{physicalActionDuration}}<br/>
     Mental Action Duration: {{mentalActionDuration}}<br/>
     Physical Reaction Time: {{physicalReactionTimeRange}}<br/>

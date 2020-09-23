@@ -78,6 +78,13 @@ export class Skills {
   getBaseResult(aspectRank: number, skillName: string, missingSpecializationRanks?: number): number {
     missingSpecializationRanks = missingSpecializationRanks || 0;
     let skillRank = this.getSkillRank(skillName) - 2*missingSpecializationRanks;
+    if(missingSpecializationRanks > 0) {
+      if(skillName == "linguist") {
+        if(this.character.traits.hasTrait("polyglot")) skillRank++;
+      } else {
+        if(this.character.traits.hasTrait("jack_of_all_trades")) skillRank += 1.2;
+      }
+    }
     if(missingSpecializationRanks > 3) skillRank -= missingSpecializationRanks-3;
     let low = Math.min(aspectRank, skillRank);
     let delta = Math.max(aspectRank, skillRank) - low;

@@ -1,6 +1,8 @@
 import { Character } from './character'
 import { CreatureType, CreatureTypeData } from './creaturetype';
 import { SpecialtyCategories } from './character/specialties';
+import { TraitDetails } from './character/traits';
+import { CurrencyInterval } from './character/equipment';
 
 export interface CampaignData {
     characters: {id:number,version:number}[];
@@ -8,6 +10,14 @@ export interface CampaignData {
     now: number; // The current time
     creatureTypes: CreatureTypeData[];
     commonSpecialties: SpecialtyCategories; // each specialty should have no more than 4 categories
+    traitsDetails: {
+        naturalTraining: {[propName:string]: TraitDetails};
+        qiTraining: {[propName:string]: TraitDetails};
+        bestowed: {[propName:string]: TraitDetails};
+        epic: {[propName:string]: TraitDetails};
+        roleplaying: {[propName:string]: TraitDetails};
+    };
+    currencyIntervals: CurrencyInterval[];
 }
 
 export class Campaign {
@@ -45,6 +55,26 @@ export class Campaign {
 
     get commonSpecialties(): SpecialtyCategories {
         return this._data.commonSpecialties;
+    }
+
+    get traitTypes(): string[] {
+        return Object.keys(this._data.traitsDetails);
+    }
+
+    get currencyIntervals(): CurrencyInterval[] {
+        return this._data.currencyIntervals;
+    }
+
+    getTraitList(traitType: string): string[] {
+        return Object.keys(this._data.traitsDetails[traitType]);
+    }
+
+    getTraitDetails(traitName: string): TraitDetails {
+        let result = {ipCost:0,prerequisites:{aspects:{},skills:{},specialties:{},traits:[],other:{}},description:""};
+        this.traitTypes.forEach(traitType => {
+            if(this._data.traitsDetails[traitType][traitName]) result = this._data.traitsDetails[traitType][traitName];
+        });
+        return result;
     }
 
     serialize(): string {
