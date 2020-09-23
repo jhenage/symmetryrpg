@@ -3,6 +3,7 @@ import { Character } from '../model/character';
 import { Campaign } from '../model/campaign';
 import { LogService } from '../log/log.service';
 import { MoveActionFactory, MoveActionObject } from '../log/action/move/action';
+import { AttackActionFactory, AttackActionObject } from '../log/action/attack/action';
 import { DataService } from '../data.service';
 
 @Component({
@@ -88,6 +89,19 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   }
 
   select(character: Character) {
+    if(this.mouseMode == 'punch') {
+      if(this.character!=character) {
+        let factory = new AttackActionFactory();
+        let action = factory.build(this.character,{time:this.logService.timer.time,target:{character:character,location:'torso'},diameter:60,length:75});
+        this.logService.newAction(action);
+      }
+      else {
+        this.openMenu = !this.openMenu;
+      }
+      this.mouseMode = '';
+      return;
+    }
+
     if(this.character!=character) {
       this.selected.emit(character);
       this.openMenu = true;
@@ -157,9 +171,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   }
 
   openMenuSelectPunch() {
-    //let factory = new MoveActionFactory();
-    //let action = factory.build(this.character,{time:time,path:[{x:x,y:y,speed:0.5}]});
-    //this.logService.newAction(action);
+    if(this.logService.timer.time >= this.logService.now) {
+      this.openMenuSelect = 'punch';
+      this.mouseMode = 'punch';
+    }
+    this.openMenu = false;
   }
 
   deleteMove(action: MoveActionObject) {

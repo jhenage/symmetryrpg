@@ -1,90 +1,112 @@
 import { Character } from 'src/app/model/character';
+import { DiceRoll } from 'src/app/model/diceroll';
 import { ActionData } from 'src/app/model/character/actions';
 import { ActionFactory, ActionObject } from '../factory';
+import { WoundSingle } from 'src/app/model/character/wounds';
 
-interface MoveActionData extends ActionData {
-    path: {
-        x: number; // destination
-        y: number;
-        speed: number; // fraction of max speed
-        state?: string; // how much of this path has been processed. 
-    }[];
+interface AttackActionData extends ActionData {
+    target: {
+        character: number;
+        location: string;
+    }
+    limb: string;
+    length: number;
+    diameter: number;
+    delayDice: number[];
 }
 
-export interface MoveActionObject extends ActionObject {
-    data: MoveActionData;
+export interface AttackActionObject extends ActionObject {
+    data: AttackActionData;
+    enemy: Character;
 }
 
-interface MoveProcessActionData extends MoveActionData {
+interface AttackProcessActionData extends AttackActionData {
+    attackdice?: number[];
+    attackmodifier?: number;
+    attacksuccess?: boolean;
+    attackduration: number;
     fatigue: number;
-    limbs: string[];
+    damagedice?: number[];
+    damagemodifier?: number;
 }
 
-export interface MoveProcessActionObject extends MoveActionObject {
-    data: MoveProcessActionData;
+export interface AttackProcessActionObject extends AttackActionObject {
+    attackroll: DiceRoll;
+    wound?: WoundSingle;
+    //damageroll: DiceRoll;
+    data: AttackProcessActionData;
 }
 
-export class MoveActionFactory implements ActionFactory {
+export class AttackActionFactory implements ActionFactory {
 
-    build(character: Character,datainit: {time: number;path: {x: number;y: number;speed: number}[]}): MoveActionObject {
-        let data = datainit as MoveActionData;
-        data.type = 'move';
+    build(character: Character,datainit: {time:number; target: {character:Character; location:string}; length:number; diameter: number;}): AttackActionObject {
+        let enemy = datainit.target.character;
+        let data = datainit as unknown as AttackActionData;
+        data.target.character = enemy.id;
+        data.type = 'attack';
         data.executed = false;
+        data.limb = 'rightArm';
+        let penalty = character.generalPenalty(data.time);
+        let dice = new DiceRoll(4,50);
+        data.delayDice = dice.result;
+        data.time += Math.round(1000 * character.aspects.getPhysicalReactionTime(data.time,penalty,dice.result,false));
 
         character.actions.add(data);
 
-        return {character: character,data: data};
+        return {character:character, enemy:enemy, data:data};
     }
 
-    buildFromStorage(character: Character,data: MoveActionData): MoveActionObject {
-        return {character:character,data:data};
+    buildFromStorage(character: Character,data: AttackActionData): AttackActionObject {
+        let enemy = character.campaign.characters.filter(char => {return char.id==data.target.character}).pop();
+        return {character:character,enemy:enemy,data:data};
     }
 
-    execute(action: MoveProcessActionObject) {
+    execute(action: AttackProcessActionObject) {
         if(!action.data.executed) {
-            action.data.fatigue = 0;
+            action.data.attackduration = 1000*action.character.aspects.getPhysicalActionTime(action.data.time,1,{targetedPenalty:0,genericPenalty:0,incidentalPenalty:0});
+            action.data.nextExecution = action.data.time + action.data.attackduration;
             action.data.executed = true;
-            action.data.nextExecution = action.data.time;
-            action.data.limbs = ["leftLeg","rightLeg"];
+
+            action.data.fatigue = .02;
+            action.character.fatigue.AddMuscleRate(action.data.time,action.data.fatigue/6,action.data.limb);
+            action.character.fatigue.AddAerobicRate(action.data.time,action.data.fatigue);
+
+            return;
         }  
         if(typeof action.data.nextExecution === "undefined") {
             return;
         }
             
-        for(let i = 0; i < action.data.path.length; i++) {
-            if(action.data.path[i].state=="done") continue;
-            if(!action.data.path[i].state) {
-                let location = action.character.location(action.data.nextExecution);
-                let speed = action.character.MaxSpeed(action.data.nextExecution,action.data.limbs,0) * action.data.path[i].speed;
-                let distance = ((location.x-action.data.path[i].x)**2 + (location.y-action.data.path[i].y)**2)**.5;
-                let duration = distance / speed; // in sec
-                location.velx = (action.data.path[i].x - location.x) / duration;
-                location.vely = (action.data.path[i].y - location.y) / duration;
-                action.character.setLocation(location);
-                action.data.fatigue = .08 * action.data.path[i].speed ** 2;
-                action.character.fatigue.AddMuscleRate(action.data.nextExecution,action.data.fatigue/6,"leftLeg");
-                action.character.fatigue.AddMuscleRate(action.data.nextExecution,action.data.fatigue/6,"rightLeg");
-                action.character.fatigue.AddAerobicRate(action.data.nextExecution,action.data.fatigue);
-                
-            
-                action.data.nextExecution += Math.round(1000*duration);
-                action.data.path[i].state = "max";
-
-                break;
-            }
-            if (action.data.path[i].state=="max") {
-                action.data.path[i].state = "done";
-                action.character.fatigue.AddMuscleRate(action.data.nextExecution,-action.data.fatigue/6,"leftLeg");
-                action.character.fatigue.AddMuscleRate(action.data.nextExecution,-action.data.fatigue/6,"rightLeg");
-                action.character.fatigue.AddAerobicRate(action.data.nextExecution,-action.data.fatigue);
-
-               if(i == action.data.path.length-1) {
-                    let location = {time:action.data.nextExecution,x:action.data.path[i].x,y:action.data.path[i].y,velx:0,vely:0};
-                    action.character.setLocation(location);
-                    action.data.nextExecution = undefined;
-                }
-            }
-        }
+        action.attackroll = new DiceRoll();
+        action.data.attackdice = action.attackroll.result;
+        action.data.attackmodifier = action.character.aspects.getBaseResult(action.data.time,'agility') - action.character.generalPenalty(action.data.nextExecution);
+        action.attackroll.modifier = action.data.attackmodifier;
         
+        action.character.fatigue.AddMuscleRate(action.data.nextExecution,-action.data.fatigue/6,action.data.limb);
+        action.character.fatigue.AddAerobicRate(action.data.nextExecution,-action.data.fatigue);
+
+        action.data.attacksuccess = action.attackroll.standardResult > action.enemy.PhysicalDefense(action.data.nextExecution);
+        if(action.data.attacksuccess) {
+            action.data.damagemodifier = action.character.aspects.getBaseResult(action.data.time,'brawn') - action.character.generalPenalty(action.data.nextExecution);
+            let roll = new DiceRoll();
+            action.data.damagedice = roll.result;
+            roll.modifier = action.data.damagemodifier;
+
+            let damage = 1000 * 10000 * (10 + roll.standardResult);
+            let wound = action.enemy.wounds.ReceiveImpactDamage(action.data.nextExecution,damage,action.data.length,action.data.diameter,action.data.target.location);
+
+            //if(wound.afflictions.length || wound.tap) {
+                action.wound = wound;
+            //}
+            
+            // apply fatigue
+            // apply bleed
+            // apply tap
+            // create new actions for healing
+        }
+
+        action.data.endTime = action.data.nextExecution;
+        action.data.nextExecution = undefined;
     }
+
 }

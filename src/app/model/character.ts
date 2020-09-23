@@ -174,6 +174,8 @@ export class Character {
   resetAll() {
     this._data.fatigue.aerobic = [];
     this._data.fatigue.muscles = {};
+    this._data.wounds.bleed = [];
+    this._data.wounds.wounds = {};
     this._data.location = [];
     this._data.qi.modified = [];
     this._data.about.height.modified = [];
@@ -199,9 +201,14 @@ export class Character {
       this._data.aspects[aspect].modified = [{time:time,amount:this.aspects.Current(time,aspect)}];
     });
     this._data.actions.splice(0,this._data.actions.findIndex((value)=> value.time > time));
+    // still need wounds
   }
 
   generalPenalty(time:number): number {
+    return 0;
+  }
+
+  limbPenalty(time:number, location:string): number {
     return 0;
   }
 

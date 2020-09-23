@@ -4,6 +4,7 @@ export interface ActionData {
   time: number;
   executed?: boolean;
   nextExecution?: number;
+  endTime?: number;
   order?: number; // order of execution
 }
 

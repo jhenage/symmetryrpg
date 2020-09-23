@@ -6,32 +6,33 @@ export interface WoundData {
     bleedRate: number; // bloodLoss per second
   }[];
   wounds: {
-    [propName: string]: { // Location (e.g. leftArm,head,torso)
-      initial: { // the initial wound object
-        time: number;
-        impact: {
-          energy: number;
-          diameter: number;
-          length: number;
-        }
-        cutting: number;
-        elemental: number;
-      };
-      end?: number; // time of last affliction healed
-      afflictions: {
-          description: string;
-          penalty: ModifiableStat;
-          global: number; // global * penalty = the global penalty
-          recoverywait: number; // days before each set of recovery tests (which heals 1 penalty)
-          recoveryinterval: number; // hours between recovery test in a set
-      }[]
-      fatigue: {[propName: string]: number}; // fatigue types applied
-      tap: number;
-      bleed: number;
-      bleedHealed: number;
-    }[]    
+    [propName: string]: WoundSingle[] // Location (e.g. leftArm,head,torso)
   }
+}
 
+export interface WoundSingle {
+  initial: { // the initial wound object
+    time: number;
+    impact: {
+      energy: number;
+      diameter: number;
+      length: number;
+    }
+    cutting: number;
+    elemental: number;
+  };
+  end?: number; // time of last affliction healed
+  afflictions: {
+      description: string;
+      penalty: ModifiableStat;
+      global: number; // global * penalty = the global penalty
+      recoverywait: number; // days before each set of recovery tests (which heals 1 penalty)
+      recoveryinterval: number; // hours between recovery test in a set
+  }[]
+  fatigue: {[propName: string]: number}; // fatigue types applied
+  tap: number;
+  bleed: number;
+  bleedHealed: number;
 }
 
 export class Wounds {
@@ -44,6 +45,7 @@ export class Wounds {
     if(data) {
       this._data = data;
     }
+    this.initialize();
   }
 
   initialize(): WoundData {
@@ -97,9 +99,9 @@ export class Wounds {
     return penalty;
   }
 
-  ReceiveImpactDamage(time:number, energy: number, length: number, diameter: number, location: string) {
-    var wound = {
-      initial: { // the initial wound object
+  ReceiveImpactDamage(time:number, energy: number, length: number, diameter: number, location: string): WoundSingle {
+    var wound: WoundSingle = {
+      initial: {
         time: time,
         impact: {
           energy: energy,
@@ -136,13 +138,30 @@ export class Wounds {
       let tissueProps = this.character.creatureType.tissues[element.tissue].impact;
       let volume = surfaceArea * element.thickness;
 
+      let absorbed = 0; // total amount of energy being applied to this tissue;
+      let maxBreak = volume * tissueProps.break;
+      let maxEnergyPerStep = maxBreak / 4; // Max Absorption available for each quarter of break threshold reached
+      for(let i = 4; i > 0; i--) { // each quarter of break threshold reached
+        let percent = tissueProps.absorb * element.thickness * (2**i) / 16; // DR based on thickness, cut in half each step
+        if(percent > 25*i) percent = 25*i; // Max DR allowed per step: 100%, 75%, 50%, 25%
+        let canabsorb = percent * energy / 100;
+        if(canabsorb > maxEnergyPerStep) {
+          absorbed += maxEnergyPerStep;
+          energy -= maxEnergyPerStep;
+        } else {
+          absorbed += canabsorb;
+          energy -= canabsorb;
+          break;
+        }
+      }
+      console.log(element,energy,absorbed,absorbed/maxBreak);
+
       // TISSUE SPECIFIC AFFLICTIONS:
       if(element.tissue == 'skin') {
         
         // welt
-        if(energy/volume >= tissueProps.break/2) {
-          let penalty = energy/volume/tissueProps.break/2;
-          if(penalty>0.5) penalty = 0.5;
+        if(absorbed >= maxBreak/2) {
+          let penalty = absorbed/volume/tissueProps.break/2;
           wound.afflictions.push({
             description: 'Welt',
             penalty: {amount:penalty},
@@ -154,8 +173,8 @@ export class Wounds {
         }
 
         // split skin
-        if(energy/volume >= tissueProps.break) {
-          wound.bleed = .001 * energy / tissueProps.break;
+        if(absorbed >= maxBreak) {
+          wound.bleed = .00001 * Math.sqrt(surfaceArea) * energy / absorbed;
         }
       }
 
@@ -163,19 +182,20 @@ export class Wounds {
 
         // fatigue
         if(location=='torso') {
-          wound.fatigue = {'aerobic': energy/volume};
+          wound.fatigue = {'aerobic': absorbed/volume};
         }
         else if(location=='head') {
-          wound.fatigue = {'mental': energy/volume};
+          wound.fatigue = {'mental': absorbed/volume};
         }
         else {
-          wound.fatigue = {'muscle': energy/volume};
+          wound.fatigue = {'muscle': absorbed/volume};
         }
+        wound.tap += absorbed/volume/50;
         
         // injured muscle
-        let penalty = energy*2/volume/tissueProps.break;
-        wound.tap += penalty*2;
-        if(energy/volume >= tissueProps.break/4) {
+        let penalty = (absorbed*2/maxBreak)**2 - 1;
+        if(absorbed >= maxBreak/2) {
+          wound.tap += penalty*2;
           wound.afflictions.push({
             description: 'Pulled Muscle/Sprain',
             penalty: {amount:penalty},
@@ -188,34 +208,36 @@ export class Wounds {
       }
 
       if(element.tissue == 'bone') {
-        if(energy/volume >= tissueProps.break/4) {
+        if(absorbed >= maxBreak/2) {
           let description = 'Hairline Fracture';
-          if(energy/volume >= tissueProps.break/2) {
+          if(absorbed >= maxBreak*3/4) {
             description = 'Compound Fracture';
-            if(energy/volume >= tissueProps.break) {
+            if(absorbed >= maxBreak) {
               description = 'Shattered Bone';
             }
           }
-          let penalty = energy*4/volume/tissueProps.break;
+          let penalty = (absorbed*2/maxBreak)**2;
           wound.afflictions.push({
             description: description,
             penalty: {amount:penalty},
             global: 0.5,
-            recoverywait: 12,
-            recoveryinterval: 6
+            recoverywait: 10,
+            recoveryinterval: 10
           });
         }
       }
 
-      // transfer to the next layer
-      energy -= tissueProps.absorb * volume;
     });
 
     if(wound.afflictions.length || wound.tap) {
+      console.log(this._data)
+      if(!this._data.wounds[location]) this._data.wounds[location] = [];
       this._data.wounds[location].push(wound);
     }
     return wound;
   }
+
+  
 
 
 }

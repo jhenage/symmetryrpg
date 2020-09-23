@@ -17,7 +17,7 @@ export class Campaign {
     characters: Character[];
     creatureTypes: CreatureType[];
 
-    constructor(data: CampaignData,getcharacters: (id,version)=>any) {
+    constructor(data: CampaignData,getcharacter: (id,version)=>any) {
         
         this._data = data;
  
@@ -28,8 +28,10 @@ export class Campaign {
 
         this.characters = [];
         for ( let char of data.characters ) {
-            let character = getcharacters(char.id,char.version);
-            this.characters.push(new Character(char.id,character.creatureType,character,this));
+            let charData = getcharacter(char.id,char.version);
+            let charObject = new Character(char.id,charData.creatureType,charData,this);
+            // charObject.resetAll(); // For Debugging
+            this.characters.push(charObject);
         }
     }
 

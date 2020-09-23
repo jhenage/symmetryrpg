@@ -6,6 +6,7 @@ import { Campaign } from '../model/campaign';
 import { AspectTestActionFactory } from './action/aspecttest/action';
 import { SkillTestActionFactory } from './action/skilltest/action';
 import { MoveActionFactory, MoveActionObject } from './action/move/action';
+import { AttackActionFactory } from './action/attack/action';
 import { DataService } from '../data.service';
 
 
@@ -30,7 +31,8 @@ export class LogService {
   readonly factories: {[propName:string]:ActionFactory} = {
     aspecttest: new AspectTestActionFactory(),
     skilltest: new SkillTestActionFactory(),
-    move: new MoveActionFactory()
+    move: new MoveActionFactory(),
+    attack: new AttackActionFactory(),    
   }
 
  

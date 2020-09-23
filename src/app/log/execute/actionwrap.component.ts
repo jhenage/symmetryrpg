@@ -4,17 +4,20 @@ import { ActionExecuteComponent } from '../action/execute.component';
 import { LogService } from '../log.service';
 
 import { MoveExecuteComponent } from '../action/move/execute.component'
+import { AttackExecuteComponent } from '../action/attack/execute.component'
+import { ActionObject } from '../action/factory';
 
 const executeActionComponents = {
-  move: MoveExecuteComponent
+  move: MoveExecuteComponent,
+  attack: AttackExecuteComponent
 };
 
 @Component({
   selector: 'executeactionwrap',
-  template: `<a (click)="time(action.data.time)">C</a><a (click)="log(action)">(_)</a><ng-template appAction></ng-template>`
+  template: `<a (click)="time(action.data.time)">Start</a><a (click)="log(action)">(_)</a><ng-template appAction></ng-template>`
 })
 export class ExecuteActionwrapComponent implements OnInit {
-  @Input() action: any;
+  @Input() action: ActionObject;
   @ViewChild(ActionDirective, {static: true}) actionHost: ActionDirective;
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver, private logService: LogService) { }

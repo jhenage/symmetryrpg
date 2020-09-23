@@ -39,15 +39,15 @@ export class DataService {
           cutting: { break: 0 }
         },
         fat: {
-          impact: { absorb: 1, give: .8, break: 100 },
+          impact: { absorb: 1, give: .8, break: 50 },
           cutting: { break: 0 }
         },
         muscle: {
-          impact: { absorb: 5, give: .5, break: 300 },
+          impact: { absorb: 2, give: .5, break: 200 },
           cutting: { break: 0 }
         },
         bone: {
-          impact: { absorb: 30, give: 0, break: 200 },
+          impact: { absorb: 5, give: 0, break: 200 },
           cutting: { break: 0 }
         },
         lung: {

@@ -28,6 +28,7 @@ export class AspectTestActionFactory implements ActionFactory {
         data.type = 'aspecttest';
         data.executed = true;
         data.luck = data.luck || 'standard';
+        data.endTime = data.time;
 
         let roll = new DiceRoll();
         data.dice = roll.result;

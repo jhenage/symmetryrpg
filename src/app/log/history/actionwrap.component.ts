@@ -2,23 +2,30 @@ import { Component, ViewChild, ComponentFactoryResolver, Input, OnInit } from '@
 import { ActionDirective } from '../action/action.directive';
 import { ActionHistoryComponent } from '../action/history.component';
 import { LogService } from '../log.service';
+import { ActionObject } from '../action/factory';
+//import { TimeButtonDirective } from '../time-button.directive';
 
 import { AspecttestHistoryComponent } from '../action/aspecttest/history.component'
 import { SkilltestHistoryComponent } from '../action/skilltest/history.component'
 import { MoveHistoryComponent } from '../action/move/history.component';
+import { AttackHistoryComponent } from '../action/attack/history.component';
 
 const historyActionComponents = {
   aspecttest: AspecttestHistoryComponent,
   skilltest: SkilltestHistoryComponent,
-  move: MoveHistoryComponent
+  move: MoveHistoryComponent,
+  attack: AttackHistoryComponent
 };
 
 @Component({
   selector: 'historyactionwrap',
-  template: `<a (click)="time(action.data.time)">C</a><a (click)="log(action)">(_)</a><ng-template appAction></ng-template>`
+  template: `<a *appTimeButton="action.data.time">Start</a>
+              <a *appTimeButton="action.data.nextExecution||action.data.endTime">End</a>
+              <a (click)="log(action)">(_)</a><ng-template appAction></ng-template>`,
+  styleUrls: ['./history.component.less']
 })
 export class HistoryActionwrapComponent implements OnInit {
-  @Input() action: any;
+  @Input() action: ActionObject;
   @ViewChild(ActionDirective, {static: true}) actionHost: ActionDirective;
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver, private logService: LogService) { }

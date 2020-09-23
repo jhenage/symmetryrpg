@@ -4,14 +4,16 @@ import { ActionQueueComponent } from '../action/queue.component';
 import { LogService } from '../log.service';
 
 import { MoveQueueComponent } from '../action/move/queue.component';
+import { AttackQueueComponent } from '../action/attack/queue.component';
 
 const queueActionComponents = {
-  move: MoveQueueComponent
+  move: MoveQueueComponent,
+  attack: AttackQueueComponent
 };
 
 @Component({
   selector: 'queueactionwrap',
-  template: `<a (click)="time(action.data.time)">C</a><a (click)="log(action)">(_)</a><ng-template appAction></ng-template>`
+  template: `<a (click)="time(action.data.time)">Start</a><a (click)="log(action)">(_)</a><ng-template appAction></ng-template>`
 })
 export class QueueActionwrapComponent implements OnInit {
   @Input() action: any;

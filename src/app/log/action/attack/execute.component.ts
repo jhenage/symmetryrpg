@@ -1,34 +1,17 @@
 import { Component, Input, OnDestroy } from '@angular/core';
-import { MoveActionObject, MoveProcessActionObject } from './action';
+import { AttackActionObject, AttackProcessActionObject } from './action';
 import { ActionExecuteComponent } from '../execute.component';
 import { LogService } from '../../log.service';
 
 @Component({
-  template: `{{action.character.about.name}} movement. <a (click)="execute()">EXE</a>`
+  template: `{{action.character.about.name}} attacking {{action.enemy.about.name}}. <a (click)="execute()">EXE</a>`
 })
-export class MoveExecuteComponent implements ActionExecuteComponent {
-  @Input() action: MoveActionObject;
+export class AttackExecuteComponent implements ActionExecuteComponent {
+  @Input() action: AttackActionObject;
   
   constructor(private logService: LogService) { }
-
-  //get speed(): string {
-  //  if(this.action.data.speed <= .25) {
-  //    return 'is walking';
-  //  }
-  //  if(this.action.data.speed <= .5) {
-  //    return 'is jogging';
-  //  }
-  //  if(this.action.data.speed <= .75) {
-  //    return 'is running';
-  //  }
-  //  return 'is sprinting';
-  //}
-
   
   execute() {
-    this.action.data.path.forEach((path) => {
-      path.speed = Number(path.speed);
-    });
     this.logService.executeAction(this.action);
   }
 

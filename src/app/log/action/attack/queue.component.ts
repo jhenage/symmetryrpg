@@ -1,12 +1,12 @@
 import { Component, Input } from '@angular/core';
-import { MoveActionObject } from './action';
+import { AttackActionObject } from './action';
 import { ActionQueueComponent } from '../queue.component';
 
 @Component({
-  template: `{{action.character.about.name}} movement.`
+  template: `{{action.character.about.name}} attacking {{action.enemy.about.name}}.`
 })
-export class MoveQueueComponent implements ActionQueueComponent {
-  @Input() action: MoveActionObject;
+export class AttackQueueComponent implements ActionQueueComponent {
+  @Input() action: AttackActionObject;
   
   constructor() { }
 

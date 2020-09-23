@@ -16,6 +16,9 @@ import { SkilltestHistoryComponent } from './log/action/skilltest/history.compon
 import { MoveHistoryComponent } from './log/action/move/history.component';
 import { MoveExecuteComponent } from './log/action/move/execute.component';
 import { MoveQueueComponent } from './log/action/move/queue.component';
+import { AttackHistoryComponent } from './log/action/attack/history.component';
+import { AttackExecuteComponent } from './log/action/attack/execute.component';
+import { AttackQueueComponent } from './log/action/attack/queue.component';
 
 import { AspectsComponent } from './sheet/aspects/aspects.component';
 import { HistoryActionwrapComponent } from './log/history/actionwrap.component';
@@ -26,15 +29,18 @@ import { SpecialtiesComponent } from './sheet/specialties/specialties.component'
 import { AboutComponent } from './sheet/about/about.component';
 import { StatusComponent } from './status/status.component';
 import { TraitsComponent } from './sheet/traits/traits.component';
+import { TimeButtonDirective } from './log/time-button.directive';
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule ],
   declarations: [ AppComponent, SheetComponent, MapComponent, ExecuteComponent, LogComponent, QueueComponent, HistoryComponent, ActionDirective, 
     AspecttestHistoryComponent, SkilltestHistoryComponent, MoveHistoryComponent, MoveExecuteComponent, MoveQueueComponent,
+    AttackHistoryComponent, AttackExecuteComponent, AttackQueueComponent,
     HistoryActionwrapComponent, AspectsComponent, SkillsComponent, AboutComponent, QueueActionwrapComponent, ExecuteActionwrapComponent,
     SpecialtiesComponent,
     StatusComponent,
-    TraitsComponent
+    TraitsComponent,
+    TimeButtonDirective
    ],
   entryComponents: [ AspecttestHistoryComponent, SkilltestHistoryComponent, MoveHistoryComponent, MoveExecuteComponent, MoveQueueComponent ],
   bootstrap:    [ AppComponent ]

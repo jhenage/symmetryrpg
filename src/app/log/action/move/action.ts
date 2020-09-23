@@ -81,6 +81,7 @@ export class MoveActionFactory implements ActionFactory {
                if(i == action.data.path.length-1) {
                     let location = {time:action.data.nextExecution,x:action.data.path[i].x,y:action.data.path[i].y,velx:0,vely:0};
                     action.character.setLocation(location);
+                    action.data.endTime = action.data.nextExecution;
                     action.data.nextExecution = undefined;
                 }
             }

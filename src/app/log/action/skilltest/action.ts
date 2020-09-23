@@ -25,6 +25,7 @@ export class SkillTestActionFactory implements ActionFactory {
         data.executed = true;
         data.luck = data.luck || 'standard';
         data.missingSpecialty = 0;
+        data.endTime = data.time;
 
         let roll = new DiceRoll();
         data.dice = roll.result;
