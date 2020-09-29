@@ -11,7 +11,6 @@ import { DataService } from '../data.service';
 })
 export class LogComponent implements OnInit, OnDestroy {
   history: ActionObject[];
-  execute: ActionObject[];
   queue: ActionObject[];
   timer: TimerObject;
   campaign: Campaign;
@@ -21,7 +20,6 @@ export class LogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.history = this.logService.history;
-    this.execute = this.logService.execute;
     this.queue = this.logService.queue;
     this.timer = this.logService.timer;
     this.campaign = this.dataService.campaign;

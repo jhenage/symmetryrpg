@@ -5,8 +5,12 @@
         <a (click)="toNow()" class="tonow">To Now</a>
     </div>
     <div class="logScrollable">
-        <app-history [actions]="history"></app-history>
-        <div class="execute"><app-execute [actions]="execute"></app-execute></div>
-        <app-queue [actions]="queue"></app-queue>
+        <div *ngFor="let action of history">
+            <actionwrap [action]="action"></actionwrap>
+        </div>
+        <div class="now"><a *appTimeButton="campaign.now">Start</a> .....NOW.....</div>
+        <div *ngFor="let action of queue">
+            <actionwrap [action]="action"></actionwrap>
+        </div>
     </div>
 </div>
