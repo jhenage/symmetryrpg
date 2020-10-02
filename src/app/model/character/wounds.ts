@@ -45,7 +45,6 @@ export class Wounds {
     if(data) {
       this._data = data;
     }
-    this.initialize();
   }
 
   initialize(): WoundData {

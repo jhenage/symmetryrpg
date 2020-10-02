@@ -24,7 +24,6 @@ export class LogService {
   private inprogress: ActionObject[] = [];
   history: ActionObject[] = [];
   queue: ActionObject[] = [];
-  execute: ActionObject[] = [];
   movements: ActionObject[] = [];
   timer: TimerObject = {time:0};
 
@@ -77,10 +76,6 @@ export class LogService {
       if ( i > -1 ) {
         this.queue.splice(i,1);
       }
-      i = this.execute.indexOf(action);
-      if ( i > -1 ) {
-        this.execute.splice(i,1);
-      }
       i = this.movements.indexOf(action);
       if ( i > -1 ) {
         this.movements.splice(i,1);
@@ -92,7 +87,7 @@ export class LogService {
     character.actions.getAll().forEach((action) => {
       this.newAction(this.factories[action.type].buildFromStorage(character,action));
     });
-    //this.sortAll();
+    this.sortAll();
   }
 
   sortAll() {
@@ -103,19 +98,13 @@ export class LogService {
       return a.data.time - b.data.time;
     });
     if(this.queue.length==0) return;
-    while(this.execute.length) {
-      this.queue.unshift(this.execute.shift());
-    }
     this.queue.sort((a,b) => a.data.time - b.data.time);
 
     let time = this.queue[0].data.time;
-    while(this.queue.length && this.queue[0].data.time == time) {
-      this.execute.unshift(this.queue.shift());
-    }
   }
 
   queueFiltered(filter): ActionObject[] {
-    return this.execute.slice().concat(this.queue).filter((action) => { 
+    return this.queue.slice().concat(this.queue).filter((action) => { 
       if(typeof filter.character == 'number') {
         if(filter.character != action.character.id) {
           return false;
