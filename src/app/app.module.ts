@@ -20,6 +20,7 @@ import { AboutComponent } from './sheet/about/about.component';
 import { StatusComponent } from './status/status.component';
 import { TraitsComponent } from './sheet/traits/traits.component';
 import { EquipmentComponent } from './sheet/equipment/equipment.component';
+import { SpellsComponent } from './sheet/spells/spells.component';
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule ],
@@ -30,7 +31,8 @@ import { EquipmentComponent } from './sheet/equipment/equipment.component';
     StatusComponent,
     TraitsComponent,
     TimeButtonDirective,
-    EquipmentComponent
+    EquipmentComponent,
+    SpellsComponent
    ],
   entryComponents: [ MoveActionComponent, AttackActionComponent ],
   bootstrap:    [ AppComponent ]

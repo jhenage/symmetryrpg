@@ -3,6 +3,7 @@ import { CreatureType, CreatureTypeData } from './creaturetype';
 import { SpecialtyCategories } from './character/specialties';
 import { TraitDetails } from './character/traits';
 import { CurrencyInterval } from './character/equipment';
+import { SpellsDetails } from './character/spells';
 
 export interface CampaignData {
     characters: {id:number,version:number}[];
@@ -17,6 +18,7 @@ export interface CampaignData {
         epic: {[propName:string]: TraitDetails};
         roleplaying: {[propName:string]: TraitDetails};
     };
+    spellsDetails: {[propName:string]: SpellsDetails};
     currencyIntervals: CurrencyInterval[];
 }
 
@@ -75,6 +77,14 @@ export class Campaign {
             if(this._data.traitsDetails[traitType][traitName]) result = this._data.traitsDetails[traitType][traitName];
         });
         return result;
+    }
+
+    getSpellList(): string[] {
+        return Object.keys(this._data.spellsDetails);
+    }
+
+    getSpellDetails(spellName: string): SpellsDetails {
+        return this._data.spellsDetails[spellName];
     }
 
     serialize(): string {

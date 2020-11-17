@@ -1,0 +1,21 @@
+<div [class.over-budget]="spells.character.isOverBudget"></div>
+<div class="spells container">
+    <h4>Spells</h4>
+    <input type="checkbox" [(ngModel)]="alphabetized"/><label>List Alphabetically</label><br/>
+    <input type="checkbox" class="display unknown-spells" /><label>Show Unknown Spells</label><br/>
+    <div class="spell list">
+        <div *ngFor="let spell of getSpellList()" class="spell single"
+        [class.unlocked]="isUnlocked(spell)"
+        [class.available]="spells.isAvailable(spell)"
+        [class.unknown]="isUnknown(spell)">
+            <div class="documentation mouseover">
+                <div class="description">{{getDescription(spell)}}</div>
+            </div>
+            <input type="checkbox"
+            [checked]="spells.hasSpell(spell)"
+            (input)="spells.setSpell(spell,$event.target.checked)"
+            [attr.disabled]="isDisabled(spell)"/>
+            <label>{{getDisplayName(spell)}}</label>
+        </div>
+    </div>
+</div>

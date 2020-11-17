@@ -1,0 +1,58 @@
+.display.unknown-spells:checked~.spell.list .single.spell.unknown.unlocked {
+    display: block;
+}
+
+.display.unknown-spells~.spell.list .single.spell.unknown {
+    display: none;
+}
+
+.single.spell.unlocked {
+    display: block;
+}
+
+.single.spell {
+    display: none;
+}
+
+.single.spell {
+    white-space: nowrap;
+    position: relative;
+}
+
+.single.spell.available label {
+    font-weight: normal;
+    color: black;
+}
+
+.single.spell:not(.available) input:checked~label {
+    font-weight: bold;
+    color: red;
+}
+
+.single.spell label {
+    color: #bbb;
+}
+
+.documentation.mouseover {
+    visibility: hidden;
+    background-color: black;
+    color: white;
+    text-align: center;
+    font-size: smaller;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    right: 105%;
+    white-space: normal;
+    width: 300px;
+}
+
+.single.spell:hover .documentation.mouseover {
+    visibility: visible;
+}
+
+.documentation.mouseover .description {
+    display: inline;
+}

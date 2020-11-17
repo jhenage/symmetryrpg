@@ -459,7 +459,7 @@ export class Character {
   getSpentIPTotal(): number {
     return this.aspects.getSpentIPTotal() + this.skills.getSpentIPTotal() + 
            this.specialties.getSpentIPTotal() + this.traits.getSpentIPTotal() +
-           this.equipment.getSpentIPTotal();
+           this.equipment.getSpentIPTotal() + this.spells.getSpentIPTotal();
   }
 
   get isOverBudget(): boolean {
