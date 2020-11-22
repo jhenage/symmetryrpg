@@ -37,11 +37,13 @@ export class SkillsComponent implements OnInit {
     this.skills.setSkillRank(skillName,Number(Number(rank).toFixed(this.PRECISION)));
   }
 
-
   makeSkillTest(aspectName:string, skillName:string) {
     let factory = new SkillTestActionFactory();
     let action = factory.build(this.skills.character,{time:this.logService.now,aspect:aspectName,skill:skillName});
     this.logService.newAction(action);
   }
 
+  getBaseResultRank(aspectName:string, skillName:string): string {
+    return `Base: ${this.skills.getBaseResult(this.skills.character.aspects.getAspectRank(aspectName),skillName).toFixed(this.PRECISION+1)}`;
+  }
 }

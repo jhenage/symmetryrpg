@@ -56,4 +56,8 @@ export class SpellsComponent implements OnInit {
     return this.spells.character.campaign.getSpellDetails(spellName).description;
   }
 
+  getDifficulty(spellName: string): string {
+    return `Base Difficulty: ${this.spells.character.campaign.getSpellDetails(spellName).difficulty}`;
+  }
+
 }

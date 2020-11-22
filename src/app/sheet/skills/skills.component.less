@@ -1,3 +1,32 @@
 label {
     width: 85px;
 }
+
+.skill-button {
+    position: relative;
+}
+
+.documentation.mouseover {
+    visibility: hidden;
+    background-color: black;
+    color: white;
+    text-align: center;
+    font-size: smaller;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    top: -15px;
+    right: 125%;
+    white-space: normal;
+    width: 80px;
+}
+
+.skill-button:hover .documentation.mouseover {
+    visibility: visible;
+}
+
+.documentation.mouseover .name,
+.documentation.mouseover .base {
+    display: block;
+}

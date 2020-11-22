@@ -2,13 +2,14 @@
 <div class="spells container">
     <h4>Spells</h4>
     <input type="checkbox" [(ngModel)]="alphabetized"/><label>List Alphabetically</label><br/>
-    <input type="checkbox" class="display unknown-spells" /><label>Show Unknown Spells</label><br/>
+    <input type="checkbox" class="display unknown-spells" /><label>Show Unknown Spells</label><br/><hr>
     <div class="spell list">
         <div *ngFor="let spell of getSpellList()" class="spell single"
         [class.unlocked]="isUnlocked(spell)"
         [class.available]="spells.isAvailable(spell)"
         [class.unknown]="isUnknown(spell)">
             <div class="documentation mouseover">
+                <div class="difficulty">{{getDifficulty(spell)}}</div>
                 <div class="description">{{getDescription(spell)}}</div>
             </div>
             <input type="checkbox"

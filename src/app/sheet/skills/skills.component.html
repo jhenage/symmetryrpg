@@ -7,8 +7,14 @@
         [class.out-of-range]="inputsOutOfRange[skill]"
         [value]="skills.getSkillRank(skill)"
         (input)="setSkillRank(skill,$event.target.value)" />
-        <div class="probability_description">({{skills.getSkillProbabilityDescription(skill)}})</div>
-      <button *ngFor="let aspect of skills.character.aspects.aspectsList"
-        [class]="aspect" (click)="makeSkillTest(aspect,skill)"></button>
+      <div class="probability_description">({{skills.getSkillProbabilityDescription(skill)}})</div>
+      <div *ngFor="let aspect of skills.character.aspects.aspectsList" class="skill-button">
+        <div class="documentation mouseover">
+          <div class="name">{{skill|titlecase}}'s</div>
+          <div class="name">{{aspect|titlecase}}</div>
+          <div class="base">{{getBaseResultRank(aspect,skill)}}</div>
+        </div>
+        <button [class]="aspect" (click)="makeSkillTest(aspect,skill)"></button>
+      </div>
     </div>
 </div>
