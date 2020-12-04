@@ -21,9 +21,11 @@ import { StatusComponent } from './status/status.component';
 import { TraitsComponent } from './sheet/traits/traits.component';
 import { EquipmentComponent } from './sheet/equipment/equipment.component';
 import { SpellsComponent } from './sheet/spells/spells.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSliderModule } from '@angular/material/slider';
 
 @NgModule({
-  imports:      [ BrowserModule, FormsModule ],
+  imports:      [ BrowserModule, FormsModule, BrowserAnimationsModule, MatSliderModule ],
   declarations: [ AppComponent, SheetComponent, MapComponent, LogComponent, ActionDirective, 
     MoveActionComponent, AttackActionComponent, ActionwrapComponent,
     AspectsComponent, SkillsComponent, AboutComponent,
