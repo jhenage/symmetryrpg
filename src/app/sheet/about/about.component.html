@@ -1,32 +1,44 @@
 <div [class.over-budget]="about.character.isOverBudget"></div>
 <div class="about container">
-  <div class="field name">
+  <div class="field name edit-mode">
     <label>Name</label>
     <input [(ngModel)]="about.name" />
   </div>
+  <div class="play-mode">
+    Name: {{about.name}}
+  </div>
   Creature Type: {{about.character.creatureType.name}}
-  <div class="field height">
+  <div class="field height edit-mode">
     <label>Height</label>
     <input [(ngModel)]="about.height" />
   </div>
-  <div class="field frame-size">
-    <label>Frame Size</label>
-    <input [(ngModel)]="frameSize" type="range" min="-7" max="7" step="0.1"/>
-    ({{about.frameSizeProbabilityDescription}})
-  </div>
-  <div class="field muscle-bulk">
-    <label>Muscle Bulk</label>
-    <input [(ngModel)]="muscleBulk" type="range" min="-7" max="7" step="0.1"/>
-    ({{about.muscleBulkProbabilityDescription}})
-  </div>
-  <div class="field body-fat">
-    <label>Body Fat</label>
-    <input [(ngModel)]="bodyFat" type="range" min="-7" max="7" step="0.1"/>
-    ({{about.bodyFatProbabilityDescription}})
+  <div class="play-mode">
+    Height: {{about.height}}
   </div>
   <input type="checkbox" class="display portrait" (click)="drawPortrait()"/><label>Show Portrait</label><br/>
   <div class="portrait-frame">
     <canvas #portrait width="{{CANVAS_SIZE}}" height="{{CANVAS_SIZE}}"></canvas>
+  </div>
+  <div class="field mouseover frame-size">
+    <div class="documentation mouseover">
+      <div class="probability_description">{{about.frameSizeProbabilityDescription}}</div>
+    </div>
+    <div class="name-value">Frame Size: {{frameSize}}</div>
+    <input [(ngModel)]="frameSize" type="range" min="-7" max="7" step="0.1" class="edit-mode"/>
+  </div>
+  <div class="field mouseover muscle-bulk">
+    <div class="documentation mouseover">
+      <div class="probability_description">{{about.muscleBulkProbabilityDescription}}</div>
+    </div>
+    <div class="name-value">Muscle Bulk: {{muscleBulk}}</div>
+    <input [(ngModel)]="muscleBulk" type="range" min="-7" max="7" step="0.1" class="edit-mode"/>
+  </div>
+  <div class="field mouseover body-fat">
+    <div class="documentation mouseover">
+      <div class="probability_description">{{about.bodyFatProbabilityDescription}}</div>
+    </div>
+    <div class="name-value">Body Fat: {{bodyFat}}</div>
+    <input [(ngModel)]="bodyFat" type="range" min="-7" max="7" step="0.1" class="edit-mode"/>
   </div>
   <div class="derived-attributes">
     Weight: {{weightLbs | number:'1.0-0'}} lbs<br/>
@@ -37,27 +49,32 @@
     Physical Defense: {{physicalDefense}}<br/>
     Magical Defense: {{magicalDefense}}<br/>
   </div>
-  <div class="field potential-rating six-digit">
-    <label>Potential Rating</label>
-    <input [(ngModel)]="about.potentialRating" type="number" />
+  <div class="play-mode">
+    Potential Rating: {{about.potentialRating}}<br/>
   </div>
-  Improvement Points: {{about.improvementPoints}} <br/>
-  IP Spent on Aspects: {{about.character.aspects.getSpentIPTotal()}} <br/>
-  IP Spent on Skills: {{about.character.skills.getSpentIPTotal()}} <br/>
-  IP Spent on Specialties: {{about.character.specialties.getSpentIPTotal()}} <br/>
-  IP Spent on Traits: {{about.character.traits.getSpentIPTotal()}} <br/>
-  IP Spent on Spells: {{about.character.spells.getSpentIPTotal()}} <br/>
-  IP Spend on Finances: {{about.character.equipment.getSpentIPTotal()}} <br/>
+  <div class="edit-mode">
+    <div class="field potential-rating six-digit">
+      <label>Potential Rating</label>
+      <input [(ngModel)]="about.potentialRating" type="number" />
+    </div>
+    Improvement Points: <div class="boxed-value">{{about.improvementPoints}}</div><br/>
+    IP Spent on Aspects: {{about.character.aspects.getSpentIPTotal()}} <br/>
+    IP Spent on Skills: {{about.character.skills.getSpentIPTotal()}} <br/>
+    IP Spent on Specialties: {{about.character.specialties.getSpentIPTotal()}} <br/>
+    IP Spent on Traits: {{about.character.traits.getSpentIPTotal()}} <br/>
+    IP Spent on Spells: {{about.character.spells.getSpentIPTotal()}} <br/>
+    IP Spent on Finances: {{about.character.equipment.getSpentIPTotal()}} <br/>
+  </div>
   <input type="checkbox" class="display descriptions" /><label>Show Descriptions</label>
-  <input type="checkbox" class="hide blank-descriptions" /><label class="blank-descriptions">Hide Blank</label>
   <div class="descriptions container">
     <div *ngFor="let description of about.descriptionsList" class="description"
     [class.blank]="about.getDescriptionText(description)==''">
         <label>{{description|titlecase}}:</label>
-        <textarea
+        <textarea class="edit-mode"
         [value]="about.getDescriptionText(description)"
         (input)="about.setDescriptionText(description,$event.target.value)">
         </textarea>
+        <textarea class="play-mode" disabled>{{about.getDescriptionText(description)}}</textarea>
     </div>
   </div>
 </div>

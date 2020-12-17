@@ -1,7 +1,6 @@
 <div [class.over-budget]="specialties.character.isOverBudget"></div>
 <div class="specialties container">
     <h4>Specialties</h4>
-    <input type="checkbox" class="display unknown-specialties" /><label>Show Unknown Specialties</label><br/>
     <input type="checkbox" class="display by-category" checked/><label>Group By Category</label>
     <div *ngIf="true" class="specialties display-group alphabetical">
         <div *ngFor="let specialty of specialties.getSpecialtiesList()" class="field specialty one-digit"

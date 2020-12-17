@@ -115,10 +115,10 @@ export class DataService {
             {tissue:"bone",thickness:20}
           ]
         }
-        
-
-      }
+      },
+      aspectMods: {}
     }],
+
     commonSpecialties: {
       archeology: ["academic"], biology:["academic","medical"],chemistry:["academic","technology"],
       economics:["academic"],education:["academic"],history:["academic"],mathematics:["academic"],

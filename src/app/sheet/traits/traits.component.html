@@ -1,7 +1,6 @@
 <div [class.over-budget]="traits.character.isOverBudget"></div>
 <div class="traits container">
     <h4>Traits</h4>
-    <input type="checkbox" class="display unknown-traits" /><label>Show Unknown Traits</label><br/>
     <div class="trait categories">
         <div *ngFor="let traitType of traitTypes" class="trait container">
             <div class="trait-container-label">{{getDisplayName(traitType)}}</div>

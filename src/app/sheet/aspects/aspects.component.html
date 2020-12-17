@@ -1,14 +1,19 @@
 <div [class.over-budget]="aspects.character.isOverBudget"></div>
 <div class="aspects container">
     <h4>Aspects</h4>
-    <div *ngFor="let aspect of aspects.aspectsList" class="field aspect three-digit">
+    <div *ngFor="let aspect of aspects.aspectsList" class="field mouseover aspect three-digit">
+      <div class="documentation mouseover">
+        <div class="aspect_description">{{aspects.getAspectDescription(aspect)}}</div>
+        <div class="probability_description">{{aspects.getAspectProbabilityDescription(aspect)}}</div>
+      </div>
       <label>{{aspect|titlecase}}</label>
-      <input type="number" step="0.1" min="{{MINIMUM_VALUE}}" max="{{MAXIMUM_VALUE}}"
+      <input type="number" step="0.1" min="{{MINIMUM_VALUE}}" max="{{MAXIMUM_VALUE}}" class="edit-mode"
         [class.out-of-range]="inputsOutOfRange[aspect]"
         [value]="aspects.getAspectRank(aspect)"
         (input)="setAspectRank(aspect,$event.target.value)" />
-        <div class="probability_description">({{aspects.getAspectProbabilityDescription(aspect)}})</div>
-      <button [class]="aspect" (click)="makeAspectTest(aspect)"></button>
+      <div class="edit-mode aspect_modifier">{{getModifierString(aspect)}}</div>
+      <div class="aspect permanent boxed-value three-digit">{{aspects.Permanent(aspect).toFixed(1)}}</div>
+      <button [class]="aspect" (click)="makeAspectTest(aspect)" class="play-mode"></button>
     </div>
     <div class="axis-container">
       <div *ngFor="let axis of aspects.axisList" class="axis">

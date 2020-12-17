@@ -71,8 +71,51 @@ export class Skills {
     }
   }
 
+  getShortDescription(skillName: string): string {
+    switch(skillName) {
+      case "actor":
+        return "Acting, Bluffing, Deception";
+      case "artist":
+        return "Visual Arts";
+      case "athlete":
+        return "Movement, Sports";
+      case "crafter":
+        return "Constructing, Repairing";
+      case "diplomat":
+        return "Persuasion, Reading People, Etiquette";
+      case "engineer":
+        return "Inventing, Reverse Engineering";
+      case "fighter":
+        return "Melee Combat";
+      case "investigator":
+        return "Finding & Analyzing Clues";
+      case "linguist":
+        return "Verbal & Written Languages";
+      case "mage":
+        return "Qi, Magic, The Supernatural";
+      case "medic":
+        return "Medicine, Physical & Mental Health";
+      case "musician":
+        return "Composing & Performing Music";
+      case "pilot":
+        return "Driving, Sailing, Piloting, Riding";
+      case "scholar":
+        return "Knowledge, Academic Research";
+      case "sharpshooter":
+        return "Throwing, Shooting, Targeting";
+      case "sneak":
+        return "Concealment, Stealth, Disguise";
+      case "stylist":
+        return "Fashions, Trends, Style, Presentation";
+      case "survivalist":
+        return "Tracking, Food, Shelter, Hazards";
+      default:
+        return "ERROR - UNRECOGNIZED SKILL";
+    }
+  }
+
   getSkillProbabilityDescription(skillName: string): string {
-    return this.character.getProbabilityDescription(this.getSkillRank(skillName));
+    return this.character.getFullProbabilityDescription(this.getSkillRank(skillName));
   }
 
   getBaseResult(aspectRank: number, skillName: string, missingSpecializationRanks?: number): number {

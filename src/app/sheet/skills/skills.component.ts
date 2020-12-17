@@ -43,7 +43,16 @@ export class SkillsComponent implements OnInit {
     this.logService.newAction(action);
   }
 
-  getBaseResultRank(aspectName:string, skillName:string): string {
-    return `Base: ${this.skills.getBaseResult(this.skills.character.aspects.getAspectRank(aspectName),skillName).toFixed(this.PRECISION+1)}`;
+  getBaseResultRank(aspectName:string, skillName:string): number {
+    return this.skills.getBaseResult(this.skills.character.aspects.Permanent(aspectName),skillName);
   }
+
+  getBaseResultRankText(aspectName:string, skillName:string): string {
+    return `Base: ${this.getBaseResultRank(aspectName,skillName).toFixed(this.PRECISION+1)}`;
+  }
+
+  getBaseResultProbabilityDescription(aspectName, skillName): string {
+    return this.skills.character.getFullProbabilityDescription(this.getBaseResultRank(aspectName,skillName)/2);
+  }
+
 }

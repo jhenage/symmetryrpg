@@ -1,18 +1,24 @@
 <div [class.over-budget]="skills.character.isOverBudget"></div>
 <div class="skills container">
     <h4>Skills</h4>
-    <div *ngFor="let skill of skills.skillsList" class="field skill three-digit">
-      <label>{{skill|titlecase}}</label>
-      <input type="number" step="0.1" min="{{MINIMUM_VALUE}}" max="{{MAXIMUM_VALUE}}"
-        [class.out-of-range]="inputsOutOfRange[skill]"
-        [value]="skills.getSkillRank(skill)"
-        (input)="setSkillRank(skill,$event.target.value)" />
-      <div class="probability_description">({{skills.getSkillProbabilityDescription(skill)}})</div>
-      <div *ngFor="let aspect of skills.character.aspects.aspectsList" class="skill-button">
+    <div *ngFor="let skill of skills.skillsList" class="skill">
+      <div class="field three-digit">
         <div class="documentation mouseover">
-          <div class="name">{{skill|titlecase}}'s</div>
-          <div class="name">{{aspect|titlecase}}</div>
-          <div class="base">{{getBaseResultRank(aspect,skill)}}</div>
+          <div class="skill_description">{{skills.getShortDescription(skill)}}</div>
+          <div class="probability_description">{{skills.getSkillProbabilityDescription(skill)}}</div>
+        </div>
+        <label>{{skill|titlecase}}</label>
+        <input type="number" step="0.1" min="{{MINIMUM_VALUE}}" max="{{MAXIMUM_VALUE}}" class="edit-mode"
+          [class.out-of-range]="inputsOutOfRange[skill]"
+          [value]="skills.getSkillRank(skill)"
+          (input)="setSkillRank(skill,$event.target.value)" />
+        <div class="play-mode boxed-value three-digit">{{skills.getSkillRank(skill).toFixed(1)}}</div>
+      </div>
+      <div *ngFor="let aspect of skills.character.aspects.aspectsList" class="skill-button play-mode">
+        <div class="documentation mouseover">
+          <div class="name">{{skill|titlecase}}'s {{aspect|titlecase}}</div>
+          <div class="base">{{getBaseResultRankText(aspect,skill)}}</div>
+          <div class="probability_description">{{getBaseResultProbabilityDescription(aspect,skill)}}</div>
         </div>
         <button [class]="aspect" (click)="makeSkillTest(aspect,skill)"></button>
       </div>

@@ -159,4 +159,8 @@ export class Traits {
     return result;
   }
 
+  getAspectBonus(aspect:string):number {
+    return 0;
+  }
+
 }

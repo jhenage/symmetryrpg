@@ -70,6 +70,9 @@ export interface CreatureTypeData {
       };
     };
   };
+  aspectMods: {
+    [propName: string]: number;
+  };
 }
 
 interface TargetData {
@@ -128,6 +131,10 @@ export class CreatureType {
 
   get qi(): {minimum: number, average: number, stddev: number} {
     return this._data.qi;
+  }
+
+  getAspectMod(aspectName:string): number {
+    return this._data.aspectMods[aspectName] || 0;
   }
 
 }

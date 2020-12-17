@@ -30,3 +30,27 @@ label {
     padding: 5px;
     margin: 5px 0px 3px 3px;
 }
+
+.field.mouseover {
+    position: relative;
+}
+
+.documentation.mouseover {
+    visibility: hidden;
+    background-color: black;
+    color: white;
+    text-align: center;
+    font-size: smaller;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    right: 102%;
+    white-space: normal;
+    width: 140px;
+}
+
+.field.mouseover:hover .documentation.mouseover {
+    visibility: visible;
+}

@@ -1,16 +1,11 @@
 input[type=checkbox].display.by-category~.specialties.display-group.by-category,
-input[type=checkbox].display.by-category:checked~.specialties.display-group.alphabetical,
-input[type=checkbox].display.unknown-specialties~.specialties.display-group .specialty.unknown {
+input[type=checkbox].display.by-category:checked~.specialties.display-group.alphabetical {
     display: none;
 }
 
 input[type=checkbox].display.by-category:checked~.specialties.display-group.by-category,
 input[type=checkbox].display.by-category~.specialties.display-group.alphabetical {
     display: flex;
-}
-
-input[type=checkbox].display.unknown-specialties:checked~.specialties.display-group .specialty.unknown {
-    display: block;
 }
 
 .specialties.display-group {

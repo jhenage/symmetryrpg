@@ -20,6 +20,31 @@
     border-color: red;
 }
 
+::ng-deep input.edit-mode-controller:not(:checked) + .sheet-container .edit-mode,
+::ng-deep input.edit-mode-controller:checked + .sheet-container .play-mode,
+::ng-deep input.edit-mode-controller:not(:checked) + .sheet-container .description.blank,
+::ng-deep input.edit-mode-controller:not(:checked) + .sheet-container .single.trait.unknown,
+::ng-deep input.edit-mode-controller:not(:checked) + .sheet-container .specialty.unknown,
+::ng-deep input.edit-mode-controller:not(:checked) + .sheet-container .single.spell.unknown {
+    display: none;
+}
+
+.boxed-value {
+    display: inline-block;
+    border: 2px solid black;
+    border-radius: 4px;
+    padding-left: 2px;
+    padding-right: 2px;
+    margin-left: 3px;
+    margin-right: 3px;
+    height: 21px;
+}
+
+.boxed-value.three-digit {
+    width: 32px;
+    text-align: right;
+}
+
 h4 {
     margin-top: 3px;
     margin-bottom: 6px;
@@ -61,7 +86,7 @@ input.out-of-range {
 
 .probability_description {
     display: inline-block;
-    width: 80px;
+    width: 140px;
     text-align: center;
 }
 

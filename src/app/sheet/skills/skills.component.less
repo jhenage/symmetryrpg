@@ -2,8 +2,10 @@ label {
     width: 85px;
 }
 
+.skill .field,
 .skill-button {
     position: relative;
+    display: inline-flex;
 }
 
 .documentation.mouseover {
@@ -17,11 +19,17 @@ label {
     position: absolute;
     z-index: 1;
     top: -15px;
-    right: 125%;
+    right: 102%;
     white-space: normal;
-    width: 80px;
+    width: 205px;
 }
 
+.skill-button .documentation.mouseover {
+    right: 125%;
+    width: 140 px;
+}
+
+.skill .field:hover .documentation.mouseover,
 .skill-button:hover .documentation.mouseover {
     visibility: visible;
 }
@@ -29,4 +37,9 @@ label {
 .documentation.mouseover .name,
 .documentation.mouseover .base {
     display: block;
+}
+
+.skills.container .skill {
+    display: flex;
+    align-items: center;
 }

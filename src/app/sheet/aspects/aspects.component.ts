@@ -76,4 +76,11 @@ export class AspectsComponent implements OnInit {
     return value.toFixed(this.ASPECT_PRECISION);
   }
 
+  getModifierString(aspectName:string): string {
+    let bonus = this.aspects.Permanent(aspectName) - this.aspects.getAspectRank(aspectName);
+    let result = " " + Math.abs(bonus).toFixed(this.ASPECT_PRECISION) + " = ";
+    if(bonus < 0) return " -" + result;
+    return " +" + result;
+  }
+
 }

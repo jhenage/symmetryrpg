@@ -37,6 +37,22 @@ export class Aspects {
     return this._data;
   }
 
+  getAspectRank(aspectName: string): number {
+    return this._data[aspectName].amount;
+  }
+
+  setAspectRank(aspectName: string, rank: number) {
+    if(this._data.hasOwnProperty(aspectName)) {
+      this._data[aspectName].amount = rank;
+    }
+  }
+
+  Permanent(aspect:string): number {
+    return this.getAspectRank(aspect) + 
+           this.character.creatureType.getAspectMod(aspect) +
+           this.character.traits.getAspectBonus(aspect);
+  }
+
   Current(time:number,aspect:string): number {
     let myList = [];
     let result = 0;
@@ -93,18 +109,29 @@ export class Aspects {
     return [];
   }
 
-  getAspectRank(aspectName: string): number {
-    return this._data[aspectName].amount;
-  }
-
-  setAspectRank(aspectName: string, rank: number) {
-    if(this._data.hasOwnProperty(aspectName)) {
-      this._data[aspectName].amount = rank;
+  getAspectDescription(aspectName:string): string {
+    switch(aspectName) {
+      case "brawn":
+        return "Strong Physical Action";
+      case "toughness":
+        return "Strong Physical Balance";
+      case "agility":
+        return "Deft Physical Action";
+      case "reflex":
+        return "Deft Physical Balance";
+      case "impression":
+        return "Strong Mental Action";
+      case "serenity":
+        return "Strong Mental Balance";
+      case "cleverness":
+        return "Deft Mental Action";
+      case "awareness":
+        return "Deft Mental Balance";
     }
   }
 
   getAspectProbabilityDescription(aspectName: string): string {
-    return this.character.getProbabilityDescription(this.getAspectRank(aspectName));
+    return this.character.getFullProbabilityDescription(this.Permanent(aspectName));
   }
 
   getBaseResult(time:number, aspectName:string): number {

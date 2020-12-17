@@ -1,8 +1,7 @@
 <div [class.over-budget]="spells.character.isOverBudget"></div>
 <div class="spells container">
     <h4>Spells</h4>
-    <input type="checkbox" [(ngModel)]="alphabetized"/><label>List Alphabetically</label><br/>
-    <input type="checkbox" class="display unknown-spells" /><label>Show Unknown Spells</label><br/><hr>
+    <input type="checkbox" [(ngModel)]="alphabetized"/><label>List Alphabetically</label><hr/>
     <div class="spell list">
         <div *ngFor="let spell of getSpellList()" class="spell single"
         [class.unlocked]="isUnlocked(spell)"

@@ -468,15 +468,38 @@ export class Character {
 
   // returns a descriptive string representing the status/probability of a symmetric with this value
   // rounds symmetric to the nearest 0.1, 
-  getProbabilityDescription(symmetric: number): string {
-    if(symmetric < -7) return "subnatural";
-    if(symmetric > 7) return "supernatural";
-    if(symmetric == 0) return "average";
+  getBasicProbabilityDescription(symmetric: number): string {
+    if(symmetric < -7 || symmetric > 7) return "";
+    if(symmetric == 0) return "50%";
     let prefix = symmetric < 0 ? "<" : ">";
     let index = Math.round(Math.abs(symmetric)*10);
     let result = this.attributeProbabilities[index];
     if(result.slice(-1) != "%") prefix = "1 in ";
     return prefix + result;
+  }
+
+  getProbabilityDescriptionPrefix(symmetric: number): string {
+    if(symmetric < -7) return "Subhuman";
+    if(symmetric <= -5.5) return "Appaling";
+    if(symmetric <= -4) return "Abysmal";
+    if(symmetric <= -2.5) return "Terrible";
+    if(symmetric <= -1.5) return "Lousy";
+    if(symmetric <= -0.5) return "Poor";
+    if(symmetric < 0) return "Below average"; 
+    if(symmetric == 0) return "Average";
+    if(symmetric < 0.5) return "Above average";
+    if(symmetric < 1.5) return "Good";
+    if(symmetric < 2.5) return "Excellent";
+    if(symmetric < 4) return "Outstanding";
+    if(symmetric < 5.5) return "Amazing";
+    if(symmetric <= 7) return "Incredible";
+    return "Superhuman";
+  }
+
+  getFullProbabilityDescription(symmetric: number): string {
+    let result = this.getBasicProbabilityDescription(symmetric);
+    if(result.length > 0) result = " (" + result + ")";
+    return this.getProbabilityDescriptionPrefix(symmetric) + result;
   }
 
 }

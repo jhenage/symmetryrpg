@@ -148,7 +148,10 @@ export class About {
   }
 
   get frameSizeProbabilityDescription(): string {
-    return this.character.getProbabilityDescription(this.frameSize);
+    let result = " (" + this.character.getBasicProbabilityDescription(this.frameSize) + ")";
+    if(this.frameSize < 0) return "Small" + result;
+    else if(this.frameSize > 0) return "Large" + result;
+    return "Average" + result;
   }
 
   get muscleBulk(): number {
@@ -160,7 +163,10 @@ export class About {
   }
 
   get muscleBulkProbabilityDescription(): string {
-    return this.character.getProbabilityDescription(this.muscleBulk);
+    let result = " (" + this.character.getBasicProbabilityDescription(this.muscleBulk) + ")";
+    if(this.muscleBulk < 0) return "Low" + result;
+    else if(this.muscleBulk > 0) return "High" + result;
+    return "Average" + result;
   }
 
   get bodyFat(): number {
@@ -172,7 +178,10 @@ export class About {
   }
 
   get bodyFatProbabilityDescription(): string {
-    return this.character.getProbabilityDescription(this.bodyFat);
+    let result = " (" +  this.character.getBasicProbabilityDescription(this.bodyFat) + ")";
+    if(this.bodyFat < 0) return "Low" + result;
+    else if(this.bodyFat > 0) return "High" + result;
+    return "Average" + result;
   }
 
   get descriptionsList(): string[] {
