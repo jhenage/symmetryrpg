@@ -122,11 +122,8 @@ export class Skills {
     missingSpecializationRanks = missingSpecializationRanks || 0;
     let skillRank = this.getSkillRank(skillName) - 2*missingSpecializationRanks;
     if(missingSpecializationRanks > 0) {
-      if(skillName == "linguist") {
-        if(this.character.traits.hasTrait("polyglot")) skillRank++;
-      } else {
-        if(this.character.traits.hasTrait("jack_of_all_trades")) skillRank += 1.2;
-      }
+      if(skillName == "linguist") skillRank += this.character.traits.getAttributeMod("linguistMissingSpecializationPenaltyOffset");
+      else skillRank += this.character.traits.getAttributeMod("standardMissingSpecializationPenaltyOffset");
     }
     if(missingSpecializationRanks > 3) skillRank -= missingSpecializationRanks-3;
     let low = Math.min(aspectRank, skillRank);

@@ -72,7 +72,7 @@ export class Campaign {
     }
 
     getTraitDetails(traitName: string): TraitDetails {
-        let result = {ipCost:0,prerequisites:{aspects:{},skills:{},specialties:{},traits:[],other:{}},description:""};
+        let result = {ipCost:0,prerequisites:{aspects:{},skills:{},specialties:{},traits:[],other:{}},description:"",attributeMods:{}};
         this.traitTypes.forEach(traitType => {
             if(this._data.traitsDetails[traitType][traitName]) result = this._data.traitsDetails[traitType][traitName];
         });

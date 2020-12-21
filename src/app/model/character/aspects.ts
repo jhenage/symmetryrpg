@@ -49,8 +49,8 @@ export class Aspects {
 
   Permanent(aspect:string): number {
     return this.getAspectRank(aspect) + 
-           this.character.creatureType.getAspectMod(aspect) +
-           this.character.traits.getAspectBonus(aspect);
+           this.character.creatureType.getAttributeMod(aspect) +
+           this.character.traits.getAttributeMod(aspect);
   }
 
   Current(time:number,aspect:string): number {

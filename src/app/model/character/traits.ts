@@ -14,6 +14,7 @@ export interface TraitDetails {
     other: {[propName: string]: number;};
   };
   description: string;
+  attributeMods: {[attributeName: string]: number;};
 }
 
 export class Traits {
@@ -159,8 +160,12 @@ export class Traits {
     return result;
   }
 
-  getAspectBonus(aspect:string):number {
-    return 0;
+  getAttributeMod(attributeName:string):number {
+    let result = 0;
+    Object.keys(this._data).forEach(traitName => {
+      if(this.hasTrait(traitName)) result += this.character.campaign.getTraitDetails(traitName).attributeMods[attributeName] || 0;
+    });
+    return result;
   }
 
 }

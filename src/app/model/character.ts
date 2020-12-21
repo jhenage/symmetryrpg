@@ -339,24 +339,12 @@ export class Character {
   }
 
   MaxQi(time: number): number { 
-    let result = this.creatureType.qi.average + this.creatureType.qi.stddev * this.aspects.Current(time,"serenity");
+    let result = this.creatureType.qi.average + this.creatureType.qi.stddev * (this.aspects.Permanent("serenity") + this.traits.getAttributeMod("serenityForQiCapacity"));
     return Math.max(this.creatureType.qi.minimum,Math.round(result)) * this.qiMultiplier;
   }
 
   get qiMultiplier(): number {
-    let multiplier = 1;
-    if(this.traits.hasTrait("qiAwareness")) {
-      multiplier++;
-      ["Action","Body","Finesse","Mind","Reaction","Strength"].forEach(aspectGroup => {
-        ["philosophyOf","focused","dedicatedTo"].forEach(philosophyLevel => {
-          if(this.traits.hasTrait(philosophyLevel + aspectGroup)) multiplier++;
-        });
-      });
-      if(this.traits.hasTrait("qiReserves")) multiplier += 2;
-      if(this.traits.hasTrait("greaterQiReserves")) multiplier += 3;
-      if(multiplier > 10) multiplier = 10;
-    }
-    return multiplier;
+    return Math.min(10, 1 + this.traits.getAttributeMod("qiMultiplier"));
   }
 
   AddQi(time: number, amount: number): void {
@@ -419,9 +407,7 @@ export class Character {
   }
 
   MaxSpeed(time: number, limbList: string[], carriedWeight: number): number { // spd in m/s
-    var result = this.skills.getBaseResult(this.aspects.Current(time,'brawn'),'athlete',0);
-    if(this.traits.hasTrait("swift")) result++;
-    if(this.traits.hasTrait("epicSwiftness")) result += 2;
+    var result = this.skills.getBaseResult(this.aspects.Current(time,'brawn')+this.traits.getAttributeMod("brawnForSpeed"),'athlete',0);
     result < 0 ? result = result * 0.6 : result = result / 0.6;
     result += 9;
     if(result <= 0) return 0;
@@ -431,9 +417,7 @@ export class Character {
   }
 
   MaxAcceleration(time: number, limbList: string[], carriedWeight: number): number { // accel in m/s/s
-    var result = (this.aspects.Current(time,'brawn'));
-    if(this.traits.hasTrait("swift")) result++;
-    if(this.traits.hasTrait("epicSwiftness")) result += 2;
+    var result = (this.aspects.Current(time,'brawn')+this.traits.getAttributeMod("brawnForAcceleration"));
     result < 0 ? result = result * 0.12 : result = result / 3;
     result++;
     if(result <=0) return 0;
@@ -452,8 +436,7 @@ export class Character {
 
   MagicalDefense(time: number): number {
     let result = this.skills.getBaseResult(this.aspects.Current(time,"awareness"),"mage") - 3;
-    if(this.traits.hasTrait("qiAwareness")) result += 2;
-    return result;
+    return result + this.traits.getAttributeMod("magicalDefense");
   }
 
   getSpentIPTotal(): number {

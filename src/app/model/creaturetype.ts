@@ -70,7 +70,7 @@ export interface CreatureTypeData {
       };
     };
   };
-  aspectMods: {
+  attributeMods: {
     [propName: string]: number;
   };
 }
@@ -133,8 +133,8 @@ export class CreatureType {
     return this._data.qi;
   }
 
-  getAspectMod(aspectName:string): number {
-    return this._data.aspectMods[aspectName] || 0;
+  getAttributeMod(attributeName:string): number {
+    return this._data.attributeMods[attributeName] || 0;
   }
 
 }

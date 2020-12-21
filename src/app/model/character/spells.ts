@@ -44,14 +44,7 @@ export class Spells {
   }
 
   isUnlocked(spellName: string): boolean {
-    let difficulty = this.character.campaign.getSpellDetails(spellName).difficulty;
-    if(this.character.traits.hasTrait("spellShaping")) {
-      if(difficulty <= 5) return true;
-      if(this.character.traits.hasTrait("greaterSpellShaping")) {
-        if(difficulty <= 15 || this.character.traits.hasTrait("epicSpellShaping")) return true;
-      }
-    }
-    return false;
+    return this.character.campaign.getSpellDetails(spellName).difficulty <= this.character.traits.getAttributeMod("maxSpellDifficulty");
   }
 
   isAvailable(spellName: string): boolean {
