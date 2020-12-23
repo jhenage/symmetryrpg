@@ -5,9 +5,10 @@
     <div *ngIf="true" class="specialties display-group alphabetical">
         <div *ngFor="let specialty of specialties.getSpecialtiesList()" class="field specialty one-digit"
         [class.unknown]="specialties.getSpecialtyRank(specialty)==0">
-            <input type="number" step="1" min="{{MINIMUM_VALUE}}" max="{{MAXIMUM_VALUE}}"
+            <input type="number" step="1" min="{{MINIMUM_VALUE}}" max="{{MAXIMUM_VALUE}}" class="edit-mode"
             [value]="specialties.getSpecialtyRank(specialty)"
             (input)="setSpecialtyRank(specialty,$event.target.value)" />
+            <div class="play-mode boxed-value one-digit">{{specialties.getSpecialtyRank(specialty)}}</div>
             <label>{{getDisplayName(specialty) | titlecase}}</label>
         </div>
     </div>
@@ -17,9 +18,10 @@
             <div class="specialty-category-label">{{category | titlecase}}</div>
             <div *ngFor="let specialty of specialties.getSpecialtiesByCategory(category)" class="field specialty one-digit"
             [class.unknown]="specialties.getSpecialtyRank(specialty)==0">
-                <input type="number" step="1" min="{{MINIMUM_VALUE}}" max="{{MAXIMUM_VALUE}}"
+                <input type="number" step="1" min="{{MINIMUM_VALUE}}" max="{{MAXIMUM_VALUE}}" class="edit-mode"
                 [value]="specialties.getSpecialtyRank(specialty)"
                 (input)="setSpecialtyRank(specialty,$event.target.value)" />
+                <div class="play-mode boxed-value one-digit">{{specialties.getSpecialtyRank(specialty)}}</div>
                 <label>{{getDisplayName(specialty) | titlecase}}{{getMultiCategoryFlag(specialty)}}</label>
             </div>
         </div>

@@ -14,7 +14,7 @@
                         <div *ngFor="let failedReq of getFailedRequirements(trait)" class="failed reqs">{{failedReq}}</div>
                     </div>
                 </div>
-                <input type="checkbox"
+                <input type="checkbox" class="edit-mode"
                   [checked]="traits.hasTrait(trait)" 
                   (input)="traits.setTrait(trait,$event.target.checked)"
                   [attr.disabled]="isDisabled(trait)"/>

@@ -9,6 +9,7 @@ export interface CampaignData {
     characters: {id:number,version:number}[];
     allCharacters: {name:string,versions:number[]}[];
     now: number; // The current time
+    characterEditMode: boolean;
     creatureTypes: CreatureTypeData[];
     commonSpecialties: SpecialtyCategories; // each specialty should have no more than 4 categories
     traitsDetails: {
@@ -65,6 +66,14 @@ export class Campaign {
 
     get currencyIntervals(): CurrencyInterval[] {
         return this._data.currencyIntervals;
+    }
+
+    get characterEditMode(): boolean {
+        return this._data.characterEditMode;
+    }
+
+    set characterEditMode(editable:boolean) {
+        this._data.characterEditMode = editable;
     }
 
     getTraitList(traitType: string): string[] {

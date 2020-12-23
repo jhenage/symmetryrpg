@@ -12,6 +12,7 @@ export class DataService {
     characters: [],
     allCharacters: [],
     now: 0,
+    characterEditMode: true,
     creatureTypes: [{
       name: 'Human',
       limbs: {
@@ -443,10 +444,10 @@ export class DataService {
         qiWriting: {ipCost:30,prerequisites:{aspects:{},skills:{mage:1},specialties:{},traits:["qiAwareness"],other:{}},
           description:"You can write or draw on the background qi.",
           attributeMods:{}},
-        residueScrubbing: {ipCost:75,prerequisites:{aspects:{cleverness:1},skills:{mage:2},specialties:{qi:2},traits:[],other:{}},
+        residueScrubbing: {ipCost:75,prerequisites:{aspects:{cleverness:1},skills:{mage:2},specialties:{qi:2},traits:["qiWriting"],other:{}},
           description:"You can attempt to obscure a qi residue.",
           attributeMods:{}},
-        residueTracking: {ipCost:75,prerequisites:{aspects:{cleverness:1},skills:{mage:2},specialties:{qi:2},traits:[],other:{}},
+        residueTracking: {ipCost:75,prerequisites:{aspects:{cleverness:1},skills:{mage:2},specialties:{qi:2},traits:["qiAwareness"],other:{}},
           description:"When you detect the qi signature of a person, you can follow the qi trail to or from that signature.",
           attributeMods:{}},
         spellShaping: {ipCost:75,prerequisites:{aspects:{cleverness:1,impression:0.5},skills:{mage:1.5},specialties:{spellcasting:1},traits:["qiWriting"],other:{}},
