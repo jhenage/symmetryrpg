@@ -15,6 +15,7 @@ export interface TraitDetails {
   };
   description: string;
   attributeMods: {[attributeName: string]: number;};
+  enabledActions: string[];
 }
 
 export class Traits {
