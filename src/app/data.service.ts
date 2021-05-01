@@ -22,6 +22,8 @@ export class DataService {
         rightLeg: { dexterity: 1, locomotion: 0.85, muscleSize: 3, reach: 0.5 },
       },
       height: { average: 1.692, stddev: 0.127 },
+      width: { average: 0.423, frameStddev: 0.03, fatStddev: 0.06, minFatStddev: 0},
+      depth: { average: 0.282, frameStddev: 0.02, fatStddev: 0.08, minFatStddev: 0},
       weight: {
         frameSizeFactor: { average: 1, stddev: 0.05 },
         organMassFactor: 6.2,

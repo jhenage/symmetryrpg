@@ -1,4 +1,5 @@
 import { Character, ModifiableStat, ModifiedValue, ChangeModifiedValue } from '../character'
+import { FrameDimension } from '../creaturetype';
 export interface AboutData {
   name: string;
   height: ModifiableStat; // in meters, retrievable as symmetric via function call
@@ -123,8 +124,27 @@ export class About {
       ChangeModifiedValue(time,this._data.height,(Number(res[1]) * 12 + Number(res[2])) * 0.0254);
     }
  }
-  getHeight(time:number){
+  getHeight(time:number): string {
     return Math.floor(this.HeightInch(time) / 12) + '\'' + Math.round(this.HeightInch(time) % 12) + '"';
+  }
+
+  getGrowthFactor(time?:number): number {
+    return this.HeightMeter(time)/this._data.height.amount;
+  }
+
+  getFrameDimensionMeter(fd:FrameDimension): number {
+    let result = fd.average + fd.frameStddev * this.frameSize;
+    return result + fd.fatStddev * Math.max(fd.minFatStddev,this.bodyFat);
+  }
+
+  WidthMeter(time?:number): number {
+    let baseWidth = this.getFrameDimensionMeter(this.character.creatureType.width);
+    return baseWidth * this.getGrowthFactor(time);
+  }
+
+  DepthMeter(time?:number): number {
+    let baseDepth = this.getFrameDimensionMeter(this.character.creatureType.depth);
+    return baseDepth * this.getGrowthFactor(time);
   }
 
   get improvementPoints(): number {

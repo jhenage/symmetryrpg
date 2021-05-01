@@ -28,6 +28,13 @@ export interface WeightData {
   };
 }
 
+export interface FrameDimension {
+  average: number; // in meters
+  frameStddev: number;
+  fatStddev: number;
+  minFatStddev: number;
+}
+
 export interface CreatureTypeData {
   name: string;
   limbs: {
@@ -38,10 +45,12 @@ export interface CreatureTypeData {
       reach: number; // as a fraction of the creature's height, human legs = 0.5, human arms = 0.375
     }
   };
-  height: {
-    average: number;
+  height: { // vertical extent in standard posture, height has its own stdev
+    average: number; // in meters
     stddev: number;
   };
+  width: FrameDimension;
+  depth: FrameDimension;
   weight: WeightData;
   quickness: { // duration = (base duration) * (physical or mental) * (action or reaction)
     physical: number; // speed of physical activity, human = 1.0
@@ -111,6 +120,14 @@ export class CreatureType {
 
   get height(): {average: number, stddev: number} {
     return this._data.height;
+  }
+
+  get width(): FrameDimension {
+    return this._data.width;
+  }
+
+  get depth(): FrameDimension {
+    return this._data.depth;
   }
 
   get weight(): WeightData {
