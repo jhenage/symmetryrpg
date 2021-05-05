@@ -11,6 +11,7 @@ import { Traits, TraitsData } from './character/traits';
 import { Wounds, WoundData } from './character/wounds';
 import { CreatureType } from './creaturetype';
 import { Campaign } from './campaign';
+import { Scene } from './scene';
 
 export interface ModifiableStat {
   amount: number;
@@ -111,13 +112,13 @@ export class Character {
   tap: Tap;
   traits: Traits;
   wounds: Wounds;
-  campaign: Campaign;
+  scene: Scene;
   creatureTypeIndex: number;
 
-  constructor(id: number,creatureTypeIndex: number,data: any,campaign: Campaign) {
+  constructor(id: number,creatureTypeIndex: number,data: any,scene: Scene) {
     this.id = id;
     this.creatureTypeIndex = creatureTypeIndex;
-    this.campaign = campaign;
+    this.scene = scene;
 
     if ( typeof data === "number" ) {
       this.about = new About(this);
@@ -167,8 +168,9 @@ export class Character {
   }
 
   serialize(): string { return JSON.stringify(this._data); }
-  get createdAt(): number { return this._data.createdAt; }
+  //get createdAt(): number { return this._data.createdAt; }
   get creatureType(): CreatureType { return this.campaign.creatureTypes[this.creatureTypeIndex]; }
+  get campaign(): Campaign { return this.scene.campaign; }
 
   // clear all temporary data. For after cloning character
   resetAll() {
@@ -187,7 +189,7 @@ export class Character {
 
   // truncate all logs to one entry. For after archiving character
   resetHistory(time: number) {
-    this._data.createdAt = time;
+    //this._data.createdAt = time;
     this.fatigue.AddAerobicRate(time,0);
     this._data.fatigue.aerobic.splice(0,this._data.fatigue.aerobic.length-1);
     for( let muscle in this._data.fatigue.muscles ) {
