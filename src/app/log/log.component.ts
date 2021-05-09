@@ -3,6 +3,7 @@ import { LogService, TimerObject } from './log.service';
 import { ActionObject } from './action/factory'
 import { Campaign } from '../model/campaign';
 import { DataService } from '../data.service';
+import { RollObject } from '../model/character/rolls';
 
 @Component({
   selector: 'app-log',
@@ -12,6 +13,7 @@ import { DataService } from '../data.service';
 export class LogComponent implements OnInit, OnDestroy {
   history: ActionObject[];
   queue: ActionObject[];
+  rolls: RollObject[];
   timer: TimerObject;
   campaign: Campaign;
   private interval: number; // setIntervalID
@@ -22,6 +24,7 @@ export class LogComponent implements OnInit, OnDestroy {
     this.history = this.logService.history;
     this.queue = this.logService.queue;
     this.timer = this.logService.timer;
+    this.rolls = this.logService.rolls;
     this.campaign = this.dataService.campaign;
     this.toNow();
   }

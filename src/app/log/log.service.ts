@@ -1,13 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Character } from '../model/character';
 import { ActionObject, ActionFactory } from './action/factory';
-import { Campaign } from '../model/campaign';
-
-import { AspectTestActionFactory } from './action/aspecttest/action';
-import { SkillTestActionFactory } from './action/skilltest/action';
-import { MoveActionFactory, MoveActionObject } from './action/move/action';
+import { MoveActionFactory } from './action/move/action';
 import { AttackActionFactory } from './action/attack/action';
 import { DataService } from '../data.service';
+import { RollObject } from '../model/character/rolls';
 
 
 export interface TimerObject {
@@ -25,11 +22,10 @@ export class LogService {
   history: ActionObject[] = [];
   queue: ActionObject[] = [];
   movements: ActionObject[] = [];
+  rolls: RollObject[];
   timer: TimerObject = {time:0};
 
   readonly factories: {[propName:string]:ActionFactory} = {
-    aspecttest: new AspectTestActionFactory(),
-    skilltest: new SkillTestActionFactory(),
     move: new MoveActionFactory(),
     attack: new AttackActionFactory(),    
   }
@@ -83,10 +79,18 @@ export class LogService {
     }
   }
 
+  newRoll(roll: RollObject): void {
+    this.rolls.push(roll);
+  }
+
   import(character: Character) {
     character.actions.getAll().forEach((action) => {
       this.newAction(this.factories[action.type].buildFromStorage(character,action));
     });
+    character.rolls.getAll().forEach((roll) => {
+      let ro = new RollObject(character,roll);
+      this.rolls.push(ro);
+    })
     this.sortAll();
   }
 
@@ -99,6 +103,7 @@ export class LogService {
     });
     if(this.queue.length==0) return;
     this.queue.sort((a,b) => a.data.time - b.data.time);
+    this.rolls.sort((a,b) => a.data.time - b.data.time);
 
     let time = this.queue[0].data.time;
   }

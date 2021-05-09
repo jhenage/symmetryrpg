@@ -13,4 +13,9 @@
             <actionwrap [action]="action"></actionwrap>
         </div>
     </div>
+    <div class="logScrollable">
+        <div *ngFor="let roll of rolls">
+            <rollwrap [roll]="roll"></rollwrap>
+        </div>
+    </div>
 </div>

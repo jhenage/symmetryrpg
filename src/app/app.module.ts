@@ -12,6 +12,7 @@ import { TimeButtonDirective } from './log/time-button.directive';
 import { AttackActionComponent } from './log/action/attack/component';
 import { MoveActionComponent } from './log/action/move/component';
 import { ActionwrapComponent } from './log/actionwrap.component';
+import { RollComponent } from './log/roll.component';
 
 import { AspectsComponent } from './sheet/aspects/aspects.component';
 import { SkillsComponent } from './sheet/skills/skills.component';
@@ -24,7 +25,7 @@ import { EquipmentComponent } from './sheet/equipment/equipment.component';
 @NgModule({
   imports:      [ BrowserModule, FormsModule ],
   declarations: [ AppComponent, SheetComponent, MapComponent, LogComponent, ActionDirective, 
-    MoveActionComponent, AttackActionComponent, ActionwrapComponent,
+    MoveActionComponent, AttackActionComponent, ActionwrapComponent, RollComponent,
     AspectsComponent, SkillsComponent, AboutComponent,
     SpecialtiesComponent,
     StatusComponent,

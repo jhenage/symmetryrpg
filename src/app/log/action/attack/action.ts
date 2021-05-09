@@ -53,12 +53,12 @@ export class AttackActionFactory implements ActionFactory {
 
         character.actions.add(data);
 
-        return {character:character, enemy:enemy, data:data};
+        return {character, enemy, data};
     }
 
     buildFromStorage(character: Character,data: AttackActionData): AttackActionObject {
-        let enemy = character.campaign.characters.filter(char => {return char.id==data.target.character}).pop();
-        return {character:character,enemy:enemy,data:data};
+        let enemy = character.scene.getCharacter(data.target.character);
+        return {character,enemy,data};
     }
 
     execute(action: AttackProcessActionObject) {

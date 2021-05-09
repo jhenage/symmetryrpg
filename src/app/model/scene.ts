@@ -15,7 +15,7 @@ export class Scene {
 
     private _data: SceneData;
     campaign: Campaign;
-    private getcharacter: (id,scene)=>any; // callback function to the data service
+    private getcharacterdata: (id,scene)=>any; // callback function to the data service
 
     characters: Character[];
 
@@ -23,7 +23,7 @@ export class Scene {
         
         this._data = data;
         this.campaign = campaign;
-        this.getcharacter = getcharacter;
+        this.getcharacterdata = getcharacter;
     }
 
     load(): void {
@@ -33,7 +33,7 @@ export class Scene {
  
         this.characters = [];
         for ( let char of this._data.characters ) {
-            let charData = this.getcharacter(char.id,this.id);
+            let charData = this.getcharacterdata(char.id,this.id);
             let charObject = new Character(char.id,charData.creatureType,charData,this);
             // charObject.resetAll(); // For Debugging
             this.characters.push(charObject);
@@ -64,7 +64,22 @@ export class Scene {
         return newchar;
     }
 
-    nextActions(): any[] {
+    getCharacter(id: number): Character {
+        return this.characters.filter((char: Character) => {return char.id==id}).pop();
+    }
+
+    archiveCharacter(character: Character): void {
+        let index = this.characters.indexOf(character);
+        this.characters.splice(index,1);
+        this._data.characters.splice(index,1);
+        //this._data.allCharacters[character.id].name = character.about.name;
+    }
+    deleteCharacter(character: Character): void {
+        this.archiveCharacter(character);
+
+    }
+
+nextActions(): any[] {
         let actions = [];
         let current = 0;
         this.characters.forEach((char) => {

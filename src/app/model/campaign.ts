@@ -4,7 +4,6 @@ import { CreatureType, CreatureTypeData } from './creaturetype';
 import { SpecialtyCategories } from './character/specialties';
 import { TraitDetails } from './character/traits';
 import { CurrencyInterval } from './character/equipment';
-import { timeStamp } from 'console';
 
 export interface CampaignData {
     scenes: SceneData[];
@@ -86,16 +85,6 @@ export class Campaign {
         return JSON.stringify(this._data);
     }
 
-//    archiveCharacter(character: Character): void {
-//        let index = this.characters.indexOf(character);
-//        this.characters.splice(index,1);
-//        this._data.characters.splice(index,1);
-//        this._data.allCharacters[character.id].name = character.about.name;
-//    }
-//    deleteCharacter(character: Character): void {
-//        this.archiveCharacter(character);
-//
-//    }
 
     nextCharacter(): number {
         return ++this._data.characterCount;

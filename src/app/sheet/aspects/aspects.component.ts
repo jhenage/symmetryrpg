@@ -39,9 +39,7 @@ export class AspectsComponent implements OnInit {
   }
 
   makeAspectTest(aspectName:string) {
-    let factory = new AspectTestActionFactory();
-    let action = factory.build(this.aspects.character,{time:this.logService.now,aspect:aspectName});
-    this.logService.newAction(action);
+    this.logService.newRoll(this.aspects.character.rolls.add({time:this.logService.now,modifier:{ability:{aspect:aspectName}}}));
   }
 
   get mentalActionDuration(): string {

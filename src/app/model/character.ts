@@ -12,6 +12,7 @@ import { Wounds, WoundData } from './character/wounds';
 import { CreatureType } from './creaturetype';
 import { Campaign } from './campaign';
 import { Scene } from './scene';
+import { RollData, Rolls } from './character/rolls';
 
 export interface ModifiableStat {
   amount: number;
@@ -84,6 +85,7 @@ export class Character {
     aspects: AspectsData;
     equipment: EquipmentData;
     fatigue: FatigueData;
+    rolls: RollData[];
     skills: SkillsData;
     specialties: SpecialtiesData;
     spells: SpellsData;
@@ -106,6 +108,7 @@ export class Character {
   aspects: Aspects;
   equipment: Equipment;
   fatigue: Fatigue;
+  rolls: Rolls;
   skills: Skills;
   specialties: Specialties;
   spells: Spells;
@@ -124,6 +127,7 @@ export class Character {
       this.about = new About(this);
       this.actions = new Actions(this);
       this.aspects = new Aspects(this);
+      this.rolls = new Rolls(this);
       this.skills = new Skills(this);
       this.specialties = new Specialties(this);
       this.spells = new Spells(this);
@@ -138,6 +142,7 @@ export class Character {
                     about:this.about.initialize(),
                     actions: this.actions.initialize(),
                     aspects: this.aspects.initialize(),
+                    rolls: this.rolls.initialize(),
                     skills: this.skills.initialize(),
                     specialties: this.specialties.initialize(),
                     spells: this.spells.initialize(),
@@ -155,6 +160,7 @@ export class Character {
       this.about = new About(this,this._data.about);
       this.actions = new Actions(this,this._data.actions);
       this.aspects = new Aspects(this,this._data.aspects);
+      this.rolls = new Rolls(this,this._data.rolls);
       this.skills = new Skills(this,this._data.skills);
       this.specialties = new Specialties(this,this._data.specialties);
       this.spells = new Spells(this,this._data.spells);
@@ -185,6 +191,7 @@ export class Character {
       this._data.aspects[aspect].modified = [];
     });
     this._data.actions.splice(0,this._data.actions.length);
+    this._data.rolls = [];
   }
 
   // truncate all logs to one entry. For after archiving character
@@ -203,6 +210,7 @@ export class Character {
       this._data.aspects[aspect].modified = [{time:time,amount:this.aspects.Current(time,aspect)}];
     });
     this._data.actions.splice(0,this._data.actions.findIndex((value)=> value.time > time));
+    this._data.rolls.splice(0,this._data.rolls.findIndex((value)=> value.time > time));
     // still need wounds
   }
 

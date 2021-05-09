@@ -39,9 +39,7 @@ export class SkillsComponent implements OnInit {
 
 
   makeSkillTest(aspectName:string, skillName:string) {
-    let factory = new SkillTestActionFactory();
-    let action = factory.build(this.skills.character,{time:this.logService.now,aspect:aspectName,skill:skillName});
-    this.logService.newAction(action);
+    this.logService.newRoll(this.skills.character.rolls.add({time:this.logService.now,modifier:{ability:{aspect:aspectName,skill:skillName,specialties:[]}}}));
   }
 
 }

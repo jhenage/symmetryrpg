@@ -9,7 +9,7 @@
       <a (click)="mode='status'" [class.selected]="mode=='status'">Status</a>
     </div>
     <div class="character">
-      <a *ngFor="let char of campaign.characters" (click)="select(char)" [class.selected]="char==character">{{char.about.name}}</a>
+      <a *ngFor="let char of scene.characters" (click)="select(char)" [class.selected]="char==character">{{char.about.name}}</a>
       <a (click)="newChar()">New Character</a>
     </div>
   </div>

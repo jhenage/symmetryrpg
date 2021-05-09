@@ -1,7 +1,7 @@
 <div class="scale">scale<input [(ngModel)]="scale" type="number"/></div>
 <div (mousemove)="onMouseMove($event)" class="viewer">
     <div id="tokens">
-        <div class="container character" *ngFor="let char of campaign.characters" 
+        <div class="container character" *ngFor="let char of campaign.activeScene.characters" 
             [style.left]="locationX(char)+'px'" [style.top]="locationY(char)+'px'" [class.selected]="char==character">
             <div class="token" (click)="select(char)" [style.width]="scale+'px'" [style.height]="scale+'px'">
                 <img [src]="char.about.url"/>

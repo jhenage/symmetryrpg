@@ -39,7 +39,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     this.offsetY = screen.availHeight * 1.5;
 
     if ( !this.character ) {
-      this.character = this.campaign.characters[0];
+      this.character = this.campaign.activeScene.characters[0];
     }
 
     this.movements = <MoveActionObject[]>this.logService.movements;
