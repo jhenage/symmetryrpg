@@ -43,6 +43,7 @@ export class Campaign {
             let sceneObject = new Scene(scene,this,getcharacter);
             this.scenes.push(sceneObject);
         }
+        this.activeScene.load();
     }
 
     get now(): number {

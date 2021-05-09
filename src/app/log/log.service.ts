@@ -22,7 +22,7 @@ export class LogService {
   history: ActionObject[] = [];
   queue: ActionObject[] = [];
   movements: ActionObject[] = [];
-  rolls: RollObject[];
+  rolls: RollObject[] = [];
   timer: TimerObject = {time:0};
 
   readonly factories: {[propName:string]:ActionFactory} = {

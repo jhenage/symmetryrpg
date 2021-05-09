@@ -78,7 +78,6 @@ interface LocationData {
 export class Character {
 
   protected _data: {
-    createdAt: number;  // tick count of creation
     creatureType: number;
     about: AboutData;
     actions: ActionData[];
@@ -123,7 +122,7 @@ export class Character {
     this.creatureTypeIndex = creatureTypeIndex;
     this.scene = scene;
 
-    if ( typeof data === "number" ) {
+    if ( ! data ) {
       this.about = new About(this);
       this.actions = new Actions(this);
       this.aspects = new Aspects(this);
@@ -137,7 +136,7 @@ export class Character {
       this.tap = new Tap(this);
       this.fatigue = new Fatigue(this);
 
-      this._data = {createdAt:data,location:[],token:'',creatureType:creatureTypeIndex,
+      this._data = {location:[],token:'',creatureType:creatureTypeIndex,
                     qi:{amount:0},
                     about:this.about.initialize(),
                     actions: this.actions.initialize(),

@@ -5,7 +5,7 @@ import { LogService } from './log.service';
 @Component({
   selector: 'rollwrap',
   template: `<a *appTimeButton="roll.data.time">Start</a>
-              <a (click)="log(roll)">(_)</a>{roll.character.about.name} {roll.data.modifier.ability.aspect}`,
+              <a (click)="log(roll)">(_)</a>{{roll.character.about.name}} {{roll.data.modifier.ability.aspect}}`,
 })
 export class RollComponent {
   @Input() roll: RollObject;

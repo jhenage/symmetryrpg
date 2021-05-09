@@ -49,7 +49,7 @@ export class Scene {
     }
 
     newCharacter(): Character {
-        let character = new Character(this.campaign.nextCharacter(),0,null,this);
+        let character = new Character(this.campaign.nextCharacter(),this.id,null,this);
         this.characters.push(character);
         this._data.characters.push({id:character.id,name:character.about.name});
         return character;
