@@ -2,10 +2,31 @@ import { Character } from '../character'
 export interface ActionData {
   type: string;
   time: number;
-  executed?: boolean;
-  nextExecution?: number;
+  body: ActionBodyPart[];
+  rolls?: RollData[];
+  nextExecution?: number; //next time this action needs to execute. Undefined when done.
   endTime?: number;
   order?: number; // order of execution
+}
+
+export interface ActionBodyPart {
+  name:string; // name of body part
+  intensity:number; // fatigue amount
+  exclusive?:boolean; // prevents limb from other actions
+}
+
+export interface RollData {
+  dice: number[];
+  time: number;
+  modifier: {
+    aspect: string;
+    skill?: string;
+    specialties?: string[];
+    qi?: number;
+  };
+  testDescription?: string;
+  resultDescription?: string;
+  order?: number; // order in the roll log
 }
 
 export class Actions {

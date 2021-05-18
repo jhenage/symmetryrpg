@@ -4,6 +4,7 @@ import { CreatureType } from './model/creaturetype';
 import { Campaign } from './model/campaign';
 import { DataService } from './data.service';
 import { LogService } from './log/log.service';
+import { Scene } from './model/scene';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,7 @@ import { LogService } from './log/log.service';
 export class AppComponent  {
   character: Character; // the selected character
   campaign: Campaign;
+  scene: Scene;
   creaturetypes: CreatureType[];
   mode: string; // sheet | status | map
 
@@ -22,29 +24,30 @@ export class AppComponent  {
   ngOnInit() {
     this.mode = 'sheet';
     this.campaign = this.dataService.campaign;
+    this.scene = this.campaign.activeScene;
     //this.campaign.now = 0; // For Debugging
 
-    this.campaign.characters.forEach((character) => {
+    this.scene.characters.forEach((character) => {
       //character.resetAll(); // For Debugging
       this.logService.import(character);
     });
   }
 
   save():void {
-    for ( let char of this.campaign.characters ) {
+    for ( let char of this.scene.characters ) {
       this.dataService.saveCharacter(char);
     }
     this.dataService.saveCampaign();
   }
 
   delete(character: Character): void {
-    this.campaign.deleteCharacter(character);
+    this.scene.deleteCharacter(character);
     this.dataService.deleteCharacter(character);
     this.dataService.saveCampaign();
   }
 
   newChar():void {
-    this.character = this.campaign.newCharacter();
+    this.character = this.scene.newCharacter();
     this.mode = 'sheet';
   }
 

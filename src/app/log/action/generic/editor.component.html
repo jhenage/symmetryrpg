@@ -1,0 +1,60 @@
+<h2 mat-dialog-title>Edit Generic Action</h2>
+<mat-dialog-content>
+  <div class="field">
+    <label>Start Time</label>
+    <input type="number" [(ngModel)]="data.action.data.time" />
+  </div>
+  <div class="field">
+    <label>End Time</label>
+    <input type="number" [(ngModel)]="data.action.data.endTime" />
+  </div>
+  <a (click)="addBody()">Add Body Part</a>
+  <div class="bodyPart" *ngFor="let body of data.action.data.body; index as i">
+    <div class="field">
+      <label>Body Part</label>
+      <input type="text" [(ngModel)]="body.name" />
+    </div>
+    <div class="field">
+      <label>Intensity</label>
+      <input type="number" [(ngModel)]="body.intensity" />
+    </div>
+    <div class="field">
+      <label>Exclusivity</label>
+      <input type="checkbox" [(ngModel)]="body.exclusive" />
+    </div>
+      <a (click)="removeBody(i)">Remove</a>
+  </div>
+  <p>Stuff about your dice roll. Edit the model.</p>
+  <a (click)="addRoll()">Add Roll</a>
+  <div class="roll" *ngFor="let roll of data.action.data.rolls; index as i">
+
+    <div class="field">
+      <label>Time</label>
+      <input [(ngModel)]="roll.time" />
+    </div>
+    <div class="field">
+      <label>Aspect</label>
+      <input [(ngModel)]="roll.modifier.aspect" />
+    </div>
+    <div class="field">
+      <label>Skill</label>
+      <input [(ngModel)]="roll.modifier.skill" />
+    </div>
+    <div class="field">
+      <label>Specialties</label>
+    </div>
+    <div class="field">
+      <label>Test Description</label>
+      <input [(ngModel)]="roll.testDescription" />
+    </div>
+    <div class="field">
+      <label>Dice</label>
+    </div>
+    <a (click)="removeRoll(i)">Remove</a>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="rollDice()">New Roll</button>
+  <button mat-button mat-dialog-close>Close</button>
+  <button mat-button [mat-dialog-close]="true">Apply</button>
+</mat-dialog-actions>

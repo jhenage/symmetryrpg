@@ -11,6 +11,7 @@ import { Traits, TraitsData } from './character/traits';
 import { Wounds, WoundData } from './character/wounds';
 import { CreatureType } from './creaturetype';
 import { Campaign } from './campaign';
+import { Scene } from './scene';
 
 export interface ModifiableStat {
   amount: number;
@@ -76,7 +77,6 @@ interface LocationData {
 export class Character {
 
   protected _data: {
-    createdAt: number;  // tick count of creation
     creatureType: number;
     about: AboutData;
     actions: ActionData[];
@@ -111,15 +111,15 @@ export class Character {
   tap: Tap;
   traits: Traits;
   wounds: Wounds;
-  campaign: Campaign;
+  scene: Scene;
   creatureTypeIndex: number;
 
-  constructor(id: number,creatureTypeIndex: number,data: any,campaign: Campaign) {
+  constructor(id: number,creatureTypeIndex: number,data: any,scene: Scene) {
     this.id = id;
     this.creatureTypeIndex = creatureTypeIndex;
-    this.campaign = campaign;
+    this.scene = scene;
 
-    if ( typeof data === "number" ) {
+    if ( ! data ) {
       this.about = new About(this);
       this.actions = new Actions(this);
       this.aspects = new Aspects(this);
@@ -132,7 +132,7 @@ export class Character {
       this.tap = new Tap(this);
       this.fatigue = new Fatigue(this);
 
-      this._data = {createdAt:data,location:[],token:'',creatureType:creatureTypeIndex,
+      this._data = {location:[],token:'',creatureType:creatureTypeIndex,
                     qi:{amount:0},
                     about:this.about.initialize(),
                     actions: this.actions.initialize(),
@@ -167,8 +167,9 @@ export class Character {
   }
 
   serialize(): string { return JSON.stringify(this._data); }
-  get createdAt(): number { return this._data.createdAt; }
+  //get createdAt(): number { return this._data.createdAt; }
   get creatureType(): CreatureType { return this.campaign.creatureTypes[this.creatureTypeIndex]; }
+  get campaign(): Campaign { return this.scene.campaign; }
 
   // clear all temporary data. For after cloning character
   resetAll() {
@@ -187,7 +188,7 @@ export class Character {
 
   // truncate all logs to one entry. For after archiving character
   resetHistory(time: number) {
-    this._data.createdAt = time;
+    //this._data.createdAt = time;
     this.fatigue.AddAerobicRate(time,0);
     this._data.fatigue.aerobic.splice(0,this._data.fatigue.aerobic.length-1);
     for( let muscle in this._data.fatigue.muscles ) {

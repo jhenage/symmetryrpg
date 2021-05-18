@@ -1,6 +1,7 @@
 import { Character } from 'src/app/model/character';
 import { ActionData } from 'src/app/model/character/actions';
-import { ActionFactory, ActionObject } from '../factory';
+import { ActionObject } from '../object';
+//import { ActionFactory, ActionObject } from '../factory';
 
 interface MoveActionData extends ActionData {
     path: {
@@ -11,78 +12,59 @@ interface MoveActionData extends ActionData {
     }[];
 }
 
-export interface MoveActionObject extends ActionObject {
+export class MoveActionObject extends ActionObject {
     data: MoveActionData;
-}
 
-interface MoveProcessActionData extends MoveActionData {
-    fatigue: number;
-    limbs: string[];
-}
-
-export interface MoveProcessActionObject extends MoveActionObject {
-    data: MoveProcessActionData;
-}
-
-export class MoveActionFactory implements ActionFactory {
-
-    build(character: Character,datainit: {time: number;path: {x: number;y: number;speed: number}[]}): MoveActionObject {
+    static Build(character: Character,datainit: {time: number;path: {x: number;y: number;speed: number}[]}): MoveActionObject {
         let data = datainit as MoveActionData;
         data.type = 'move';
-        data.executed = false;
+        data.nextExecution = data.time;
+        data.body = [{name:'leftLeg',intensity:0},{name:'rightLeg',intensity:0}];
 
-        character.actions.add(data);
+       character.actions.add(data);
 
-        return {character: character,data: data};
+        return new this(character,data);
     }
 
-    buildFromStorage(character: Character,data: MoveActionData): MoveActionObject {
-        return {character:character,data:data};
-    }
-
-    execute(action: MoveProcessActionObject) {
-        if(!action.data.executed) {
-            action.data.fatigue = 0;
-            action.data.executed = true;
-            action.data.nextExecution = action.data.time;
-            action.data.limbs = ["leftLeg","rightLeg"];
-        }  
-        if(typeof action.data.nextExecution === "undefined") {
+    execute() {
+        if(typeof this.data.nextExecution === "undefined") {
             return;
         }
             
-        for(let i = 0; i < action.data.path.length; i++) {
-            if(action.data.path[i].state=="done") continue;
-            if(!action.data.path[i].state) {
-                let location = action.character.location(action.data.nextExecution);
-                let speed = action.character.MaxSpeed(action.data.nextExecution,action.data.limbs,0) * action.data.path[i].speed;
-                let distance = ((location.x-action.data.path[i].x)**2 + (location.y-action.data.path[i].y)**2)**.5;
+        for(let i = 0; i < this.data.path.length; i++) {
+            if(this.data.path[i].state=="done") continue;
+            if(!this.data.path[i].state) {
+                let location = this.character.location(this.data.nextExecution);
+                let speed = this.character.MaxSpeed(this.data.nextExecution,this.data.body.map(x => x.name),0) * this.data.path[i].speed;
+                let distance = ((location.x-this.data.path[i].x)**2 + (location.y-this.data.path[i].y)**2)**.5;
                 let duration = distance / speed; // in sec
-                location.velx = (action.data.path[i].x - location.x) / duration;
-                location.vely = (action.data.path[i].y - location.y) / duration;
-                action.character.setLocation(location);
-                action.data.fatigue = .08 * action.data.path[i].speed ** 2;
-                action.character.fatigue.AddMuscleRate(action.data.nextExecution,action.data.fatigue/6,"leftLeg");
-                action.character.fatigue.AddMuscleRate(action.data.nextExecution,action.data.fatigue/6,"rightLeg");
-                action.character.fatigue.AddAerobicRate(action.data.nextExecution,action.data.fatigue);
+                location.velx = (this.data.path[i].x - location.x) / duration;
+                location.vely = (this.data.path[i].y - location.y) / duration;
+                this.character.setLocation(location);
+                this.data.body.forEach(body => {
+                    body.intensity = .08 * this.data.path[i].speed ** 2;
+                    this.character.fatigue.AddMuscleRate(this.data.nextExecution,body.intensity,body.name);
+                    this.character.fatigue.AddAerobicRate(this.data.nextExecution,body.intensity*3);
+                });
                 
             
-                action.data.nextExecution += Math.round(1000*duration);
-                action.data.path[i].state = "max";
+                this.data.nextExecution += Math.round(1000*duration);
+                this.data.path[i].state = "max";
 
                 break;
             }
-            if (action.data.path[i].state=="max") {
-                action.data.path[i].state = "done";
-                action.character.fatigue.AddMuscleRate(action.data.nextExecution,-action.data.fatigue/6,"leftLeg");
-                action.character.fatigue.AddMuscleRate(action.data.nextExecution,-action.data.fatigue/6,"rightLeg");
-                action.character.fatigue.AddAerobicRate(action.data.nextExecution,-action.data.fatigue);
+            if (this.data.path[i].state=="max") {
+                this.data.path[i].state = "done";
+                this.data.body.forEach(body => {
+                    this.character.fatigue.AddMuscleRate(this.data.nextExecution,-body.intensity,body.name);
+                    this.character.fatigue.AddAerobicRate(this.data.nextExecution,-body.intensity*3);
+                });
 
-               if(i == action.data.path.length-1) {
-                    let location = {time:action.data.nextExecution,x:action.data.path[i].x,y:action.data.path[i].y,velx:0,vely:0};
-                    action.character.setLocation(location);
-                    action.data.endTime = action.data.nextExecution;
-                    action.data.nextExecution = undefined;
+               if(i == this.data.path.length-1) {
+                    let location = {time:this.data.nextExecution,x:this.data.path[i].x,y:this.data.path[i].y,velx:0,vely:0};
+                    this.character.setLocation(location);
+                    this.data.endTime = this.data.nextExecution;
+                    this.data.nextExecution = undefined;
                 }
             }
         }

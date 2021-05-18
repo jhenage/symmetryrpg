@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Skills } from 'src/app/model/character/skills';
 import { LogService } from 'src/app/log/log.service';
-import { SkillTestActionFactory } from 'src/app/log/action/skilltest/action';
+import { GenericActionObject } from 'src/app/log/action/generic/action';
 
 @Component({
   selector: 'app-skills',
@@ -38,8 +38,7 @@ export class SkillsComponent implements OnInit {
   }
 
   makeSkillTest(aspectName:string, skillName:string) {
-    let factory = new SkillTestActionFactory();
-    let action = factory.build(this.skills.character,{time:this.logService.now,aspect:aspectName,skill:skillName});
+    let action = GenericActionObject.Build(this.skills.character,{time:this.logService.now,aspect:aspectName,skill:skillName});
     this.logService.newAction(action);
   }
 

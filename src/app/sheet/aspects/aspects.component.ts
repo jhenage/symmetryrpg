@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Aspects } from '../../model/character/aspects'
 import { LogService } from '../../log/log.service';
-import { AspectTestActionFactory } from '../../log/action/aspecttest/action';
+import { GenericActionObject } from '../../log/action/generic/action';
 
 @Component({
   selector: 'app-aspects',
@@ -39,8 +39,7 @@ export class AspectsComponent implements OnInit {
   }
 
   makeAspectTest(aspectName:string) {
-    let factory = new AspectTestActionFactory();
-    let action = factory.build(this.aspects.character,{time:this.logService.now,aspect:aspectName});
+    let action = GenericActionObject.Build(this.aspects.character,{time:this.logService.now,aspect:aspectName});
     this.logService.newAction(action);
   }
 

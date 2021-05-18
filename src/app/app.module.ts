@@ -1,17 +1,16 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 import { SheetComponent } from './sheet/sheet.component';
 import { MapComponent } from './map/map.component';
 import { LogComponent } from './log/log.component';
-import { ActionDirective } from './log/action/action.directive';
 import { TimeButtonDirective } from './log/time-button.directive';
-
-import { AttackActionComponent } from './log/action/attack/component';
-import { MoveActionComponent } from './log/action/move/component';
-import { ActionwrapComponent } from './log/actionwrap.component';
+import { RollDialogComponent } from './log/roll-dialog.component';
+import { GenericEditorComponent } from './log/action/generic/editor.component';
 
 import { AspectsComponent } from './sheet/aspects/aspects.component';
 import { SkillsComponent } from './sheet/skills/skills.component';
@@ -21,26 +20,12 @@ import { StatusComponent } from './status/status.component';
 import { TraitsComponent } from './sheet/traits/traits.component';
 import { EquipmentComponent } from './sheet/equipment/equipment.component';
 import { SpellsComponent } from './sheet/spells/spells.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
-  imports: [ 
-    BrowserModule, 
-    FormsModule, 
-    BrowserAnimationsModule
-  ],
-  declarations: [ 
-    AppComponent, 
-    SheetComponent, 
-    MapComponent, 
-    LogComponent, 
-    ActionDirective, 
-    MoveActionComponent, 
-    AttackActionComponent, 
-    ActionwrapComponent,
-    AspectsComponent, 
-    SkillsComponent, 
-    AboutComponent,
+  imports:      [ BrowserModule, FormsModule, MatDialogModule, BrowserAnimationsModule ],
+  declarations: [ AppComponent, SheetComponent, MapComponent, LogComponent, 
+    RollDialogComponent, 
+    AspectsComponent, SkillsComponent, AboutComponent, GenericEditorComponent,
     SpecialtiesComponent,
     StatusComponent,
     TraitsComponent,
@@ -48,10 +33,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     EquipmentComponent,
     SpellsComponent
   ],
-  entryComponents: [ 
-    MoveActionComponent, 
-    AttackActionComponent 
-  ],
-  bootstrap: [ AppComponent ]
+  entryComponents: [ RollDialogComponent, GenericEditorComponent ],
+  bootstrap:    [ AppComponent ]
 })
 export class AppModule { }

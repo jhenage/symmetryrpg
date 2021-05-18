@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>Edit Dice Roll</h2>
+<mat-dialog-content>
+  <p>Stuff about your dice roll. Edit the model.</p>
+  <div class="field">
+    <label>Test Description</label>
+    <input [(ngModel)]="data.roll.testDescription" />
+  </div>
+  <div class="field">
+    <label>Result Description</label>
+    <input [(ngModel)]="data.roll.resultDescription" />
+  </div>
+  <div class="field">
+    <label>Dice</label>
+    <div class="die" *ngFor="let die of data.roll.dice; index as i">
+        <input type="number" [(ngModel)]="data.roll.dice[i]" />
+    </div>
+    + {{modifier}} = {{total()}}
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="rollDice()">New Roll</button>
+  <button mat-button mat-dialog-close>Close</button>
+  <button mat-button [mat-dialog-close]="true">Save</button>
+</mat-dialog-actions>

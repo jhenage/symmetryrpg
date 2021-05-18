@@ -128,8 +128,8 @@ export class Wounds {
     targetWidth *= 2;
 
     // Will want to strike at different orientations, right now just doing perpendicular:
-    width = width < targetLength ? width : targetLength;
-    length = length < targetWidth ? length : width;
+    width = Math.min(width, targetLength);
+    length = Math.min(length, targetWidth);
     var surfaceArea = length * width;
 
     tissues.forEach(element => {

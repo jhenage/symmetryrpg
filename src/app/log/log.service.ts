@@ -1,17 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Character } from '../model/character';
-import { ActionObject, ActionFactory } from './action/factory';
-import { Campaign } from '../model/campaign';
-
-import { AspectTestActionFactory } from './action/aspecttest/action';
-import { SkillTestActionFactory } from './action/skilltest/action';
-import { MoveActionFactory, MoveActionObject } from './action/move/action';
-import { AttackActionFactory } from './action/attack/action';
 import { DataService } from '../data.service';
+import { RollData } from '../model/character/actions';
+import { ActionObject } from './action/object';
+import { GenericActionObject } from './action/generic/action';
+import { MoveActionObject } from './action/move/action';
+import { AttackActionObject } from './action/attack/action';
 
 
-export interface TimerObject {
-  time: number;
+export interface LogComponentData {
+  time: number; // time currently being viewed
+  nextRoll: number; // time of next roll
+  log: {
+      time:number;
+      action:ActionObject;
+      roll?:RollData;
+    }[];
+  
 }
 
 // Manages the generated log from campaign
@@ -21,19 +26,15 @@ export interface TimerObject {
 export class LogService {
   private lastProcessedTime: number = 0;
   private lastOrderNumber: number = 0;
-  private inprogress: ActionObject[] = [];
-  history: ActionObject[] = [];
-  queue: ActionObject[] = [];
+  private queue: ActionObject[] = [];
+  data: LogComponentData = {time:0,nextRoll:0,log:[]};
   movements: ActionObject[] = [];
-  timer: TimerObject = {time:0};
 
-  readonly factories: {[propName:string]:ActionFactory} = {
-    aspecttest: new AspectTestActionFactory(),
-    skilltest: new SkillTestActionFactory(),
-    move: new MoveActionFactory(),
-    attack: new AttackActionFactory(),    
-  }
-
+  classes = {
+    generic: GenericActionObject,
+    move: MoveActionObject,
+    attack: AttackActionObject
+  };
  
   constructor(private dataService: DataService) { }
 
@@ -42,40 +43,29 @@ export class LogService {
   }
 
   newAction(action: ActionObject) {
-    if(action.data.executed) {
-      if ( typeof action.data.order == 'undefined' ) {
-        action.data.order = this.nextOrder(action.data.time);
-      }
-      this.history.push(action);
-      if(action.data.nextExecution) {
-        this.inprogress.push(action);
-      }
-    }
-    else {
+    if( typeof action.data.nextExecution != 'undefined' ) {
       this.queue.push(action);
-      this.sortAll();
       if(action.data.type=="move") {
         this.movements.push(action);
       }
     }
+    if(action.data.time > this.now) {
+      this.data.log.push({time:action.data.time,action});
+    }
+    if(action.data.rolls) {
+      action.data.rolls.forEach((roll) => {
+        this.data.log.push({time:roll.time,action,roll});
+      });
+    }
   }
 
   removeAction(action: ActionObject) {
-    if(action.data.executed) {
-      let i = this.history.indexOf(action);
-      if ( i > -1 ) {
-        this.history.splice(i,1);
-      }
-      i = this.inprogress.indexOf(action);
-      if ( i > -1 ) {
-        this.inprogress.splice(i,1);
-      }
+    this.data.log = this.data.log.filter(item => item.action != action);
+    let i = this.queue.indexOf(action);
+    if ( i > -1 ) {
+      this.queue.splice(i,1);
     }
-    else {
-      let i = this.queue.indexOf(action);
-      if ( i > -1 ) {
-        this.queue.splice(i,1);
-      }
+    if(action.data.type=="move") {
       i = this.movements.indexOf(action);
       if ( i > -1 ) {
         this.movements.splice(i,1);
@@ -85,102 +75,91 @@ export class LogService {
 
   import(character: Character) {
     character.actions.getAll().forEach((action) => {
-      this.newAction(this.factories[action.type].buildFromStorage(character,action));
+      const obj = new this.classes[action.type](character,action);
+      this.newAction(obj);
     });
     this.sortAll();
   }
 
   sortAll() {
-    this.history.sort((a,b) => {
-      if(a.data.time == b.data.time) {
-        return a.data.order - b.data.order;
+    this.queue.sort((a,b) => a.data.nextExecution - b.data.nextExecution);
+
+    let nextRollTime: number;
+    this.data.log.forEach(item => {
+      if(item.roll) {
+        item.time = item.roll.time;
+        if(item.time >= this.now) {
+          if(typeof nextRollTime == 'undefined' || nextRollTime > item.time) {
+            nextRollTime = item.time;
+          }
+        }
+      } else {
+        item.time = item.action.data.time;
       }
-      return a.data.time - b.data.time;
     });
-    if(this.queue.length==0) return;
-    this.queue.sort((a,b) => a.data.time - b.data.time);
+    this.data.nextRoll = nextRollTime;
 
-    let time = this.queue[0].data.time;
-  }
-
-  queueFiltered(filter): ActionObject[] {
-    return this.queue.slice().concat(this.queue).filter((action) => { 
-      if(typeof filter.character == 'number') {
-        if(filter.character != action.character.id) {
-          return false;
-        }
+    this.data.log.sort((a,b) => {
+      if(a.time != b.time) {
+        return a.time - b.time;
       }
-      if(typeof filter.character == 'object') {
-        if(filter.character != action.character) {
-          return false;
-        }
+      if(!a.roll) {
+        return b.roll ? 1 : 0;
       }
-      return this.queueFiltered_Iterate(action.data,filter);
+      if(!b.roll){
+        return -1;
+      }
+      return a.roll.order - b.roll.order;
     });
-  }
-  private queueFiltered_Iterate(data,filter): boolean {
-    for ( let name in filter ) {
-      if ( typeof data[name] == 'undefined' ) {
-        return false;
-      }
-      if ( typeof filter[name] == 'object' ) {
-        if ( !this.queueFiltered_Iterate(data[name],filter[name]) ) {
-          return false;
-        }
-      }
-      else {
-        if ( data[name] != filter[name] ) {
-          return false;
-        }
-      }
-    }
-    return true;
+
   }
 
-  nextOrder(time: number) {
-    if ( time < this.lastProcessedTime ) {
-      throw new Error('Invalid time '+time+' before '+this.lastProcessedTime);
-    }
-    if ( time == this.lastProcessedTime ) {
-      return ++this.lastOrderNumber;
-    }
-    this.lastProcessedTime = time;
-    this.lastOrderNumber = 0;
-    return this.lastOrderNumber;
-  }
 
-  executeAction(action: ActionObject) {
-    if(action.data.executed) {
+//  nextOrder(time: number) {
+//    if ( time < this.lastProcessedTime ) {
+//      throw new Error('Invalid time '+time+' before '+this.lastProcessedTime);
+//    }
+//    if ( time == this.lastProcessedTime ) {
+//      return ++this.lastOrderNumber;
+//    }
+//    this.lastProcessedTime = time;
+//    this.lastOrderNumber = 0;
+//    return this.lastOrderNumber;
+//  }
 
-    }
-    else {
-      this.progressClock(action.data.time);
-      this.removeAction(action);
-      this.factories[action.data.type].execute(action);
-      this.newAction(action);
-      this.sortAll();
-    }
-    this.dataService.saveCharacter(action.character);
-    this.dataService.saveCampaign();
-   
-  }
+//  executeAction(action: ActionObject) {
+//    if(action.data.executed) {
+//
+//    }
+//    else {
+//      this.progressClock(action.data.time);
+//      this.removeAction(action);
+//      this.factories[action.data.type].execute(action);
+//      this.newAction(action);
+//      this.sortAll();
+//    }
+//    this.dataService.saveCharacter(action.character);
+//    this.dataService.saveCampaign();
+//   
+//  }
 
   progressClock(time: number): void {
     // run all in progress tasks up to this point
-    if(this.inprogress.length){
+    if(this.data.nextRoll && time > this.data.nextRoll) {
+      console.error('Can\'t progress past a die roll');
+      time = this.data.nextRoll;
+    }
+    if(this.queue.length){
       let sorting = (a: ActionObject,b: ActionObject) => {
-        if(a.data.nextExecution == b.data.nextExecution) {
-          return a.data.order - b.data.order;
-        }
         return a.data.nextExecution - b.data.nextExecution;
       };
-      this.inprogress.sort(sorting);  
-      while(this.inprogress.length && this.inprogress[0].data.nextExecution <= time) {
-        let action = this.inprogress.shift();
-        this.factories[action.data.type].execute(action);
+      this.queue.sort(sorting);  
+      while(this.queue.length && this.queue[0].data.nextExecution <= time) {
+        let action = this.queue.shift();
+        action.execute();
         if(action.data.nextExecution) {
-          this.inprogress.push(action);
-          this.inprogress.sort(sorting);
+          this.queue.push(action);
+          this.queue.sort(sorting);
         }
       }
     }

@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy, Input, EventEmitter, Output, ElementRef, 
 import { Character } from '../model/character';
 import { Campaign } from '../model/campaign';
 import { LogService } from '../log/log.service';
-import { MoveActionFactory, MoveActionObject } from '../log/action/move/action';
-import { AttackActionFactory, AttackActionObject } from '../log/action/attack/action';
+import { MoveActionObject } from '../log/action/move/action';
+import { AttackActionObject } from '../log/action/attack/action';
 import { DataService } from '../data.service';
 
 @Component({
@@ -39,7 +39,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     this.offsetY = screen.availHeight * 1.5;
 
     if ( !this.character ) {
-      this.character = this.campaign.characters[0];
+      this.character = this.campaign.activeScene.characters[0];
     }
 
     this.movements = <MoveActionObject[]>this.logService.movements;
@@ -91,8 +91,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   select(character: Character) {
     if(this.mouseMode == 'punch') {
       if(this.character!=character) {
-        let factory = new AttackActionFactory();
-        let action = factory.build(this.character,{time:this.logService.timer.time,target:{character:character,location:'torso'},diameter:60,length:75});
+        let action = AttackActionObject.Build(this.character,{time:this.logService.data.time,target:{character:character,location:'torso'},diameter:60,length:75});
         this.logService.newAction(action);
       }
       else {
@@ -116,7 +115,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   }
 
   openMenuSelectReposition() {
-    if(this.logService.timer.time == this.logService.now) {
+    if(this.logService.data.time == this.logService.now) {
      this.openMenuSelect = 'reposition';
      this.mouseMode = 'reposition';
     }
@@ -128,7 +127,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
     const repo = this.elementRef.nativeElement.querySelector('#reposition');
     let x = (repo.offsetLeft - this.offsetX) / this.scale + .5;
     let y = (repo.offsetTop - this.offsetY) / this.scale + .5;
-    let time = this.logService.timer.time;
+    let time = this.logService.data.time;
 
     if ( this.mouseMode == 'reposition' ) {
       this.character.setLocation({time:time,x:x,y:y});      
@@ -138,8 +137,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
       if(mymoves.length) {
         mymoves[0].data.path.push({x:x,y:y,speed:0.5});
       } else {
-        let factory = new MoveActionFactory();
-        let action = factory.build(this.character,{time:time,path:[{x:x,y:y,speed:0.5}]});
+        let action = MoveActionObject.Build(this.character,{time:time,path:[{x:x,y:y,speed:0.5}]});
         this.logService.newAction(action);
       }
       
@@ -163,7 +161,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   }
 
   openMenuSelectMove() {
-    if(this.logService.timer.time >= this.logService.now) {
+    if(this.logService.data.time >= this.logService.now) {
       this.openMenuSelect = 'move';
       this.mouseMode = 'move';
     }
@@ -171,7 +169,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   }
 
   openMenuSelectPunch() {
-    if(this.logService.timer.time >= this.logService.now) {
+    if(this.logService.data.time >= this.logService.now) {
       this.openMenuSelect = 'punch';
       this.mouseMode = 'punch';
     }
@@ -179,7 +177,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   }
 
   deleteMove(action: MoveActionObject) {
-    if(action.data.executed) {
+    if(action.data.time != action.data.nextExecution) {
       return;
     }
     action.data.path.pop();
@@ -191,11 +189,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   }
 
   locationX(character: Character,time?:number): number {
-    time = time || this.logService.timer.time;
+    time = time || this.logService.data.time;
     return (character.location(time).x - .5) * this.scale + this.offsetX;
   }
   locationY(character: Character,time?:number): number {
-    time = time || this.logService.timer.time;
+    time = time || this.logService.data.time;
     return (character.location(time).y - .5) * this.scale + this.offsetY;
   }
 

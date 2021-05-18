@@ -1,7 +1,7 @@
 import { Character } from 'src/app/model/character';
 import { DiceRoll } from 'src/app/model/diceroll';
 import { ActionData } from 'src/app/model/character/actions';
-import { ActionFactory, ActionObject } from '../factory';
+import { ActionObject } from '../object';
 import { WoundSingle } from 'src/app/model/character/wounds';
 
 interface AttackActionData extends ActionData {
@@ -13,11 +13,6 @@ interface AttackActionData extends ActionData {
     length: number;
     diameter: number;
     delayDice: number[];
-}
-
-export interface AttackActionObject extends ActionObject {
-    data: AttackActionData;
-    enemy: Character;
 }
 
 interface AttackProcessActionData extends AttackActionData {
@@ -37,14 +32,14 @@ export interface AttackProcessActionObject extends AttackActionObject {
     data: AttackProcessActionData;
 }
 
-export class AttackActionFactory implements ActionFactory {
+export class AttackActionObject extends ActionObject {
+    data: AttackActionData;
 
-    build(character: Character,datainit: {time:number; target: {character:Character; location:string}; length:number; diameter: number;}): AttackActionObject {
+    static Build(character: Character,datainit: {time:number; target: {character:Character; location:string}; length:number; diameter: number;}): AttackActionObject {
         let enemy = datainit.target.character;
         let data = datainit as unknown as AttackActionData;
         data.target.character = enemy.id;
         data.type = 'attack';
-        data.executed = false;
         data.limb = 'rightArm';
         let penalty = character.generalPenalty(data.time);
         let dice = new DiceRoll(4,50);
@@ -53,60 +48,59 @@ export class AttackActionFactory implements ActionFactory {
 
         character.actions.add(data);
 
-        return {character:character, enemy:enemy, data:data};
+        return new this(character,data);
     }
 
-    buildFromStorage(character: Character,data: AttackActionData): AttackActionObject {
-        let enemy = character.campaign.characters.filter(char => {return char.id==data.target.character}).pop();
-        return {character:character,enemy:enemy,data:data};
+    get enemy() {
+        return this.character.scene.getCharacter(this.data.target.character);
     }
 
-    execute(action: AttackProcessActionObject) {
-        if(!action.data.executed) {
-            action.data.attackduration = 1000*action.character.aspects.getPhysicalActionTime(action.data.time,1,{targetedPenalty:0,genericPenalty:0,incidentalPenalty:0});
-            action.data.nextExecution = action.data.time + action.data.attackduration;
-            action.data.executed = true;
-
-            action.data.fatigue = .02;
-            action.character.fatigue.AddMuscleRate(action.data.time,action.data.fatigue/6,action.data.limb);
-            action.character.fatigue.AddAerobicRate(action.data.time,action.data.fatigue);
-
-            return;
-        }  
-        if(typeof action.data.nextExecution === "undefined") {
-            return;
-        }
-            
-        action.attackroll = new DiceRoll();
-        action.data.attackdice = action.attackroll.result;
-        action.data.attackmodifier = action.character.aspects.getBaseResult(action.data.time,'agility') - action.character.generalPenalty(action.data.nextExecution);
-        action.attackroll.modifier = action.data.attackmodifier;
-        
-        action.character.fatigue.AddMuscleRate(action.data.nextExecution,-action.data.fatigue/6,action.data.limb);
-        action.character.fatigue.AddAerobicRate(action.data.nextExecution,-action.data.fatigue);
-
-        action.data.attacksuccess = action.attackroll.standardResult > action.enemy.PhysicalDefense(action.data.nextExecution);
-        if(action.data.attacksuccess) {
-            action.data.damagemodifier = action.character.aspects.getBaseResult(action.data.time,'brawn') - action.character.generalPenalty(action.data.nextExecution);
-            let roll = new DiceRoll();
-            action.data.damagedice = roll.result;
-            roll.modifier = action.data.damagemodifier;
-
-            let damage = 1000 * 10000 * (10 + roll.standardResult);
-            let wound = action.enemy.wounds.ReceiveImpactDamage(action.data.nextExecution,damage,action.data.length,action.data.diameter,action.data.target.location);
-
-            //if(wound.afflictions.length || wound.tap) {
-                action.wound = wound;
-            //}
-            
-            // apply fatigue
-            // apply bleed
-            // apply tap
-            // create new actions for healing
-        }
-
-        action.data.endTime = action.data.nextExecution;
-        action.data.nextExecution = undefined;
-    }
+//    execute() {
+//        if(!this.data.executed) {
+//            this.data.attackduration = 1000*this.character.aspects.getPhysicalActionTime(this.data.time,1,{targetedPenalty:0,genericPenalty:0,incidentalPenalty:0});
+//            this.data.nextExecution = this.data.time + this.data.attackduration;
+//            this.data.executed = true;
+//
+//            this.data.fatigue = .02;
+//            this.character.fatigue.AddMuscleRate(this.data.time,this.data.fatigue/6,this.data.limb);
+//            this.character.fatigue.AddAerobicRate(this.data.time,this.data.fatigue);
+//
+//            return;
+//        }  
+//        if(typeof this.data.nextExecution === "undefined") {
+//            return;
+//        }
+//            
+//        this.attackroll = new DiceRoll();
+//        this.data.attackdice = this.attackroll.result;
+//        this.data.attackmodifier = this.character.aspects.getBaseResult(this.data.time,'agility') - this.character.generalPenalty(this.data.nextExecution);
+//        this.attackroll.modifier = this.data.attackmodifier;
+//        
+//        this.character.fatigue.AddMuscleRate(this.data.nextExecution,-this.data.fatigue/6,this.data.limb);
+//        this.character.fatigue.AddAerobicRate(this.data.nextExecution,-this.data.fatigue);
+//
+//        this.data.attacksuccess = this.attackroll.standardResult > this.enemy.PhysicalDefense(this.data.nextExecution);
+//        if(this.data.attacksuccess) {
+//            this.data.damagemodifier = this.character.aspects.getBaseResult(this.data.time,'brawn') - this.character.generalPenalty(this.data.nextExecution);
+//            let roll = new DiceRoll();
+//            this.data.damagedice = roll.result;
+//            roll.modifier = this.data.damagemodifier;
+//
+//            let damage = 1000 * 10000 * (10 + roll.standardResult);
+//            let wound = this.enemy.wounds.ReceiveImpactDamage(this.data.nextExecution,damage,this.data.length,this.data.diameter,this.data.target.location);
+//
+//            //if(wound.afflictions.length || wound.tap) {
+//                this.wound = wound;
+//            //}
+//            
+//            // apply fatigue
+//            // apply bleed
+//            // apply tap
+//            // create new actions for healing
+//        }
+//
+//        this.data.endTime = this.data.nextExecution;
+//        this.data.nextExecution = undefined;
+//    }
 
 }
