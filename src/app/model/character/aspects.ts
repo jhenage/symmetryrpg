@@ -1,5 +1,4 @@
 import { Character, ModifiableStat, ModifiedValue, ChangeModifiedValue } from '../character'
-import { ActionPenalty } from 'src/app/log/action/aspecttest/action';
 export interface AspectsData {
   brawn: ModifiableStat;
   toughness: ModifiableStat;
@@ -10,6 +9,12 @@ export interface AspectsData {
   cleverness: ModifiableStat;
   awareness: ModifiableStat;
 }
+export interface ActionPenalty {
+  targetedPenalty: number;
+  genericPenalty: number;
+  incidentalPenalty: number;
+}
+
 
 export class Aspects {
 

@@ -1,21 +1,36 @@
 <div class="logContainer">
-    <div class="timer" [class.past]="timer.time<campaign.now" [class.present]="timer.time==campaign.now" [class.future]="timer.time>campaign.now">
-        <input [value]="timer.time" (input)="setTime($event.target.value)" type="number" />
+    <div class="timer" [class.past]="data.time<campaign.now" [class.present]="data.time==campaign.now" [class.future]="data.time>campaign.now">
+        <input [value]="data.time" (input)="setTime($event.target.value)" type="number" />
         <a (click)="play()">{{ speed==10 ? '>>' : '>' }}</a>
         <a (click)="toNow()" class="tonow">To Now</a>
     </div>
     <div class="logScrollable">
-        <div *ngFor="let action of history">
-            <actionwrap [action]="action"></actionwrap>
-        </div>
-        <div class="now"><a *appTimeButton="campaign.now">Start</a> .....NOW.....</div>
-        <div *ngFor="let action of queue">
-            <actionwrap [action]="action"></actionwrap>
-        </div>
-    </div>
-    <div class="logScrollable">
-        <div *ngFor="let roll of rolls">
-            <rollwrap [roll]="roll"></rollwrap>
+        <div *ngFor="let item of data.log">
+            <a (click)="console(item)">(_)</a>
+            <div *ngIf="item.roll; then rollBlock else actionStub"></div>
+            <ng-template #rollBlock>
+                <div *ngIf="item.roll.dice && item.roll.dice.length; then rollHistory else rollFuture"></div>
+                <ng-template #rollHistory>
+                    {{item.action.character.about.name}} rolled {{item.roll.modifier.skill ? item.roll.modifier.skill : "Pure"}} {{item.roll.modifier.aspect}}
+                    <a *appTimeButton="item.roll.time">at {{item.roll.time}}</a>
+                    {{item.roll.testDescription}}
+                    Result Number and expandable
+                    {{item.roll.resultDescription}}
+                </ng-template>
+                <ng-template #rollFuture>
+                    <a (click)="editAction(item.action)">
+                        {{item.action.character.about.name}} rolls {{item.roll.modifier.skill ? item.roll.modifier.skill : "Pure"}} {{item.roll.modifier.aspect}}
+                        <a *appTimeButton="item.roll.time">at {{item.roll.time}}</a>
+                        {{item.roll.testDescription}}
+                    </a>
+                    <ng-container *ngIf="item.roll.time==data.nextRoll"><button (click)="rollNow(item.action,item.roll)">Roll Now</button></ng-container>
+                </ng-template>
+            </ng-template>
+            <ng-template #actionStub>
+                <a *ngIf="item.action.type=='generic'" (click)="editAction(item.action)">{{item.action.character.about.name}} acts</a>
+                <a *ngIf="item.action.type=='attack'">{{item.action.character.about.name}} attacks</a>
+                <div *ngIf="item.action.type=='move'">{{item.action.character.about.name}} moves</div>
+            </ng-template>
         </div>
     </div>
 </div>

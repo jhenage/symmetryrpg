@@ -18,19 +18,19 @@ export class TimeButtonDirective {
   @HostBinding('class.past') get isPast() { 
     if(Number.isInteger(this.time)) {
       const el = this.templateRef.elementRef.nativeElement.previousElementSibling;
-      if(this.time < this.logService.timer.time) {
+      if(this.time < this.logService.data.time) {
         this.renderer.addClass(el, 'past');
         this.renderer.removeClass(el, 'present');
         this.renderer.removeClass(el, 'future');
         return true;
       }
-      if(this.time == this.logService.timer.time) {
+      if(this.time == this.logService.data.time) {
         this.renderer.addClass(el, 'present');
         this.renderer.removeClass(el, 'past');
         this.renderer.removeClass(el, 'future');
         return true;
       }
-      if(this.time > this.logService.timer.time) {
+      if(this.time > this.logService.data.time) {
         this.renderer.addClass(el, 'future');
         this.renderer.removeClass(el, 'present');
         this.renderer.removeClass(el, 'past');
@@ -49,7 +49,7 @@ export class TimeButtonDirective {
       this.viewContainer.createEmbeddedView(this.templateRef);
       this.hasView = true;
       const el = this.templateRef.elementRef.nativeElement;//.nextElementSibling;
-      this.renderer.listen(el.previousElementSibling, 'click', () => {this.logService.timer.time = time});
+      this.renderer.listen(el.previousElementSibling, 'click', () => {this.logService.data.time = time});
     }
   }
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Character } from '../model/character';
-import { LogService } from '../log/log.service';
+import { LogComponentData, LogService } from '../log/log.service';
 
 @Component({
   selector: 'app-status',
@@ -13,12 +13,12 @@ export class StatusComponent implements OnInit {
   @Input() now: number; 
   @Output() saved = new EventEmitter();
 
-  timer: {time:number};
+  timer: LogComponentData;
 
   constructor(private logService: LogService) { }
 
   ngOnInit(): void {
-    this.timer = this.logService.timer;
+    this.timer = this.logService.data;
   }
 
   save() {
