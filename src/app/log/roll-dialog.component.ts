@@ -30,7 +30,7 @@ export class RollDialogComponent implements OnInit {
     //per body part - TAP, fatigue, wound   -- how much with multiple parts? Add or average? Intensity?
     //
     this.modifier -= character.generalPenalty(time);
-    this.rollDice();
+    setTimeout(()=>this.rollDice(),1);
   }
   rollDice(): void { 
     let dice = new DiceRoll();
