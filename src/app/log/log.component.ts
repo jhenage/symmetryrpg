@@ -64,6 +64,7 @@ export class LogComponent implements OnInit, OnDestroy {
     
     dialogRef.afterClosed().subscribe((result)=>{
       if(result) {
+        roll.order = this.logService.nextOrder(roll.time);
         this.logService.sortAll();
       } else {
         roll.dice = [];
