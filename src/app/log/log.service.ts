@@ -49,13 +49,13 @@ export class LogService {
         this.movements.push(action);
       }
     }
-    if(action.data.time > this.now) {
-      this.data.log.push({time:action.data.time,action});
-    }
-    if(action.data.rolls) {
+    
+    if(action.data.rolls && action.data.rolls.length) {
       action.data.rolls.forEach((roll) => {
         this.data.log.push({time:roll.time,action,roll});
       });
+    } else {
+      this.data.log.push({time:action.data.time,action});
     }
   }
 
@@ -88,7 +88,7 @@ export class LogService {
     this.data.log.forEach(item => {
       if(item.roll) {
         item.time = item.roll.time;
-        if(item.time >= this.now) {
+        if(!item.roll.dice || item.roll.dice.length==0) {
           if(typeof nextRollTime == 'undefined' || nextRollTime > item.time) {
             nextRollTime = item.time;
           }
@@ -109,23 +109,32 @@ export class LogService {
       if(!b.roll){
         return -1;
       }
-      return a.roll.order - b.roll.order;
+      if(a.roll.order && b.roll.order) {
+        return a.roll.order - b.roll.order;
+      }
+      if(a.roll.order) {
+        return -1;
+      }
+      if(b.roll.order) {
+        return 1;
+      }
+      return 0;
     });
 
   }
 
 
-//  nextOrder(time: number) {
-//    if ( time < this.lastProcessedTime ) {
-//      throw new Error('Invalid time '+time+' before '+this.lastProcessedTime);
-//    }
-//    if ( time == this.lastProcessedTime ) {
-//      return ++this.lastOrderNumber;
-//    }
-//    this.lastProcessedTime = time;
-//    this.lastOrderNumber = 0;
-//    return this.lastOrderNumber;
-//  }
+  nextOrder(time: number) {
+    if ( time < this.lastProcessedTime ) {
+      throw new Error('Invalid time '+time+' before '+this.lastProcessedTime);
+    }
+    if ( time == this.lastProcessedTime ) {
+      return ++this.lastOrderNumber;
+    }
+    this.lastProcessedTime = time;
+    this.lastOrderNumber = 0;
+    return this.lastOrderNumber;
+  }
 
 //  executeAction(action: ActionObject) {
 //    if(action.data.executed) {
@@ -156,6 +165,9 @@ export class LogService {
       this.queue.sort(sorting);  
       while(this.queue.length && this.queue[0].data.nextExecution <= time) {
         let action = this.queue.shift();
+        if(action.data.nextExecution==action.data.time && action.data.type == 'move') {
+          this.movements.splice(this.movements.indexOf(action),1);
+        }
         action.execute();
         if(action.data.nextExecution) {
           this.queue.push(action);
