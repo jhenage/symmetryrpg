@@ -18,6 +18,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   @Output() saved = new EventEmitter();
   @Output() selected = new EventEmitter();
   private canvas: HTMLCanvasElement;
+  private scrollInterval: number;
 
   campaign: Campaign;
   openMenu: boolean; // token main menu
@@ -68,15 +69,25 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
 
   ngOnChanges() {
     let speed = 50;
-    let interval = setInterval(() => {
+    let interval = window.setInterval(() => {
       let token = <HTMLDivElement>document.querySelector('#tokens .character.selected');
-      //console.log(token)
       if(token) {
         let scrollX = Math.round(token.offsetLeft - this.canvas.parentElement.clientWidth / 2 + this.scale / 2);
         let scrollY = Math.round(token.offsetTop - this.canvas.parentElement.clientHeight / 2 + this.scale / 2);
         let diffX = this.canvas.parentElement.scrollLeft - scrollX;
         let diffY = this.canvas.parentElement.scrollTop - scrollY;
-        if(diffX**2 <= 1 && diffY**2 <= 1) clearInterval(interval);
+        
+        // Check if reach edges of boundaries:
+        if(this.canvas.parentElement.scrollLeft==0 && scrollX<0) {
+          diffX = 0;
+        }
+        if(this.canvas.parentElement.scrollTop==0 && scrollY<0) {
+          diffY = 0;
+        }
+        if(diffX**2 <= 1 && diffY**2 <= 1) {
+          window.clearInterval(interval);
+        }
+
         diffX = diffX>0 ? (diffX<speed ? 1 : Math.round(diffX/speed)) : (diffX>-speed ? -1 : Math.round(diffX/speed));
         diffY = diffY>0 ? (diffY<speed ? 1 : Math.round(diffY/speed)) : (diffY>-speed ? -1 : Math.round(diffY/speed));
         this.canvas.parentElement.scrollTo(this.canvas.parentElement.scrollLeft - diffX,this.canvas.parentElement.scrollTop - diffY);
