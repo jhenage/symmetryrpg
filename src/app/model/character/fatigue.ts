@@ -40,9 +40,9 @@ export class Fatigue {
     return this._data;
   }
 
-  Penalty(location: string, time: number): number {
+  penalty(location: string, time: number): number {
     if ( location == 'aerobic' || location == 'general' ) {
-      let buckets = this.AerobicTotal(time);
+      let buckets = this.aerobicTotal(time);
       return .2 * (buckets - 2) **2 - .8;
     }
     if ( !this._data.muscles.hasOwnProperty(location) ) {
@@ -51,20 +51,20 @@ export class Fatigue {
 
     for(let i = this._data.muscles[location].length; i > 0; i--) {
       if ( this._data.muscles[location][i-1].time <= time ) {
-        let result = this.MuscleOverTime(this._data.muscles[location][i-1].rate,this._data.muscles[location][i-1].amount,time-this._data.muscles[location][i-1].time);
+        let result = this.muscleOverTime(this._data.muscles[location][i-1].rate,this._data.muscles[location][i-1].amount,time-this._data.muscles[location][i-1].time);
         let total = result.reduce((a,b) => a+b);
         return total / 60000;
       }
     }
   }
 
-  AerobicTotal(time:number): number {
+  aerobicTotal(time:number): number {
       // find the correct entry:
       for(let i = this._data.aerobic.length; i > 0; i--) {
         if ( this._data.aerobic[i-1].time <= time ) {
-          let result = this.AerobicOverTime(this._data.aerobic[i-1].amount,this._data.aerobic[i-1].malfatigue,this._data.aerobic[i-1].rate,this._data.aerobic[i-1].time,time);
-          let buckets2 = this.AerobicBuckets(time,result.amount+result.malfatigue);
-          let buckets1 = this.AerobicBuckets(time,result.amount);
+          let result = this.aerobicOverTime(this._data.aerobic[i-1].amount,this._data.aerobic[i-1].malfatigue,this._data.aerobic[i-1].rate,this._data.aerobic[i-1].time,time);
+          let buckets2 = this.aerobicBuckets(time,result.amount+result.malfatigue);
+          let buckets1 = this.aerobicBuckets(time,result.amount);
           return .2 * (buckets1 - 2) **2 - .8 > .2 * (buckets2 - 2) **2 - .8 ? buckets1 : buckets2;
         }
       }
@@ -72,7 +72,7 @@ export class Fatigue {
 
   }
 
-  AddAerobicRate(time:number,rate:number): void {
+  addAerobicRate(time:number,rate:number): void {
     let i = this._data.aerobic.length;
     if ( i == 0 ) {
       this._data.aerobic.push({time:time,rate:rate,amount:0,malfatigue:0});
@@ -86,11 +86,11 @@ export class Fatigue {
       this._data.aerobic[i-1].rate += rate;
       return;
     }
-    let result = this.AerobicOverTime(this._data.aerobic[i-1].amount,this._data.aerobic[i-1].malfatigue,this._data.aerobic[i-1].rate,this._data.aerobic[i-1].time,time);
+    let result = this.aerobicOverTime(this._data.aerobic[i-1].amount,this._data.aerobic[i-1].malfatigue,this._data.aerobic[i-1].rate,this._data.aerobic[i-1].time,time);
     this._data.aerobic.push({time:time,rate:this._data.aerobic[i-1].rate+rate,amount:result.amount,malfatigue:result.malfatigue});
   }
 
-  AddAerobicMalfatigue(time:number,malfatigue:number): void {
+  addAerobicMalfatigue(time:number,malfatigue:number): void {
     let i = this._data.aerobic.length;
     if ( i == 0 ) {
       this._data.aerobic.push({time:time,rate:0,amount:0,malfatigue:malfatigue});
@@ -104,26 +104,26 @@ export class Fatigue {
       this._data.aerobic[i-1].malfatigue += malfatigue;
       return;
     }
-    let result = this.AerobicOverTime(this._data.aerobic[i-1].amount,this._data.aerobic[i-1].malfatigue,this._data.aerobic[i-1].rate,this._data.aerobic[i-1].time,time);
+    let result = this.aerobicOverTime(this._data.aerobic[i-1].amount,this._data.aerobic[i-1].malfatigue,this._data.aerobic[i-1].rate,this._data.aerobic[i-1].time,time);
     this._data.aerobic.push({time:time,rate:this._data.aerobic[i-1].rate,amount:result.amount,malfatigue:result.malfatigue+malfatigue});
   }
 
-  protected AerobicBucketSize(time:number): number {
-    return this.character.Endurance(time) * 30;
+  protected aerobicBucketSize(time:number): number {
+    return this.character.endurance(time) * 30;
   }
 
-  protected AerobicBuckets(time:number,fatigue: number): number {
-    return fatigue / this.AerobicBucketSize(time);
+  protected aerobicBuckets(time:number,fatigue: number): number {
+    return fatigue / this.aerobicBucketSize(time);
   }
 
   // return fatigue per milisecond
-  protected AerobicRecoverySpeed(time:number,buckets: number): number {
-    return this.character.Endurance(time) * 0.0002 * (Math.floor(buckets)**1.5+1);
+  protected aerobicRecoverySpeed(time:number,buckets: number): number {
+    return this.character.endurance(time) * 0.0002 * (Math.floor(buckets)**1.5+1);
   }
 
-  protected AerobicOverTime(amount:number,malfatigue:number,rate:number,start:number,end:number): {amount:number,malfatigue:number} {
-    let recovery = this.AerobicRecoverySpeed(start,this.AerobicBuckets(start,amount));
-    let bucketsize = this.AerobicBucketSize(start);
+  protected aerobicOverTime(amount:number,malfatigue:number,rate:number,start:number,end:number): {amount:number,malfatigue:number} {
+    let recovery = this.aerobicRecoverySpeed(start,this.aerobicBuckets(start,amount));
+    let bucketsize = this.aerobicBucketSize(start);
     let bucketremaining = bucketsize - amount % bucketsize;
     let duration = end - start;
 
@@ -133,10 +133,10 @@ export class Fatigue {
       let timeuntilfull = rate > 0 ? bucketremaining / rate : duration;
 
       if ( timeuntilempty < duration && timeuntilempty < timeuntilfull ) {
-        return this.AerobicOverTime(amount+rate*timeuntilempty, 0, rate, start+timeuntilempty, end);
+        return this.aerobicOverTime(amount+rate*timeuntilempty, 0, rate, start+timeuntilempty, end);
       }
       if ( timeuntilfull < duration ) {
-        return this.AerobicOverTime(amount+rate*timeuntilfull, malfatigue-recovery*timeuntilfull, rate, start+timeuntilfull, end);
+        return this.aerobicOverTime(amount+rate*timeuntilfull, malfatigue-recovery*timeuntilfull, rate, start+timeuntilfull, end);
       }
       return {amount: amount+rate*duration, malfatigue: malfatigue-recovery*duration};
     }
@@ -147,7 +147,7 @@ export class Fatigue {
     if ( recovery < rate ) {
       let timeuntilfull = bucketremaining / (rate - recovery);
       if ( timeuntilfull < duration ) {
-        return this.AerobicOverTime(amount+bucketremaining,0,rate,start+timeuntilfull,end);
+        return this.aerobicOverTime(amount+bucketremaining,0,rate,start+timeuntilfull,end);
       }
       return {amount: amount+(rate-recovery)*duration, malfatigue: 0};
     }
@@ -156,7 +156,7 @@ export class Fatigue {
     }
     bucketremaining = bucketsize - bucketremaining; // change to amount in bucket rather than amount left to fill
     if ( bucketremaining == 0 ) {
-      recovery = this.AerobicRecoverySpeed(start,this.AerobicBuckets(start,amount)-1);
+      recovery = this.aerobicRecoverySpeed(start,this.aerobicBuckets(start,amount)-1);
       if ( recovery <= rate ) {
         return {amount: amount, malfatigue: 0};
       }
@@ -167,13 +167,13 @@ export class Fatigue {
 
     let timeuntilempty = bucketremaining / (recovery - rate);
     if (timeuntilempty < duration) {
-      return this.AerobicOverTime(amount - bucketremaining,0,rate,start+timeuntilempty,end);
+      return this.aerobicOverTime(amount - bucketremaining,0,rate,start+timeuntilempty,end);
     }
     return {amount:amount - duration * (recovery - rate),malfatigue:0};
 
   }
 
-  ValidateMuscleLocation(time:number,location: string) {
+  validateMuscleLocation(time:number,location: string) {
     if ( !this._data.muscles.hasOwnProperty(location) ) {
       if ( location != 'mental' && !this.character.creatureType.limbs.hasOwnProperty(location) ) {
         throw new Error('Invalid location '+location);
@@ -182,36 +182,36 @@ export class Fatigue {
     }
   }
   
-  AddMuscleRate(time:number,rate:number,location:string): void {
+  addMuscleRate(time:number,rate:number,location:string): void {
     
-    this.ValidateMuscleLocation(time,location);
+    this.validateMuscleLocation(time,location);
     let i = this._data.muscles[location].length;
 
     if ( this._data.muscles[location][i-1].time > time ) {
       throw new Error('Invalid time '+time);
     }
 
-    rate = 3000 * rate / this.character.Endurance(time);
+    rate = 3000 * rate / this.character.endurance(time);
 
     if ( this._data.muscles[location][i-1].time == time ) {
       this._data.muscles[location][i-1].rate += rate;
       return;
     }
-    let result = this.MuscleOverTime(this._data.muscles[location][i-1].rate,this._data.muscles[location][i-1].amount,time-this._data.muscles[location][i-1].time);
+    let result = this.muscleOverTime(this._data.muscles[location][i-1].rate,this._data.muscles[location][i-1].amount,time-this._data.muscles[location][i-1].time);
     this._data.muscles[location].push({time:time,rate:rate+this._data.muscles[location][i-1].rate,amount:result});
   }
 
   // Adding Instant Fatigue
-  AddMuscleAmount(time:number,amount:number,location:string): void {
+  addMuscleAmount(time:number,amount:number,location:string): void {
     
-    this.ValidateMuscleLocation(time,location);
+    this.validateMuscleLocation(time,location);
     let i = this._data.muscles[location].length;
     
     if ( this._data.muscles[location][i-1].time > time ) {
       throw new Error('Invalid time '+time);
     }
 
-    let result = this.MuscleOverTime(this._data.muscles[location][i-1].rate,this._data.muscles[location][i-1].amount,time-this._data.muscles[location][i-1].time);
+    let result = this.muscleOverTime(this._data.muscles[location][i-1].rate,this._data.muscles[location][i-1].amount,time-this._data.muscles[location][i-1].time);
     for ( let i = 0; i < 5; i++ ) {
       result[i] += amount;
       if ( result[i] < 0 ) {
@@ -234,7 +234,7 @@ export class Fatigue {
   }
 
 
-  protected MuscleOverTime(rate:number,amount:number[],duration:number): number[] {
+  protected muscleOverTime(rate:number,amount:number[],duration:number): number[] {
     let result = Array(5).fill(0);
     let toadd = duration * rate;
 
@@ -255,13 +255,13 @@ export class Fatigue {
     return result;
   }
 
-  MuscleHalflife(time:number,location:string):number {
+  muscleHalflife(time:number,location:string):number {
     if ( !this._data.muscles.hasOwnProperty(location) ) {
       return 0;
     }
     for(let i = this._data.muscles[location].length; i > 0; i--) {
       if ( this._data.muscles[location][i-1].time <= time ) {
-        let result = this.MuscleOverTime(this._data.muscles[location][i-1].rate,this._data.muscles[location][i-1].amount,time-this._data.muscles[location][i-1].time);
+        let result = this.muscleOverTime(this._data.muscles[location][i-1].rate,this._data.muscles[location][i-1].amount,time-this._data.muscles[location][i-1].time);
         let goal = result.reduce((a,b) => a+b) / 2;
 
         for(let i = 0; i<5; i++) {

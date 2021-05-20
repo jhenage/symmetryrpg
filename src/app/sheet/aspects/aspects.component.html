@@ -12,14 +12,14 @@
         [value]="aspects.getAspectRank(aspect)"
         (input)="setAspectRank(aspect,$event.target.value)" />
       <div class="edit-mode aspect_modifier">{{getModifierString(aspect)}}</div>
-      <div class="aspect permanent boxed-value three-digit">{{aspects.Permanent(aspect).toFixed(1)}}</div>
+      <div class="aspect permanent boxed-value three-digit">{{aspects.permanent(aspect).toFixed(1)}}</div>
       <button [class]="aspect" (click)="makeAspectTest(aspect)" class="play-mode"></button>
     </div>
     <div class="axis-container">
       <div *ngFor="let axis of aspects.axisList" class="axis">
         <label class="end first name">{{axis[0]|titlecase}}</label>
-        <label class="end first value">{{displayValue(aspects.Current(now,axis[0]))}}</label>
-        <label class="end second value">{{displayValue(aspects.Current(now,axis[1]))}}</label>
+        <label class="end first value">{{displayValue(aspects.current(now,axis[0]))}}</label>
+        <label class="end second value">{{displayValue(aspects.current(now,axis[1]))}}</label>
         <label class="end second name">{{axis[1]|titlecase}}</label>
       </div>
     </div>

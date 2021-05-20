@@ -43,7 +43,7 @@ export class SkillsComponent implements OnInit {
   }
 
   getBaseResultRank(aspectName:string, skillName:string): number {
-    return this.skills.getBaseResult(this.skills.character.aspects.Permanent(aspectName),skillName);
+    return this.skills.getBaseResult(this.skills.character.aspects.permanent(aspectName),skillName);
   }
 
   getBaseResultRankText(aspectName:string, skillName:string): string {

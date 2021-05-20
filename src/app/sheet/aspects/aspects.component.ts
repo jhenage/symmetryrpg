@@ -64,7 +64,7 @@ export class AspectsComponent implements OnInit {
   }
 
   get surpriseMultiplier(): string {
-    return this.aspects.getSurpriseMultiplier(this.aspects.Current(this.now,"awareness")).toFixed(this.ASPECT_PRECISION + 1);
+    return this.aspects.getSurpriseMultiplier(this.aspects.current(this.now,"awareness")).toFixed(this.ASPECT_PRECISION + 1);
   }
 
   get now(): number {
@@ -76,7 +76,7 @@ export class AspectsComponent implements OnInit {
   }
 
   getModifierString(aspectName:string): string {
-    let bonus = this.aspects.Permanent(aspectName) - this.aspects.getAspectRank(aspectName);
+    let bonus = this.aspects.permanent(aspectName) - this.aspects.getAspectRank(aspectName);
     let result = " " + Math.abs(bonus).toFixed(this.ASPECT_PRECISION) + " = ";
     if(bonus < 0) return " -" + result;
     return " +" + result;

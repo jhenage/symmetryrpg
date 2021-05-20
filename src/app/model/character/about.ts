@@ -82,7 +82,7 @@ export class About {
 
   // returns 5'6" instead of meters
   get height(): string {
-    return Math.floor(this.HeightInch() / 12) + '\'' + Math.round(this.HeightInch() % 12) + '"';
+    return Math.floor(this.heightInch() / 12) + '\'' + Math.round(this.heightInch() % 12) + '"';
   }
 
   // expects like 5'6" and saves it in meters
@@ -102,19 +102,19 @@ export class About {
     this._data.potentialRating = pr;
   }
 
-  HeightMeter(time?: number): number {
+  heightMeter(time?: number): number {
     if ( typeof time === "undefined" ) {
       return this._data.height.amount;
     }
     return ModifiedValue(time,this._data.height);
   }
 
-  HeightInch(time?: number): number {
-    return this.HeightMeter(time) / 0.0254;
+  heightInch(time?: number): number {
+    return this.heightMeter(time) / 0.0254;
   }
 
-  HeightSymmetric(time?: number): number {
-    return (this.HeightMeter(time) - this.character.creatureType.height.average) / this.character.creatureType.height.stddev;
+  heightSymmetric(time?: number): number {
+    return (this.heightMeter(time) - this.character.creatureType.height.average) / this.character.creatureType.height.stddev;
   }
 
   setHeight(time:number,height:string) {
@@ -125,11 +125,11 @@ export class About {
     }
  }
   getHeight(time:number): string {
-    return Math.floor(this.HeightInch(time) / 12) + '\'' + Math.round(this.HeightInch(time) % 12) + '"';
+    return Math.floor(this.heightInch(time) / 12) + '\'' + Math.round(this.heightInch(time) % 12) + '"';
   }
 
   getGrowthFactor(time?:number): number {
-    return this.HeightMeter(time)/this._data.height.amount;
+    return this.heightMeter(time)/this._data.height.amount;
   }
 
   getFrameDimensionMeter(fd:FrameDimension): number {
@@ -137,12 +137,12 @@ export class About {
     return result + fd.fatStddev * Math.max(fd.minFatStddev,this.bodyFat);
   }
 
-  WidthMeter(time?:number): number {
+  widthMeter(time?:number): number {
     let baseWidth = this.getFrameDimensionMeter(this.character.creatureType.width);
     return baseWidth * this.getGrowthFactor(time);
   }
 
-  DepthMeter(time?:number): number {
+  depthMeter(time?:number): number {
     let baseDepth = this.getFrameDimensionMeter(this.character.creatureType.depth);
     return baseDepth * this.getGrowthFactor(time);
   }
@@ -225,7 +225,7 @@ export class About {
   }
 
   physicalEccentricity(time?: number): number {
-    let result = this.symmetricEccentricity(this.HeightSymmetric(time));
+    let result = this.symmetricEccentricity(this.heightSymmetric(time));
     result += this.symmetricEccentricity(this.frameSize);
     result += this.symmetricEccentricity(this.muscleBulk);
     result += this.symmetricEccentricity(this.bodyFat);

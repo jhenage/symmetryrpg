@@ -52,7 +52,7 @@ export class Wounds {
     return this._data;
   }
 
-  Penalty(location: string, time: number): number {
+  penalty(location: string, time: number): number {
     if(!this._data.wounds[location]) return 0;
     let penalty = 0;
     this._data.wounds[location].forEach(element => {
@@ -98,7 +98,7 @@ export class Wounds {
     return penalty;
   }
 
-  ReceiveImpactDamage(time:number, energy: number, length: number, diameter: number, location: string): WoundSingle {
+  receiveImpactDamage(time:number, energy: number, length: number, diameter: number, location: string): WoundSingle {
     var wound: WoundSingle = {
       initial: {
         time: time,
@@ -117,10 +117,10 @@ export class Wounds {
       bleedHealed: 0
     }
 
-    var {give, tissues} = this.character.TissueSizes(time,location);
+    var {give, tissues} = this.character.tissueSizes(time,location);
     var width = give > diameter/2 ? diameter : 2*Math.sqrt(diameter*give - give*give); // contact width of weapon
 
-    var targetLength = this.character.TargetLength(time,location);
+    var targetLength = this.character.targetLength(time,location);
     var targetWidth = 0;
     tissues.forEach(element => {
       targetWidth += element.thickness;

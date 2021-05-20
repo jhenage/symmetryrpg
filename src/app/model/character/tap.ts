@@ -23,7 +23,7 @@ export class Tap {
     return this._data;
   }
 
-  Penalty(time: number, location?: string): number {
+  penalty(time: number, location?: string): number {
     if(!location) {
       location = 'general';
     }
@@ -44,7 +44,7 @@ export class Tap {
     return 0;
   }
 
-  AddTap(time: number, amount: number, location?: string): void {
+  addTap(time: number, amount: number, location?: string): void {
     if ( amount == 0 ) return;
 
     // Verify the Location

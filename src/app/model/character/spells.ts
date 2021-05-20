@@ -50,7 +50,7 @@ export class Spells {
   isAvailable(spellName: string): boolean {
     if(this.isUnlocked(spellName)) {
       let difficulty = this.character.campaign.getSpellDetails(spellName).difficulty;
-      let baseResult = this.character.skills.getBaseResult(this.character.aspects.Permanent("cleverness"),"mage",0);
+      let baseResult = this.character.skills.getBaseResult(this.character.aspects.permanent("cleverness"),"mage",0);
       return baseResult +1 >= difficulty;
     }
     return false;

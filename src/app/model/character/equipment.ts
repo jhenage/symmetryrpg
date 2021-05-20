@@ -105,11 +105,11 @@ export class Equipment {
     return result;   
   }
 
-  Weight(location: string): number {
+  weight(location: string): number {
     return 0;
   }
 
-  AddItem(time: number, location: string, item: number): void {}
-  RemoveItem(time: number, location: string, item: number): void {}
-  MoveItem(time: number, location: string, item: number): void {}
+  addItem(time: number, location: string, item: number): void {}
+  removeItem(time: number, location: string, item: number): void {}
+  moveItem(time: number, location: string, item: number): void {}
 }

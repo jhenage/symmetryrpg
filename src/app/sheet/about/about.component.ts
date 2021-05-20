@@ -60,11 +60,11 @@ export class AboutComponent implements OnInit, OnChanges {
   }
 
   get weightLbs(): string {
-    return this.about.character.WeightLbs(this.about.character.campaign.now).toFixed(0);
+    return this.about.character.weightLbs(this.about.character.campaign.now).toFixed(0);
   }
 
   get endurance(): string {
-    return this.about.character.Endurance(this.about.character.campaign.now).toFixed(2);
+    return this.about.character.endurance(this.about.character.campaign.now).toFixed(2);
   }
 
   get physicalEccentricity(): string {
@@ -72,15 +72,15 @@ export class AboutComponent implements OnInit, OnChanges {
   }
 
   get physicalDefense(): string {
-    return this.about.character.PhysicalDefense(this.about.character.campaign.now).toFixed(2);
+    return this.about.character.physicalDefense(this.about.character.campaign.now).toFixed(2);
   }
 
   get magicalDefense(): string {
-    return this.about.character.MagicalDefense(this.about.character.campaign.now).toFixed(2);
+    return this.about.character.magicalDefense(this.about.character.campaign.now).toFixed(2);
   }
 
   get maxQi(): string {
-    return this.about.character.MaxQi(this.about.character.campaign.now).toFixed(0);
+    return this.about.character.maxQi(this.about.character.campaign.now).toFixed(0);
   }
 
   drawPortrait(): void {

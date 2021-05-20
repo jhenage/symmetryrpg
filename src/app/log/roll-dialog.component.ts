@@ -20,7 +20,7 @@ export class RollDialogComponent implements OnInit {
     let time = this.data.roll.time;
     this.modifier = 0; //aspect
     if(modify.skill) {
-      let aspectRank = character.aspects.Current(time,modify.aspect);
+      let aspectRank = character.aspects.current(time,modify.aspect);
       // TODO: Need to actually see if they have these specialties
       let specialties = modify.specialties ? modify.specialties.length : 0; 
       this.modifier = character.skills.getBaseResult(aspectRank,modify.skill,specialties);

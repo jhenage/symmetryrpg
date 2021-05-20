@@ -52,13 +52,13 @@ export class Aspects {
     }
   }
 
-  Permanent(aspect:string): number {
+  permanent(aspect:string): number {
     return this.getAspectRank(aspect) + 
            this.character.creatureType.getAttributeMod(aspect) +
            this.character.traits.getAttributeMod(aspect);
   }
 
-  Current(time:number,aspect:string): number {
+  current(time:number,aspect:string): number {
     let myList = [];
     let result = 0;
     if(this.flatAxisList.includes(aspect)) {
@@ -72,7 +72,7 @@ export class Aspects {
     return result;
   }
 
-  TempChange(time:number,aspect:string,amount:number): void {
+  tempChange(time:number,aspect:string,amount:number): void {
     ChangeModifiedValue(time,this._data[aspect],amount);
   }
 
@@ -136,11 +136,11 @@ export class Aspects {
   }
 
   getAspectProbabilityDescription(aspectName: string): string {
-    return this.character.getFullProbabilityDescription(this.Permanent(aspectName));
+    return this.character.getFullProbabilityDescription(this.permanent(aspectName));
   }
 
   getBaseResult(time:number, aspectName:string): number {
-    return 2*this.Current(time,aspectName);
+    return 2*this.current(time,aspectName);
   }
 
   protected getBaseReactionTime(rank:number): number {
@@ -171,16 +171,16 @@ export class Aspects {
   }
 
   getMentalReactionTime(time:number, penalty: number, diceResult: number[], isSurprised: boolean): number { //time is in seconds
-    let awareness = this.Current(time,'awareness');
+    let awareness = this.current(time,'awareness');
     let result = this.getHalfReactionTime(awareness,penalty,diceResult[0]+diceResult[1],isSurprised) +
                  this.getHalfReactionTime(awareness,penalty,diceResult[2]+diceResult[3],isSurprised);
     return result * this.character.creatureType.quickness.mental;
   }
 
   getPhysicalReactionTime(time:number, penalty: number, diceResult: number[], isSurprised: boolean): number { //time is in seconds
-    let result = this.getHalfReactionTime(this.Current(time,'awareness'),penalty,diceResult[0]+diceResult[1],isSurprised) *
+    let result = this.getHalfReactionTime(this.current(time,'awareness'),penalty,diceResult[0]+diceResult[1],isSurprised) *
                  this.character.creatureType.quickness.mental;
-    result += this.getHalfReactionTime(this.Current(time,'reflex'),penalty,diceResult[2]+diceResult[3],false) *
+    result += this.getHalfReactionTime(this.current(time,'reflex'),penalty,diceResult[2]+diceResult[3],false) *
               this.character.creatureType.quickness.physical;
     return result;
   }
@@ -196,11 +196,11 @@ export class Aspects {
   }
 
   getMentalActionTime(time:number, actionTime: number, actionPenalty: ActionPenalty) {
-    return this.getActionTime(actionTime,this.Current(time,'cleverness'),actionPenalty) * this.character.creatureType.quickness.mental;
+    return this.getActionTime(actionTime,this.current(time,'cleverness'),actionPenalty) * this.character.creatureType.quickness.mental;
   }
 
   getPhysicalActionTime(time:number, actionTime: number, actionPenalty: ActionPenalty) {
-    return this.getActionTime(actionTime,this.Current(time,'agility'),actionPenalty) * this.character.creatureType.quickness.physical;
+    return this.getActionTime(actionTime,this.current(time,'agility'),actionPenalty) * this.character.creatureType.quickness.physical;
   }
 
   getSpentIPTotal(): number {

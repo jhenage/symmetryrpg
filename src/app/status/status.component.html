@@ -8,12 +8,12 @@
         </tr>
         <tr>
             <td>Qi</td>
-            <td><input type="number" [value]="character.Qi(timer.time)" (input)="character.SetQi(timer.time,$event.target.value)" [disabled]="timer.time!=now"/></td>
-            <td>{{character.MaxQi(timer.time)}}</td>
+            <td><input type="number" [value]="character.qi(timer.time)" (input)="character.setQi(timer.time,$event.target.value)" [disabled]="timer.time!=now"/></td>
+            <td>{{character.maxQi(timer.time)}}</td>
         </tr>
         <tr *ngFor="let aspect of character.aspects.aspectsList">
             <td>{{aspect|titlecase}}</td>
-            <td><input type="number" [value]="character.aspects.Current(timer.time,aspect)" (input)="character.aspects.TempChange(timer.time,aspect,$event.target.value)" [disabled]="timer.time!=now"/></td>
+            <td><input type="number" [value]="character.aspects.current(timer.time,aspect)" (input)="character.aspects.tempChange(timer.time,aspect,$event.target.value)" [disabled]="timer.time!=now"/></td>
             <td>{{character.aspects.getAspectRank(aspect)}}</td>
         </tr>
     </table>
@@ -21,15 +21,15 @@
 </div>
 <div class="fatigue container">
     <div>
-        Top Speed: {{character.MaxSpeed(timer.time,['leftLeg','rightLeg'],0)}}
+        Top Speed: {{character.maxSpeed(timer.time,['leftLeg','rightLeg'],0)}}
     </div>
     <div>
-        Aerobic Penalty {{character.fatigue.Penalty('aerobic',timer.time)}}, Total {{character.fatigue.AerobicTotal(timer.time)}}
+        Aerobic Penalty {{character.fatigue.penalty('aerobic',timer.time)}}, Total {{character.fatigue.aerobicTotal(timer.time)}}
     </div>
     <div>
-        Mental Penalty {{character.fatigue.Penalty('mental',timer.time)}}, Halflife {{character.fatigue.MuscleHalflife(timer.time,'mental')}}
+        Mental Penalty {{character.fatigue.penalty('mental',timer.time)}}, Halflife {{character.fatigue.muscleHalflife(timer.time,'mental')}}
     </div>
     <div *ngFor="let muscle of character.creatureType.limbList">
-        {{muscle|titlecase}} Penalty {{character.fatigue.Penalty(muscle,timer.time)}}, Halflife {{character.fatigue.MuscleHalflife(timer.time,muscle)}}
+        {{muscle|titlecase}} Penalty {{character.fatigue.penalty(muscle,timer.time)}}, Halflife {{character.fatigue.muscleHalflife(timer.time,muscle)}}
     </div>
 </div>
