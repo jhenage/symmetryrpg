@@ -16,11 +16,11 @@ export class ActionObject {
             let duration = this.data.endTime - this.data.time;
             if(duration>0) {
                 this.data.body.forEach((body)=>{
-                    if(body.intensity) {
-                        this.character.fatigue.AddMuscleRate(this.data.time,body.intensity/6,body.name);
-                        this.character.fatigue.AddMuscleRate(this.data.endTime,-body.intensity/6,body.name);
-                        this.character.fatigue.AddAerobicRate(this.data.time,body.intensity);                
-                        this.character.fatigue.AddAerobicRate(this.data.endTime,-body.intensity);                
+                    if(body.effort) {
+                        this.character.fatigue.addMuscleRate(this.data.time,body.effort/6,body.name);
+                        this.character.fatigue.addMuscleRate(this.data.endTime,-body.effort/6,body.name);
+                        this.character.fatigue.addAerobicRate(this.data.time,body.effort);                
+                        this.character.fatigue.addAerobicRate(this.data.endTime,-body.effort);                
                     }
                 })
             }

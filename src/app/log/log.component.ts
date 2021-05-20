@@ -6,7 +6,8 @@ import { DataService } from '../data.service';
 import { RollData } from '../model/character/actions';
 import { MatDialog } from '@angular/material/dialog';
 import { RollDialogComponent } from './roll-dialog.component';
-import { GenericEditorComponent } from './action/generic/editor.component';
+import { GenericActionEditor } from './action/generic/editor.component';
+import { AttackActionEditor } from './action/attack/editor.component';
 
 @Component({
   selector: 'app-log',
@@ -75,7 +76,14 @@ export class LogComponent implements OnInit, OnDestroy {
 
   editAction(action: ActionObject) {
     if(action.data.type=='generic') {
-      const dialogRef = this.dialog.open(GenericEditorComponent, {data:{action}});
+      const dialogRef = this.dialog.open(GenericActionEditor, {data:{action}});
+      dialogRef.afterClosed().subscribe(result => {
+        this.logService.sortAll();
+      });
+
+    }
+    if(action.data.type=='attack') {
+      const dialogRef = this.dialog.open(AttackActionEditor, {data:{action}});
       dialogRef.afterClosed().subscribe(result => {
         this.logService.sortAll();
       });

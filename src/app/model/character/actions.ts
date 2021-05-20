@@ -11,7 +11,7 @@ export interface ActionData {
 
 export interface ActionBodyPart {
   name:string; // name of body part
-  intensity:number; // fatigue amount
+  effort:number; // 0-100. used to calculate fatigue amount
   exclusive?:boolean; // prevents limb from other actions
 }
 

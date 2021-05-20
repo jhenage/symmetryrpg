@@ -29,7 +29,9 @@
             </ng-template>
             <ng-template #actionStub>
                 <a *ngIf="item.action.data.type=='generic'" (click)="editAction(item.action)">{{item.action.character.about.name}} acts</a>
-                <div *ngIf="item.action.data.type=='move'">{{item.action.character.about.name}} moves</div>
+                <ng-container *ngIf="item.action.data.type=='move'">{{item.action.character.about.name}} moves</ng-container>
+                <a *ngIf="item.action.data.type=='attack'" (click)="editAction(item.action)">{{item.action.character.about.name}} attacks {{item.action.enemy.about.name}}</a>
+                <a *appTimeButton="item.action.data.time">at {{item.action.data.time}}</a>
             </ng-template>
         </div>
     </div>

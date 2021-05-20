@@ -10,7 +10,8 @@ import { MapComponent } from './map/map.component';
 import { LogComponent } from './log/log.component';
 import { TimeButtonDirective } from './log/time-button.directive';
 import { RollDialogComponent } from './log/roll-dialog.component';
-import { GenericEditorComponent } from './log/action/generic/editor.component';
+import { GenericActionEditor } from './log/action/generic/editor.component';
+import { AttackActionEditor } from './log/action/attack/editor.component';
 
 import { AspectsComponent } from './sheet/aspects/aspects.component';
 import { SkillsComponent } from './sheet/skills/skills.component';
@@ -25,7 +26,7 @@ import { SpellsComponent } from './sheet/spells/spells.component';
   imports:      [ BrowserModule, FormsModule, MatDialogModule, BrowserAnimationsModule ],
   declarations: [ AppComponent, SheetComponent, MapComponent, LogComponent, 
     RollDialogComponent, 
-    AspectsComponent, SkillsComponent, AboutComponent, GenericEditorComponent,
+    AspectsComponent, SkillsComponent, AboutComponent, GenericActionEditor, AttackActionEditor,
     SpecialtiesComponent,
     StatusComponent,
     TraitsComponent,
@@ -33,7 +34,7 @@ import { SpellsComponent } from './sheet/spells/spells.component';
     EquipmentComponent,
     SpellsComponent
   ],
-  entryComponents: [ RollDialogComponent, GenericEditorComponent ],
+  entryComponents: [ RollDialogComponent, GenericActionEditor, AttackActionEditor ],
   bootstrap:    [ AppComponent ]
 })
 export class AppModule { }

@@ -19,7 +19,7 @@ export class MoveActionObject extends ActionObject {
         let data = datainit as MoveActionData;
         data.type = 'move';
         data.nextExecution = data.time;
-        data.body = [{name:'leftLeg',intensity:0},{name:'rightLeg',intensity:0}];
+        data.body = [{name:'leftLeg',effort:0},{name:'rightLeg',effort:0}];
 
        character.actions.add(data);
 
@@ -35,16 +35,16 @@ export class MoveActionObject extends ActionObject {
             if(this.data.path[i].state=="done") continue;
             if(!this.data.path[i].state) {
                 let location = this.character.location(this.data.nextExecution);
-                let speed = this.character.MaxSpeed(this.data.nextExecution,this.data.body.map(x => x.name),0) * this.data.path[i].speed;
+                let speed = this.character.maxSpeed(this.data.nextExecution,this.data.body.map(x => x.name),0) * this.data.path[i].speed;
                 let distance = ((location.x-this.data.path[i].x)**2 + (location.y-this.data.path[i].y)**2)**.5;
                 let duration = distance / speed; // in sec
                 location.velx = (this.data.path[i].x - location.x) / duration;
                 location.vely = (this.data.path[i].y - location.y) / duration;
                 this.character.setLocation(location);
                 this.data.body.forEach(body => {
-                    body.intensity = .08 * this.data.path[i].speed ** 2;
-                    this.character.fatigue.AddMuscleRate(this.data.nextExecution,body.intensity,body.name);
-                    this.character.fatigue.AddAerobicRate(this.data.nextExecution,body.intensity*3);
+                    body.effort = .08 * this.data.path[i].speed ** 2;
+                    this.character.fatigue.addMuscleRate(this.data.nextExecution,body.effort,body.name);
+                    this.character.fatigue.addAerobicRate(this.data.nextExecution,body.effort*3);
                 });
                 
             
@@ -56,8 +56,8 @@ export class MoveActionObject extends ActionObject {
             if (this.data.path[i].state=="max") {
                 this.data.path[i].state = "done";
                 this.data.body.forEach(body => {
-                    this.character.fatigue.AddMuscleRate(this.data.nextExecution,-body.intensity,body.name);
-                    this.character.fatigue.AddAerobicRate(this.data.nextExecution,-body.intensity*3);
+                    this.character.fatigue.addMuscleRate(this.data.nextExecution,-body.effort,body.name);
+                    this.character.fatigue.addAerobicRate(this.data.nextExecution,-body.effort*3);
                 });
 
                if(i == this.data.path.length-1) {

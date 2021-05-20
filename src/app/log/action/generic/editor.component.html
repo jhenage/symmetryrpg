@@ -15,8 +15,8 @@
       <input type="text" [(ngModel)]="body.name" />
     </div>
     <div class="field">
-      <label>Intensity</label>
-      <input type="number" [(ngModel)]="body.intensity" />
+      <label>Effort</label>
+      <input type="number" [(ngModel)]="body.effort" />
     </div>
     <div class="field">
       <label>Exclusivity</label>
@@ -54,7 +54,5 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button (click)="rollDice()">New Roll</button>
   <button mat-button mat-dialog-close>Close</button>
-  <button mat-button [mat-dialog-close]="true">Apply</button>
 </mat-dialog-actions>

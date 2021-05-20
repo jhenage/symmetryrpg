@@ -18,9 +18,9 @@ export class GenericActionObject extends ActionObject {
         data.endTime = data.nextExecution = data.time;
 
         if(character.aspects.getAspectDescriptors(datainit.aspect)[0] == "body") {
-            data.body = [{name:'full',intensity:0}];
+            data.body = [{name:'full',effort:0}];
         } else {
-            data.body = [{name:'mental',intensity:0}];
+            data.body = [{name:'mental',effort:0}];
         }
 
         character.actions.add(data);

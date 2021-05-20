@@ -1,4 +1,4 @@
-import { Character } from 'src/app/model/character';
+import { Character, Strike } from 'src/app/model/character';
 import { DiceRoll } from 'src/app/model/diceroll';
 import { ActionData } from 'src/app/model/character/actions';
 import { ActionObject } from '../object';
@@ -9,50 +9,36 @@ interface AttackActionData extends ActionData {
         character: number;
         location: string;
     }
-    limb: string;
-    length: number;
-    diameter: number;
-    delayDice: number[];
-}
-
-interface AttackProcessActionData extends AttackActionData {
-    attackdice?: number[];
-    attackmodifier?: number;
-    attacksuccess?: boolean;
-    attackduration: number;
-    fatigue: number;
-    damagedice?: number[];
-    damagemodifier?: number;
-}
-
-export interface AttackProcessActionObject extends AttackActionObject {
-    attackroll: DiceRoll;
-    wound?: WoundSingle;
-    //damageroll: DiceRoll;
-    data: AttackProcessActionData;
+    strike: number;
+    buildup: number; // Buildup is the distance of the attack path, 0 for quickest and 100 for maximum power.
 }
 
 export class AttackActionObject extends ActionObject {
     data: AttackActionData;
 
-    static Build(character: Character,datainit: {time:number; target: {character:Character; location:string}; length:number; diameter: number;}): AttackActionObject {
+    static Build(character: Character,datainit: {time:number; target: {character:Character; location:string}; strike: number, buildup: number}, effort: number): AttackActionObject {
         let enemy = datainit.target.character;
         let data = datainit as unknown as AttackActionData;
         data.target.character = enemy.id;
         data.type = 'attack';
-        data.limb = 'rightArm';
-        let penalty = character.generalPenalty(data.time);
-        let dice = new DiceRoll(4,50);
-        data.delayDice = dice.result;
-        data.time += Math.round(1000 * character.aspects.getPhysicalReactionTime(data.time,penalty,dice.result,false));
+        let strike = character.strikes[data.strike];
+        data.body = strike.location.map((name) => {return {name,effort};});
+        //let penalty = character.generalPenalty(data.time);
+        //let dice = new DiceRoll(4,50);
+        //data.delayDice = dice.result;
+        //data.time += Math.round(1000 * character.aspects.getPhysicalReactionTime(data.time,penalty,dice.result,false));
 
         character.actions.add(data);
 
         return new this(character,data);
     }
 
-    get enemy() {
+    get enemy(): Character {
         return this.character.scene.getCharacter(this.data.target.character);
+    }
+
+    get strike(): Strike {
+        return this.character.strikes[this.data.strike];
     }
 
 //    execute() {

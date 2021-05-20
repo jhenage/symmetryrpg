@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>Edit Attack Action</h2>
+<mat-dialog-content>
+  <div class="field">
+    <label>Start Time</label>
+    <input type="number" [(ngModel)]="data.action.data.time" />
+  </div>
+  <div class="field">
+    <label>Weapon Strike</label>
+    <select [(ngModel)]="data.action.data.strike">
+      <option *ngFor="let strike of data.action.character.strikes; index as i" value="i">{{strike.name}}</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Effort(0-100)</label>
+    <input type="number" [(ngModel)]="effort" />
+  </div>
+  <div class="field">
+    <label>Buildup(0=quick, 100=power)</label>
+    <input type="number" [(ngModel)]="data.action.data.buildup" />
+  </div>
+  <div class="field">
+    <label>Enemy</label>
+    <select [(ngModel)]="data.action.data.target.character">
+      <option *ngFor="let character of data.action.character.scene.characters" value="{{character.id}}">{{character.about.name}}</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Target Body Part</label>
+    <input type="text" [(ngModel)]="data.action.data.target.location"/>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

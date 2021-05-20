@@ -102,7 +102,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges
   select(character: Character) {
     if(this.mouseMode == 'punch') {
       if(this.character!=character) {
-        let action = AttackActionObject.Build(this.character,{time:this.logService.data.time,target:{character:character,location:'torso'},diameter:60,length:75});
+        let intensity = 50;
+        let location = 'torso';
+        let strike = 0;
+        let buildup = 50;
+        let action = AttackActionObject.Build(this.character,{time:this.logService.data.time,target:{character,location},strike,buildup},intensity);
         this.logService.newAction(action);
       }
       else {

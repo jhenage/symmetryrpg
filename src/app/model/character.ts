@@ -74,6 +74,14 @@ interface LocationData {
   vely?: number;
 }
 
+export interface Strike {
+  location: string[];  // could be two handed.
+  diameter: number; // mm
+  length: number; // mm
+  reach: number; // m
+  name: string;
+}
+
 export class Character {
 
   protected _data: {
@@ -189,17 +197,17 @@ export class Character {
   // truncate all logs to one entry. For after archiving character
   resetHistory(time: number) {
     //this._data.createdAt = time;
-    this.fatigue.AddAerobicRate(time,0);
+    this.fatigue.addAerobicRate(time,0);
     this._data.fatigue.aerobic.splice(0,this._data.fatigue.aerobic.length-1);
     for( let muscle in this._data.fatigue.muscles ) {
-      this.fatigue.AddMuscleRate(time,0,muscle);
+      this.fatigue.addMuscleRate(time,0,muscle);
       this._data.fatigue.muscles[muscle].splice(0,this._data.fatigue.muscles[muscle].length-1);
     }
     this._data.location = [this.location(time)];
-    this._data.qi = {amount:this.MaxQi(time),modified:[{time:time,amount:this.Qi(time)}]};
-    this._data.about.height.modified = [{time:time,amount:this.about.HeightMeter(time)}];
+    this._data.qi = {amount:this.maxQi(time),modified:[{time:time,amount:this.qi(time)}]};
+    this._data.about.height.modified = [{time:time,amount:this.about.heightMeter(time)}];
     this.aspects.aspectsList.forEach((aspect) => {
-      this._data.aspects[aspect].modified = [{time:time,amount:this.aspects.Current(time,aspect)}];
+      this._data.aspects[aspect].modified = [{time:time,amount:this.aspects.current(time,aspect)}];
     });
     this._data.actions.splice(0,this._data.actions.findIndex((value)=> value.time > time));
     // still need wounds
@@ -213,23 +221,23 @@ export class Character {
     return 0;
   }
 
-  WeightLbs(time:number): number {
-    return this.WeightKg(time) * 2.2;
+  weightLbs(time:number): number {
+    return this.weightKg(time) * 2.2;
   }
 
-  WeightKg(time:number): number {
-    let breakdown = this.WeightKgBreakdown(time);
+  weightKg(time:number): number {
+    let breakdown = this.weightKgBreakdown(time);
     return breakdown.boneMass + breakdown.fatMass + breakdown.muscleMass + breakdown.organMass;
   }
 
-  WeightKgBreakdown(time:number): MassBreakdown {
+  weightKgBreakdown(time:number): MassBreakdown {
     let weight = this.creatureType.weight;
     let frameSizeFactor = this.interpretSymmetric(this.about.frameSize, weight.frameSizeFactor);
     let fatMassFactor = this.interpretSymmetric(this.about.bodyFat, weight.fatMassFactor);
-    let brawnFactor = this.interpretSymmetric(this.aspects.Current(time,"brawn"), weight.brawnFactor);
-    let toughnessFactor = this.interpretSymmetric(this.aspects.Current(time,"toughness"), weight.toughnessFactor);
+    let brawnFactor = this.interpretSymmetric(this.aspects.current(time,"brawn"), weight.brawnFactor);
+    let toughnessFactor = this.interpretSymmetric(this.aspects.current(time,"toughness"), weight.toughnessFactor);
     let muscleBulkFactor = this.interpretSymmetric(this.about.muscleBulk, weight.muscleBulkFactor);
-    let scale = (this.about.HeightMeter(time) ** 2) * frameSizeFactor;
+    let scale = (this.about.heightMeter(time) ** 2) * frameSizeFactor;
     let organMass = weight.organMassFactor * scale;
     let fatMass = fatMassFactor * scale;
     scale *= brawnFactor * toughnessFactor * muscleBulkFactor;
@@ -254,7 +262,7 @@ export class Character {
     return Math.max(0.5,(8 + toughness) * ((1 - this.about.muscleBulk/14) ** 2));
   }
   
-  TissueSizes(time:number, location:string): { give:number, tissues: {tissue:string,thickness:number}[] } {
+  tissueSizes(time:number, location:string): { give:number, tissues: {tissue:string,thickness:number}[] } {
     var target = this.creatureType.targets.torso;
     target = undefined;
     location.split('.').forEach(element => {
@@ -263,12 +271,12 @@ export class Character {
 
     let brawnFactor = this.creatureType.weight.brawnFactor;
     let toughnessFactor = this.creatureType.weight.toughnessFactor;
-    let brawn = this.interpretSymmetric(this.aspects.Current(time,"brawn"), {
+    let brawn = this.interpretSymmetric(this.aspects.current(time,"brawn"), {
       minimum: brawnFactor.minimum/brawnFactor.average,
       average: 1,
       stddev: brawnFactor.stddev/brawnFactor.average
     });
-    let toughness = this.interpretSymmetric(this.aspects.Current(time,"toughness"), {
+    let toughness = this.interpretSymmetric(this.aspects.current(time,"toughness"), {
       minimum: toughnessFactor.minimum/toughnessFactor.average,
       average: 1,
       stddev: toughnessFactor.stddev/toughnessFactor.average
@@ -304,17 +312,17 @@ export class Character {
     return {give:give,tissues:tissues};
   }
 
-  TargetLength(time:number, location:string): number {
+  targetLength(time:number, location:string): number {
     var target = this.creatureType.targets.torso;
     target = undefined;
     location.split('.').forEach(element => {
       target = target ? target.targets[element] : this.creatureType.targets[element];
     });
-    return target.length * this.about.HeightMeter(time) / this.creatureType.height.average;
+    return target.length * this.about.heightMeter(time) / this.creatureType.height.average;
   }
 
-  Endurance(time:number): number { 
-    let endurance = this.getBaseEndurance(this.aspects.Current(time,"toughness"));
+  endurance(time:number): number { 
+    let endurance = this.getBaseEndurance(this.aspects.current(time,"toughness"));
     if ( this.traits.hasTrait("endurance") ) {
       if ( this.traits.hasTrait("greatEndurance") ) {
         if ( this.traits.hasTrait("epicEndurance") ) {
@@ -335,12 +343,12 @@ export class Character {
     return endurance;
   }
 
-  Qi(time: number): number {
-    return Math.min(ModifiedValue(time,this._data.qi),this.MaxQi(time));
+  qi(time: number): number {
+    return Math.min(ModifiedValue(time,this._data.qi),this.maxQi(time));
   }
 
-  MaxQi(time: number): number { 
-    let result = this.creatureType.qi.average + this.creatureType.qi.stddev * (this.aspects.Permanent("serenity") + this.traits.getAttributeMod("serenityForQiCapacity"));
+  maxQi(time: number): number { 
+    let result = this.creatureType.qi.average + this.creatureType.qi.stddev * (this.aspects.permanent("serenity") + this.traits.getAttributeMod("serenityForQiCapacity"));
     return Math.max(this.creatureType.qi.minimum,Math.round(result)) * this.qiMultiplier;
   }
 
@@ -348,11 +356,11 @@ export class Character {
     return Math.min(10, 1 + this.traits.getAttributeMod("qiMultiplier"));
   }
 
-  AddQi(time: number, amount: number): void {
+  addQi(time: number, amount: number): void {
     return ChangeModifiedValue(time,this._data.qi,ModifiedValue(time,this._data.qi)+amount);
   }
 
-  SetQi(time: number, amount: number): void {
+  setQi(time: number, amount: number): void {
     return ChangeModifiedValue(time,this._data.qi,amount);
   }
 
@@ -393,50 +401,50 @@ export class Character {
     }
   }
 
-  protected LimbsMovementFactor(time: number, limbList: string[]): number { // weighted avg of all participating limbs and penalties
+  protected limbsMovementFactor(time: number, limbList: string[]): number { // weighted avg of all participating limbs and penalties
     if(!limbList || limbList.length == 0) return 0;
     var result = 1;
     limbList.forEach((limb) => { // build up product for geometric mean
       result *= this.creatureType.limbs[limb].locomotion;
       result *= this.creatureType.limbs[limb].reach;
-      result *= 0.7 ** this.fatigue.Penalty(limb,time);
-      result *= 0.7 ** this.wounds.Penalty(limb,time);
+      result *= 0.7 ** this.fatigue.penalty(limb,time);
+      result *= 0.7 ** this.wounds.penalty(limb,time);
     });
     result **= 1 / limbList.length; // finish taking geometric mean
-    result *= 0.8 ** this.fatigue.Penalty('aerobic',time);
+    result *= 0.8 ** this.fatigue.penalty('aerobic',time);
     return result;
   }
 
-  MaxSpeed(time: number, limbList: string[], carriedWeight: number): number { // spd in m/s
-    var result = this.skills.getBaseResult(this.aspects.Current(time,'brawn')+this.traits.getAttributeMod("brawnForSpeed"),'athlete',0);
+  maxSpeed(time: number, limbList: string[], carriedWeight: number): number { // spd in m/s
+    var result = this.skills.getBaseResult(this.aspects.current(time,'brawn')+this.traits.getAttributeMod("brawnForSpeed"),'athlete',0);
     result < 0 ? result = result * 0.6 : result = result / 0.6;
     result += 9;
     if(result <= 0) return 0;
-    result *= 0.5 * this.LimbsMovementFactor(time,limbList) * this.about.HeightMeter(time);
-    result *= (100/(this.WeightKg(time)+carriedWeight))**0.5;
+    result *= 0.5 * this.limbsMovementFactor(time,limbList) * this.about.heightMeter(time);
+    result *= (100/(this.weightKg(time)+carriedWeight))**0.5;
     return result;
   }
 
-  MaxAcceleration(time: number, limbList: string[], carriedWeight: number): number { // accel in m/s/s
-    var result = (this.aspects.Current(time,'brawn')+this.traits.getAttributeMod("brawnForAcceleration"));
+  maxAcceleration(time: number, limbList: string[], carriedWeight: number): number { // accel in m/s/s
+    var result = (this.aspects.current(time,'brawn')+this.traits.getAttributeMod("brawnForAcceleration"));
     result < 0 ? result = result * 0.12 : result = result / 3;
     result++;
     if(result <=0) return 0;
     result **= 1.5;
-    result *= 100 * this.LimbsMovementFactor(time,limbList) / (this.WeightKg(time)+carriedWeight);
+    result *= 100 * this.limbsMovementFactor(time,limbList) / (this.weightKg(time)+carriedWeight);
     return result;
   }
 
-  PhysicalDefense(time: number): number {
-    let result = this.skills.getBaseResult(this.aspects.Current(time,"reflex"),"fighter") - 3;
+  physicalDefense(time: number): number {
+    let result = this.skills.getBaseResult(this.aspects.current(time,"reflex"),"fighter") - 3;
     let unarmed = this.specialties.getSpecialtyRank("unarmedCombat")
     if(unarmed > 0) result += 1.5;
     if(unarmed > 1) result += 0.5;
     return result;
   }
 
-  MagicalDefense(time: number): number {
-    let result = this.skills.getBaseResult(this.aspects.Current(time,"awareness"),"mage") - 3;
+  magicalDefense(time: number): number {
+    let result = this.skills.getBaseResult(this.aspects.current(time,"awareness"),"mage") - 3;
     return result + this.traits.getAttributeMod("magicalDefense");
   }
 
@@ -484,6 +492,16 @@ export class Character {
     let result = this.getBasicProbabilityDescription(symmetric);
     if(result.length > 0) result = " (" + result + ")";
     return this.getProbabilityDescriptionPrefix(symmetric) + result;
+  }
+
+  get strikes(): Strike[] {
+    return [{
+      name: "Punch",
+      location: ["rightArm"],
+      diameter: 8,
+      length: 8,
+      reach: 1
+    }]
   }
 
 }
