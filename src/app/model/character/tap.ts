@@ -54,7 +54,7 @@ export class Tap {
     if(!this._data.hasOwnProperty(location)) {
 
       if(location != 'general' && location != 'mental') {
-        if(!this.character.creatureType.limbs.hasOwnProperty(location)) {
+        if(!this.character.specie.limbs.hasOwnProperty(location)) {
           throw new Error('Invalid location '+location);
         }
       }

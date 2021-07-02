@@ -34,7 +34,7 @@ export class Scene {
         this.characters = [];
         for ( let char of this._data.characters ) {
             let charData = this.getcharacterdata(char.id,this.id);
-            let charObject = new Character(char.id,charData.creatureType,charData,this);
+            let charObject = new Character(char.id,charData.specie,charData,this);
             // charObject.resetAll(); // For Debugging
             this.characters.push(charObject);
         }
@@ -57,7 +57,7 @@ export class Scene {
 
     // take a character from an old scene and clone it into this scene
     addCharacter(character: Character): Character {
-        let newchar = new Character(character.id,character.creatureTypeIndex,character.serialize(),this);
+        let newchar = new Character(character.id,character.specieIndex,character.serialize(),this);
         newchar.resetHistory(this.start);
         this.characters.push(newchar);
         this._data.characters.push({id:newchar.id,name:newchar.about.name});

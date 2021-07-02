@@ -175,7 +175,7 @@ export class Fatigue {
 
   validateMuscleLocation(time:number,location: string) {
     if ( !this._data.muscles.hasOwnProperty(location) ) {
-      if ( location != 'mental' && !this.character.creatureType.limbs.hasOwnProperty(location) ) {
+      if ( location != 'mental' && !this.character.specie.limbs.hasOwnProperty(location) ) {
         throw new Error('Invalid location '+location);
       }
       this._data.muscles[location] = [{ time: time, rate: 0, amount: Array(5).fill(0) }];

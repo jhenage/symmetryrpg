@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Character } from './model/character';
-import { CreatureType } from './model/creaturetype';
+import { Specie } from './model/specie';
 import { Campaign } from './model/campaign';
 import { DataService } from './data.service';
 import { LogService } from './log/log.service';
@@ -15,7 +15,7 @@ export class AppComponent  {
   character: Character; // the selected character
   campaign: Campaign;
   scene: Scene;
-  creaturetypes: CreatureType[];
+  species: Specie[];
   mode: string; // sheet | status | map
 
   constructor(private dataService: DataService, private logService: LogService) {

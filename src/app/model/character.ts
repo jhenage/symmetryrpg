@@ -9,7 +9,7 @@ import { Spells, SpellsData } from './character/spells';
 import { Tap, TapData } from './character/tap';
 import { Traits, TraitsData } from './character/traits';
 import { Wounds, WoundData } from './character/wounds';
-import { CreatureType } from './creaturetype';
+import { Specie } from './specie';
 import { Campaign } from './campaign';
 import { Scene } from './scene';
 
@@ -85,7 +85,7 @@ export interface Strike {
 export class Character {
 
   protected _data: {
-    creatureType: number;
+    specie: number;
     about: AboutData;
     actions: ActionData[];
     aspects: AspectsData;
@@ -120,11 +120,11 @@ export class Character {
   traits: Traits;
   wounds: Wounds;
   scene: Scene;
-  creatureTypeIndex: number;
+  specieIndex: number;
 
-  constructor(id: number,creatureTypeIndex: number,data: any,scene: Scene) {
+  constructor(id: number,specieIndex: number,data: any,scene: Scene) {
     this.id = id;
-    this.creatureTypeIndex = creatureTypeIndex;
+    this.specieIndex = specieIndex;
     this.scene = scene;
 
     if ( ! data ) {
@@ -140,7 +140,7 @@ export class Character {
       this.tap = new Tap(this);
       this.fatigue = new Fatigue(this);
 
-      this._data = {location:[],token:'',creatureType:creatureTypeIndex,
+      this._data = {location:[],token:'',specie:specieIndex,
                     qi:{amount:0},
                     about:this.about.initialize(),
                     actions: this.actions.initialize(),
@@ -176,7 +176,7 @@ export class Character {
 
   serialize(): string { return JSON.stringify(this._data); }
   //get createdAt(): number { return this._data.createdAt; }
-  get creatureType(): CreatureType { return this.campaign.creatureTypes[this.creatureTypeIndex]; }
+  get specie(): Specie { return this.campaign.species[this.specieIndex]; }
   get campaign(): Campaign { return this.scene.campaign; }
 
   // clear all temporary data. For after cloning character
@@ -231,7 +231,7 @@ export class Character {
   }
 
   weightKgBreakdown(time:number): MassBreakdown {
-    let weight = this.creatureType.weight;
+    let weight = this.specie.weight;
     let frameSizeFactor = this.interpretSymmetric(this.about.frameSize, weight.frameSizeFactor);
     let fatMassFactor = this.interpretSymmetric(this.about.bodyFat, weight.fatMassFactor);
     let brawnFactor = this.interpretSymmetric(this.aspects.current(time,"brawn"), weight.brawnFactor);
@@ -263,14 +263,14 @@ export class Character {
   }
   
   tissueSizes(time:number, location:string): { give:number, tissues: {tissue:string,thickness:number}[] } {
-    var target = this.creatureType.targets.torso;
+    var target = this.specie.targets.torso;
     target = undefined;
     location.split('.').forEach(element => {
-      target = target ? target.targets[element] : this.creatureType.targets[element];
+      target = target ? target.targets[element] : this.specie.targets[element];
     });
 
-    let brawnFactor = this.creatureType.weight.brawnFactor;
-    let toughnessFactor = this.creatureType.weight.toughnessFactor;
+    let brawnFactor = this.specie.weight.brawnFactor;
+    let toughnessFactor = this.specie.weight.toughnessFactor;
     let brawn = this.interpretSymmetric(this.aspects.current(time,"brawn"), {
       minimum: brawnFactor.minimum/brawnFactor.average,
       average: 1,
@@ -285,10 +285,10 @@ export class Character {
     var give = 0;
     var tissues = [];
     target.layers.forEach(element => {
-      give += this.creatureType.tissues[element.tissue].impact.give * element.thickness;
+      give += this.specie.tissues[element.tissue].impact.give * element.thickness;
       let thickness = element.thickness;
       if(element.tissue == 'fat') {
-        let fmf = this.creatureType.weight.fatMassFactor;
+        let fmf = this.specie.weight.fatMassFactor;
         thickness = this.interpretSymmetric(this.about.bodyFat, {
           minimum: fmf.minimum*thickness/fmf.average,
           average: thickness,
@@ -296,7 +296,7 @@ export class Character {
         });
       }
       if(element.tissue == 'muscle') {
-        let bulkFactor = this.creatureType.weight.muscleBulkFactor;
+        let bulkFactor = this.specie.weight.muscleBulkFactor;
         let bulk = this.interpretSymmetric(this.about.muscleBulk, {
           minimum: bulkFactor.minimum/bulkFactor.average,
           average: 1,
@@ -313,12 +313,12 @@ export class Character {
   }
 
   targetLength(time:number, location:string): number {
-    var target = this.creatureType.targets.torso;
+    var target = this.specie.targets.torso;
     target = undefined;
     location.split('.').forEach(element => {
-      target = target ? target.targets[element] : this.creatureType.targets[element];
+      target = target ? target.targets[element] : this.specie.targets[element];
     });
-    return target.length * this.about.heightMeter(time) / this.creatureType.height.average;
+    return target.length * this.about.heightMeter(time) / this.specie.height.average;
   }
 
   endurance(time:number): number { 
@@ -348,8 +348,8 @@ export class Character {
   }
 
   maxQi(time: number): number { 
-    let result = this.creatureType.qi.average + this.creatureType.qi.stddev * (this.aspects.permanent("serenity") + this.traits.getAttributeMod("serenityForQiCapacity"));
-    return Math.max(this.creatureType.qi.minimum,Math.round(result)) * this.qiMultiplier;
+    let result = this.specie.qi.average + this.specie.qi.stddev * (this.aspects.permanent("serenity") + this.traits.getAttributeMod("serenityForQiCapacity"));
+    return Math.max(this.specie.qi.minimum,Math.round(result)) * this.qiMultiplier;
   }
 
   get qiMultiplier(): number {
@@ -405,8 +405,8 @@ export class Character {
     if(!limbList || limbList.length == 0) return 0;
     var result = 1;
     limbList.forEach((limb) => { // build up product for geometric mean
-      result *= this.creatureType.limbs[limb].locomotion;
-      result *= this.creatureType.limbs[limb].reach;
+      result *= this.specie.limbs[limb].locomotion;
+      result *= this.specie.limbs[limb].reach;
       result *= 0.7 ** this.fatigue.penalty(limb,time);
       result *= 0.7 ** this.wounds.penalty(limb,time);
     });

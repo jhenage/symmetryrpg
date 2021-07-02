@@ -134,7 +134,7 @@ export class Wounds {
 
     tissues.forEach(element => {
       if(energy<=0) return;
-      let tissueProps = this.character.creatureType.tissues[element.tissue].impact;
+      let tissueProps = this.character.specie.tissues[element.tissue].impact;
       let volume = surfaceArea * element.thickness;
 
       let absorbed = 0; // total amount of energy being applied to this tissue;

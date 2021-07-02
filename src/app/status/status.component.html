@@ -29,7 +29,7 @@
     <div>
         Mental Penalty {{character.fatigue.penalty('mental',timer.time)}}, Halflife {{character.fatigue.muscleHalflife(timer.time,'mental')}}
     </div>
-    <div *ngFor="let muscle of character.creatureType.limbList">
+    <div *ngFor="let muscle of character.specie.limbList">
         {{muscle|titlecase}} Penalty {{character.fatigue.penalty(muscle,timer.time)}}, Halflife {{character.fatigue.muscleHalflife(timer.time,muscle)}}
     </div>
 </div>

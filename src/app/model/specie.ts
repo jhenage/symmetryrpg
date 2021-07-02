@@ -35,7 +35,7 @@ export interface FrameDimension {
   minFatStddev: number;
 }
 
-export interface CreatureTypeData {
+export interface SpecieData {
   name: string;
   limbs: {
     [propName: string]: {
@@ -96,11 +96,11 @@ interface TargetData {
 }
 
 
-export class CreatureType {
+export class Specie {
 
-  protected _data: CreatureTypeData;
+  protected _data: SpecieData;
 
-  constructor(data?: CreatureTypeData) {
+  constructor(data?: SpecieData) {
     if (data) {
       this._data = data;
     }

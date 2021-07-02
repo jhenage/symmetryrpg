@@ -6,7 +6,7 @@ export const blankcampaign: CampaignData = {
   characterCount: 0,
   now: 0,
     characterEditMode: true,
-    creatureTypes: [{
+    species: [{
       name: 'Human',
       limbs: {
         leftArm:  { dexterity: 5, locomotion: 0.05, muscleSize: 2, reach: 0.375 }, // reach and muscle size might need to calculate from target sizes

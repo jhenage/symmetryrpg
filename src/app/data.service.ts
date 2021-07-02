@@ -23,7 +23,7 @@ export class DataService {
     if(typeof this._campaign === "undefined") {
       let data = this.parse(localStorage.getItem('campaign'));
       if(data) {
-        data.creatureTypes = blankcampaign.creatureTypes; // For Debugging
+        data.species = blankcampaign.species; // For Debugging
         data.commonSpecialties = blankcampaign.commonSpecialties; // For Debugging
         this._campaign = new Campaign(data,(id,scene)=>this.getCharacter(id,scene));
       }

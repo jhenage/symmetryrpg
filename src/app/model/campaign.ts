@@ -1,6 +1,6 @@
 import { Character } from './character';
 import { Scene, SceneData } from './scene';
-import { CreatureType, CreatureTypeData } from './creaturetype';
+import { Specie, SpecieData } from './specie';
 import { SpecialtyCategories } from './character/specialties';
 import { TraitDetails } from './character/traits';
 import { CurrencyInterval } from './character/equipment';
@@ -12,7 +12,7 @@ export interface CampaignData {
     now: number; // The current time
     characterEditMode: boolean;
     activeScene: number; // Index of the active scene
-    creatureTypes: CreatureTypeData[];
+    species: SpecieData[];
     commonSpecialties: SpecialtyCategories; // each specialty should have no more than 4 categories
     traitsDetails: {
         naturalTraining: {[propName:string]: TraitDetails};
@@ -30,15 +30,15 @@ export class Campaign {
     protected _data: CampaignData;
 
     scenes: Scene[];
-    creatureTypes: CreatureType[];
+    species: Specie[];
 
     constructor(data: CampaignData,getcharacter: (id,scene)=>any) {
         
         this._data = data;
  
-        this.creatureTypes = [];
-        for ( let creaturetype of this._data.creatureTypes ) {
-            this.creatureTypes.push(new CreatureType(creaturetype));
+        this.species = [];
+        for ( let specie of this._data.species ) {
+            this.species.push(new Specie(specie));
         }
 
         this.scenes = [];

@@ -40,16 +40,16 @@ export class ActionObject {
 
 
     getPhysicalReactionTime(time: number, modifier: number, isSurprised: boolean): number { // return milliseconds
-        let result = this.getBaseReactionTime(this.character.aspects.current(time,'awareness') + 5 + modifier) * this.character.creatureType.quickness.mental;
-        result += this.getBaseReactionTime(this.character.aspects.current(time,'reflex') + modifier) * this.character.creatureType.quickness.physical;
+        let result = this.getBaseReactionTime(this.character.aspects.current(time,'awareness') + 5 + modifier) * this.character.specie.quickness.mental;
+        result += this.getBaseReactionTime(this.character.aspects.current(time,'reflex') + modifier) * this.character.specie.quickness.physical;
         if(isSurprised) result *= this.getSurpriseMultiplier(this.character.aspects.current(time,'reflex') + modifier);
         return result;
     }
     
 
     getMentalReactionTime(time: number, modifier: number, isSurprised: boolean): number { // return milliseconds
-        let result = this.getBaseReactionTime(this.character.aspects.current(time,'awareness') + modifier) * this.character.creatureType.quickness.mental;
-        result += this.getBaseReactionTime(this.character.aspects.current(time,'reflex') + 5 + modifier) * this.character.creatureType.quickness.physical;
+        let result = this.getBaseReactionTime(this.character.aspects.current(time,'awareness') + modifier) * this.character.specie.quickness.mental;
+        result += this.getBaseReactionTime(this.character.aspects.current(time,'reflex') + 5 + modifier) * this.character.specie.quickness.physical;
         if(isSurprised) result *= this.getSurpriseMultiplier(this.character.aspects.current(time,'awareness') + modifier);
         return result;
     }

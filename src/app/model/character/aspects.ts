@@ -54,7 +54,7 @@ export class Aspects {
 
   permanent(aspect:string): number {
     return this.getAspectRank(aspect) + 
-           this.character.creatureType.getAttributeMod(aspect) +
+           this.character.specie.getAttributeMod(aspect) +
            this.character.traits.getAttributeMod(aspect);
   }
 
@@ -163,7 +163,7 @@ export class Aspects {
   }
 
   protected getHalfReactionTime(rank: number, penalty: number, diceTotal: number, isSurprised: boolean): number {
-    let result = 0.001 * this.character.creatureType.quickness.reaction;
+    let result = 0.001 * this.character.specie.quickness.reaction;
     result *= this.getBaseReactionTime(rank) + diceTotal * 0.01 * this.getReactionTimeRange(rank);
     if(penalty) result *= 1.1 ** penalty;
     if(isSurprised) result *= this.getSurpriseMultiplier(rank);
@@ -174,14 +174,14 @@ export class Aspects {
     let awareness = this.current(time,'awareness');
     let result = this.getHalfReactionTime(awareness,penalty,diceResult[0]+diceResult[1],isSurprised) +
                  this.getHalfReactionTime(awareness,penalty,diceResult[2]+diceResult[3],isSurprised);
-    return result * this.character.creatureType.quickness.mental;
+    return result * this.character.specie.quickness.mental;
   }
 
   getPhysicalReactionTime(time:number, penalty: number, diceResult: number[], isSurprised: boolean): number { //time is in seconds
     let result = this.getHalfReactionTime(this.current(time,'awareness'),penalty,diceResult[0]+diceResult[1],isSurprised) *
-                 this.character.creatureType.quickness.mental;
+                 this.character.specie.quickness.mental;
     result += this.getHalfReactionTime(this.current(time,'reflex'),penalty,diceResult[2]+diceResult[3],false) *
-              this.character.creatureType.quickness.physical;
+              this.character.specie.quickness.physical;
     return result;
   }
 
@@ -192,15 +192,15 @@ export class Aspects {
     result *= 2 ** actionPenalty.targetedPenalty;
     result *= 1.2 ** actionPenalty.genericPenalty;
     result *= 1.05 ** actionPenalty.incidentalPenalty;
-    return result * this.character.creatureType.quickness.action;
+    return result * this.character.specie.quickness.action;
   }
 
   getMentalActionTime(time:number, actionTime: number, actionPenalty: ActionPenalty) {
-    return this.getActionTime(actionTime,this.current(time,'cleverness'),actionPenalty) * this.character.creatureType.quickness.mental;
+    return this.getActionTime(actionTime,this.current(time,'cleverness'),actionPenalty) * this.character.specie.quickness.mental;
   }
 
   getPhysicalActionTime(time:number, actionTime: number, actionPenalty: ActionPenalty) {
-    return this.getActionTime(actionTime,this.current(time,'agility'),actionPenalty) * this.character.creatureType.quickness.physical;
+    return this.getActionTime(actionTime,this.current(time,'agility'),actionPenalty) * this.character.specie.quickness.physical;
   }
 
   getSpentIPTotal(): number {
