@@ -444,7 +444,7 @@ export class Character {
   }
 
   magicalDefense(time: number): number {
-    let result = this.skills.getBaseResult(this.aspects.current(time,"awareness"),"mage") - 3;
+    let result = this.skills.getBaseResult(this.aspects.current(time,"perception"),"mage") - 3;
     return result + this.traits.getAttributeMod("magicalDefense");
   }
 

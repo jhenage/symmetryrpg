@@ -64,7 +64,7 @@ export class AspectsComponent implements OnInit {
   }
 
   get surpriseMultiplier(): string {
-    return this.aspects.getSurpriseMultiplier(this.aspects.current(this.now,"awareness")).toFixed(this.ASPECT_PRECISION + 1);
+    return this.aspects.getSurpriseMultiplier(this.aspects.current(this.now,"perception")).toFixed(this.ASPECT_PRECISION + 1);
   }
 
   get now(): number {

@@ -7,7 +7,7 @@ export interface AspectsData {
   impression: ModifiableStat;
   serenity: ModifiableStat;
   cleverness: ModifiableStat;
-  awareness: ModifiableStat;
+  perception: ModifiableStat;
 }
 export interface ActionPenalty {
   targetedPenalty: number;
@@ -37,7 +37,7 @@ export class Aspects {
       impression: {amount:0},
       serenity: {amount:0},
       cleverness: {amount:0},
-      awareness: {amount:0}
+      perception: {amount:0}
     };
     return this._data;
   }
@@ -108,7 +108,7 @@ export class Aspects {
         return ["mind","strength","balance"];
       case "cleverness":
         return ["mind","finesse","action"];
-      case "awareness":
+      case "perception":
         return ["mind","finesse","balance"];
     }
     return [];
@@ -130,7 +130,7 @@ export class Aspects {
         return "Strong Mental Balance";
       case "cleverness":
         return "Deft Mental Action";
-      case "awareness":
+      case "perception":
         return "Deft Mental Balance";
     }
   }
@@ -171,14 +171,14 @@ export class Aspects {
   }
 
   getMentalReactionTime(time:number, penalty: number, diceResult: number[], isSurprised: boolean): number { //time is in seconds
-    let awareness = this.current(time,'awareness');
-    let result = this.getHalfReactionTime(awareness,penalty,diceResult[0]+diceResult[1],isSurprised) +
-                 this.getHalfReactionTime(awareness,penalty,diceResult[2]+diceResult[3],isSurprised);
+    let perception = this.current(time,'perception');
+    let result = this.getHalfReactionTime(perception,penalty,diceResult[0]+diceResult[1],isSurprised) +
+                 this.getHalfReactionTime(perception,penalty,diceResult[2]+diceResult[3],isSurprised);
     return result * this.character.specie.quickness.mental;
   }
 
   getPhysicalReactionTime(time:number, penalty: number, diceResult: number[], isSurprised: boolean): number { //time is in seconds
-    let result = this.getHalfReactionTime(this.current(time,'awareness'),penalty,diceResult[0]+diceResult[1],isSurprised) *
+    let result = this.getHalfReactionTime(this.current(time,'perception'),penalty,diceResult[0]+diceResult[1],isSurprised) *
                  this.character.specie.quickness.mental;
     result += this.getHalfReactionTime(this.current(time,'reflex'),penalty,diceResult[2]+diceResult[3],false) *
               this.character.specie.quickness.physical;
