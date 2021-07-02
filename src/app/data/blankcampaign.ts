@@ -886,7 +886,7 @@ export const blankcampaign: CampaignData = {
       rift: {difficulty: 19.8,
         description:"Open a portal to another location"},
       transformation: {difficulty: 21.0,
-        description:"Change the target to another creature type"},
+        description:"Change the target to another specie"},
       suppressMagic: {difficulty: 22.2,
         description:"Prevent all spellcasting in an area"},
       resurrection: {difficulty: 23.4,
