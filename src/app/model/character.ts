@@ -249,6 +249,31 @@ export class Character {
     };
   }
 
+  weightKgTarget(time:number, location:string): number {
+    return this.weightKg(time) / 6;
+//    let breakdown = this.weightKgTargetBreakdown(time, location);
+//    return breakdown.boneMass + breakdown.fatMass + breakdown.muscleMass + breakdown.organMass;
+  }
+
+//  weightKgTargetBreakdown(time:number, location:string): MassBreakdown {
+//    let weight = this.specie.weight;
+//    let frameSizeFactor = this.interpretSymmetric(this.about.frameSize, weight.frameSizeFactor);
+//    let fatMassFactor = this.interpretSymmetric(this.about.bodyFat, weight.fatMassFactor);
+//    let brawnFactor = this.interpretSymmetric(this.aspects.current(time,"brawn"), weight.brawnFactor);
+//    let toughnessFactor = this.interpretSymmetric(this.aspects.current(time,"toughness"), weight.toughnessFactor);
+//    let muscleBulkFactor = this.interpretSymmetric(this.about.muscleBulk, weight.muscleBulkFactor);
+//    let scale = (this.about.heightMeter(time) ** 2) * frameSizeFactor;
+//    let organMass = weight.organMassFactor * scale;
+//    let fatMass = fatMassFactor * scale;
+//    scale *= brawnFactor * toughnessFactor * muscleBulkFactor;
+//    return {
+//      boneMass: weight.boneMassFactor * scale,
+//      fatMass: fatMass,
+//      muscleMass: weight.muscleMassFactor * scale,
+//      organMass: organMass
+//    };
+//  }
+
   // for normal or log-normal distributions; data.minimum signals the use of log-normal distributions
   interpretSymmetric(symmetric: number, data: {minimum?: number, average: number, stddev: number}) {
     if(symmetric >= 0 || isNaN(data.minimum) ) {
