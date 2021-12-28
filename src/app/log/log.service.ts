@@ -42,6 +42,7 @@ export class LogService {
     return this.dataService.campaign.now;
   }
 
+  // adds an action to the log
   newAction(action: ActionObject) {
     if( typeof action.data.nextExecution != 'undefined' ) {
       this.queue.push(action);
@@ -59,6 +60,7 @@ export class LogService {
     }
   }
 
+  // removes an action from the log
   removeAction(action: ActionObject) {
     this.data.log = this.data.log.filter(item => item.action != action);
     let i = this.queue.indexOf(action);
@@ -73,6 +75,7 @@ export class LogService {
     }
   }
 
+  // add all actions from a character to the log
   import(character: Character) {
     character.actions.getAll().forEach((action) => {
       const obj = new this.classes[action.type](character,action);
@@ -123,8 +126,8 @@ export class LogService {
 
   }
 
-
-  nextOrder(time: number) {
+  // returns a new generated order number, to sort the order actions were processed
+  nextOrder(time: number): number {
     if ( time < this.lastProcessedTime ) {
       throw new Error('Invalid time '+time+' before '+this.lastProcessedTime);
     }
