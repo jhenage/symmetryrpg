@@ -41,6 +41,14 @@ export class AttackActionObject extends ActionObject {
         return this.character.strikes[this.data.strike];
     }
 
+    createAttackRoll() {
+        let start = this.data.time;
+        let distance = 1 //this.strike.timing.average;
+        if(this.data.buildup < 50) {
+            // average - minimum = 50 - buildup
+        }
+    }
+
 //    execute() {
 //        if(!this.data.executed) {
 //            this.data.attackduration = 1000*this.character.aspects.getPhysicalActionTime(this.data.time,1,{targetedPenalty:0,genericPenalty:0,incidentalPenalty:0});
