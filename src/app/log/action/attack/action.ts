@@ -1,6 +1,6 @@
 import { Character, Strike } from 'src/app/model/character';
 import { DiceRoll } from 'src/app/model/diceroll';
-import { ActionData } from 'src/app/model/character/actions';
+import { ActionData, RollData } from 'src/app/model/character/actions';
 import { ActionObject } from '../object';
 import { WoundSingle } from 'src/app/model/character/wounds';
 
@@ -46,7 +46,23 @@ export class AttackActionObject extends ActionObject {
         let distance = 1 //this.strike.timing.average;
         if(this.data.buildup < 50) {
             // average - minimum = 50 - buildup
-        }
+        } // TODO: distance calculation, which needs strike definition
+
+        let mass = 0;
+        let force = 0;
+        this.data.body.forEach(limb => {
+            mass += this.character.limbMass(start,limb.name);
+            force += this.character.limbForce(start,limb.name,limb.effort);
+        });
+        let time = start + (distance*mass/force)**.5;
+        let roll = {
+            dice:[],
+            time,
+            modifier:{
+                aspect:"agility",
+                skill:"fighter"
+            }} as RollData;
+        this.data.rolls.push(roll);
     }
 
 //    execute() {
